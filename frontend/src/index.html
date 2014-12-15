@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html ng-app="transcribe-ninja" ng-controller="AppCtrl">
+  <head>
+    <title ng-bind="pageTitle"></title>
+
+    <!-- social media tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@fefa4ka">
+    <meta name="twitter:title" content="Transcribe.ninja">
+    <meta name="twitter:description" content="Make text from voice.">
+    <meta name="twitter:creator" content="@fefa4ka">
+    <meta name="twitter:image:src" content="">
+    <meta property="og:title" content="Transcribe.ninja" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://transcribe.ninja" />
+    <meta property="og:image" content="" />
+    <meta property="og:description" content="Make text from voice.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- font awesome from BootstrapCDN -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
+
+
+ 
+  </head>
+  <body>
+    <div class="container">
+        <header>
+            <h1>
+                {{ 'Стенограф'  }}
+            </h1>
+
+            <ul class="nav nav-pills controls">
+                <!-- If AnonymousUser -->
+                <li ng-hide="Data.user.id">
+                    <button class="btn btn-default btn-xs" 
+                            ui-sref="auth-login">Войти с паролем</button>
+                </li>
+
+                <li ui-sref-active="active">
+                    <a href ui-sref="record-upload">Загрузить запись</a>
+                </li>  
+                
+                <!-- If Authorized -->
+                <li ui-sref-active="active" 
+                    ng-show="Data.user.id && Data.user.records.length > 0">
+                    <a href ui-sref="record-list">Ваши записи<span class="badge">{{ Data.user.records.length }}</span></a>
+                </li>
+
+                <li ui-sref-active="active">
+                    <a href ui-sref="transcribe">Поработать</a>
+                </li>
+
+                <li ng-show="Data.user.id">
+                    <div class="btn-group" dropdown>
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ Data.user.username }} <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#">Оплата</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="#" ng-click="logout()">Выход</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p>{{ Data.user.balance }} ₷</p>
+                </li>
+            </ul>
+        </header>
+    </div>
+    <div class="container" ui-view="main"></div>
+
+  </body>
+</html>

@@ -1,0 +1,88 @@
+/**
+ * This is the main application stylesheet. It should include or import all
+ * stylesheets used throughout the application as this is the only stylesheet in
+ * the Grunt configuration that is automatically processed.
+ */
+
+
+/**
+ * First, we include the Twitter Bootstrap LESS files. Only the ones used in the
+ * project should be imported as the rest are just wasting space.
+ */
+
+@import '../../vendor/bootstrap/less/bootstrap.less';
+
+
+/**
+ * This is our main variables file. We must include it last so we can overwrite any variable
+ * definitions in our imported stylesheets.
+ */
+
+@import 'variables.less';
+
+
+/**
+ * Typography
+ */
+
+@import url(http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,700&subset=latin,cyrillic-ext);
+
+body {
+  font-family: 'Roboto Slab', serif;
+}
+
+
+// Header
+header {
+  padding: 10px 0 0 0;
+
+  h1 {
+    font-weight: bold;
+    font-size: 56px;
+
+    margin-top: 10px;
+    float: left;
+  }
+
+  h3 {
+    margin-top: -10px;
+  }
+
+  a {
+    font-weight: 100;
+    font-size: 12px;
+    line-height: 22px;
+
+    vertical-align: top;
+  }
+
+  .controls {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    
+    list-style-type: none;
+  }
+
+  .controls>li {
+      padding-right: 6px;
+  }
+
+  .controls>li>a{
+      padding: 3px 5px;
+
+      font-size: 11px;
+      font-weight: 300;
+      line-height: 1.5;
+  }
+
+  .controls .badge {
+      font-size: 11px;
+      font-weight: 300;
+  }
+}
+
+
+@import '../app/record/record.less';
+@import '../app/record/list/list.less';
+@import '../app/record/upload/upload.less';

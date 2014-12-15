@@ -1,0 +1,88 @@
+
+.upload {
+    margin-top: 70px;
+}
+
+.upload__records {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.upload__speakers-label {
+    font-weight: 100;
+    margin-left: 5px;
+}
+
+.upload {
+    text-align: center;
+    
+    input {
+        display: inline-block;
+        width: 300px;
+        padding: 0;
+        margin: 0;
+        height: 360px;
+
+        position: relative;
+        top: -360px;
+        opacity: 0; 
+
+        cursor: pointer;
+    }
+
+    svg {
+        width: 300px;
+        height: 320px;
+        opacity: .7;
+
+        path {
+            fill: #000;
+        }
+    }
+
+    svg.drop path {
+        fill: #337ab7;
+    }
+
+    .file-drop {
+        
+    }
+}
+
+.upload-suggests {
+    label {
+        font-weight: 100;
+        font-size: 18px;
+        
+        position: absolute;
+    }
+    .interview {
+        top: 180px;
+        left: 15%;
+    }
+    .dialogs {
+        top: 270px;
+        left: 20%;
+    }
+    .speech {
+        top: 200px;
+        right: 25%;
+    }
+    .research {
+        top: 570px;
+        left: 15%;
+    }
+    .transcriptions {
+        top: 400px;
+        left: 10%;
+    }
+    .recognize {
+        top: 580px;
+        right: 20%;
+    }
+    .subtitles {
+        top: 350px;
+        right: 15%;
+    }
+}

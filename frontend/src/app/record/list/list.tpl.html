@@ -1,0 +1,47 @@
+<section class="records">
+    <section class="finished" ng-show="(records | filter : { completed_percentage: '100' }).length > 0">
+        <h2>Готовые записи</h2>
+        <ul>
+            <li ng-repeat="record in records | filter : { completed_percentage: '100' }">
+                <a href="{{ record.url }}">{{ record.title }}</a>
+                <span>{{ record.duration }}</span>
+            </li>
+        </ul>
+    </section>
+    <section class="inprogress" ng-show="(records | filter : { completed_percentage: '!100' }).length > 0">
+        <h2>В работе</h2>
+
+        <ul>
+            <li ng-repeat="record in records | filter : { completed_percentage: '!100' }" 
+                ng-mouseenter="show = true" 
+                ng-mouseleave="show = false" 
+                ng-hide="record.trashed_at > 0">
+                <div class="progress records_list__progress">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ record.completed_percentage }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ record.completed_percentage }}%">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+
+                <a href="/#/record/{{ record.id }}">{{ record.title }}</a>
+                <span class="label label-success" 
+                        ng-show="record.progress === 2">Распознаётся</span>
+                <span class="label label-default" 
+                        ng-show="record.duration === 0">Подготовка</span>
+                
+                
+                <div class="record_list__item-duration" ng-show="record.duration > 0">{{ record.duration | humanSeconds }}</div>
+                <div class="record_list__item-controls" 
+                    ng-show="show">   
+                    <button class="btn btn-default btn-xs" 
+                            ng-show="record.duration > 0"
+                            ng-click="order()">Распознать за {{ (record.duration / 60) * 15 | number: 0 }} ₷</button><span class=""></span>
+
+                    <button class="btn btn-danger btn-xs pull-right" 
+                            ng-click="record = remove(record)">
+                      <i class="fa fa-trash-o fa-lg"></i>
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </section>
+</section>

@@ -1,0 +1,8 @@
+media/*
+static/*
+*.pyc
+frontend/static/*
+frontend/vendor/*
+frontend/node_modules/*
+frontend/build/*
+frontend/bin/*

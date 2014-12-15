@@ -1,0 +1,8 @@
+Django==1.7.1
+django-rq==0.7.0    # Async process
+djangorestframework==3.0.1 # REST API
+markdown==2.5.2       # Markdown support for the browsable API.
+django-filter==0.9.1  # Filtering support
+mysql-python==1.2.5
+http://voiceid.googlecode.com/svn/trunk#egg=voiceid # Скопировать voiceid и LIAM а local/share/voiceid/
+numpy==1.9.1

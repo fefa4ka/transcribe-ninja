@@ -1,0 +1,112 @@
+angular.module( 'transcribe-ninja.record.upload', [
+  'ui.router',
+  'angularFileUpload'
+])
+
+.config(function config( $stateProvider ) {
+  $stateProvider.state( 'record-upload', {
+    url: '/upload',
+    views: {
+      "main": {
+        controller: 'RecordUploadCtrl',
+        templateUrl: 'record/upload/upload.tpl.html'
+      }
+    },
+    data:{ pageTitle: 'Загрузка записи' }
+  });
+})
+
+.controller( 'RecordUploadCtrl', function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, api ) {
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+  }
+
+  var uploader = $scope.uploader = new FileUploader({
+    url: '/api/records/',
+    alias: 'file_name',
+    headers : {
+        'X-CSRFToken': getCookie('csrftoken') // X-CSRF-TOKEN is used for Ruby on Rails Tokens
+    }
+  }),
+
+  $modalInstance = {};
+
+
+  $scope.open = function(){
+    $modalInstance = $modal.open({
+      templateUrl: 'record/upload/upload.list.tpl.html',
+      controller: function($scope, $modalInstance, uploader){
+        $scope.uploader = uploader;
+
+        $scope.cancel = function () {
+          $modalInstance.dismiss('cancel');
+
+          uploader.cancelAll();
+        };
+    },
+    resolve: {
+        uploader: function () {
+          return uploader;
+        }
+      },
+      size: 'lg'
+    });
+  };
+
+  uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+      console.info('onWhenAddingFileFailed', item, filter, options);
+  };
+  uploader.onAfterAddingFile = function(fileItem) {
+      console.info('onAfterAddingFile', fileItem);
+
+      fileItem.formData.push({
+          title: fileItem.file.name,
+          speakers: 2
+      });
+  };
+  uploader.onAfterAddingAll = function(addedFileItems) {
+      $scope.open();
+
+      console.info('onAfterAddingAll', addedFileItems);
+  };
+  uploader.onBeforeUploadItem = function(item) {
+      console.info('onBeforeUploadItem', item);
+  };
+  uploader.onProgressItem = function(fileItem, progress) {
+      console.info('onProgressItem', fileItem, progress);
+  };
+  uploader.onProgressAll = function(progress) {
+      console.info('onProgressAll', progress);
+  };
+  uploader.onSuccessItem = function(fileItem, response, status, headers) {
+      console.info('onSuccessItem', fileItem, response, status, headers);
+  };
+  uploader.onErrorItem = function(fileItem, response, status, headers) {
+      console.info('onErrorItem', fileItem, response, status, headers);
+  };
+  uploader.onCancelItem = function(fileItem, response, status, headers) {
+      console.info('onCancelItem', fileItem, response, status, headers);
+  };
+  uploader.onCompleteItem = function(fileItem, response, status, headers) {
+      console.info('onCompleteItem', fileItem, response, status, headers);
+  };
+  uploader.onCompleteAll = function() {
+      uploader.queue = [];
+      $modalInstance.dismiss('cancel');
+  };
+
+})
+
+;
