@@ -18,7 +18,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-import backend.core.utils
+import backend.transcribe.utils
 from backend.core.models import *
 
 from backend.api.serializers import *
