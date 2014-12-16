@@ -6,3 +6,4 @@ django-filter==0.9.1  # Filtering support
 mysql-python==1.2.5
 http://voiceid.googlecode.com/svn/trunk#egg=voiceid # Скопировать voiceid и LIAM а local/share/voiceid/
 numpy==1.9.1
+pydub==0.9.5

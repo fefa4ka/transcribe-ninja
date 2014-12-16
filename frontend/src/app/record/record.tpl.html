@@ -8,7 +8,7 @@
 
 <button class="btn btn-default btn-circle record_detail__play" ng-click="wavesurfer.playPause()"><i class="fa fa-play"></i></button>
 <ul class="record_detail-list list-inline">
-    <li>
+    <li ng-show="record.duration > 0">
         {{ record.duration | humanSeconds }}
     </li>
     <li>

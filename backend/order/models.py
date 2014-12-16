@@ -52,51 +52,30 @@ class Order(models.Model):
             self.save()
 
 
-def create_payment(sender, instance, **kwargs):
-    # Берём дефолтный прайс для объекта
-    object_id = ContentType.objects.get_for_model(type(instance)).id
-    price = Price.objects.filter(content_type_id=object_id, default=1)[0]
-    duration = instance.end_at - instance.start_at
-    total = price.price * duration / 60
-    owner = instance.owner
-
-    payment = Payment(content_object=instance, price=price, total=total, owner=owner)
-
-    # If work_type = 0 - to pay
-    # work_type = 1 - to earn
-    if price.work_type == 0:
-        owner.account.balance -= total
-    else:
-        owner.account.balance += total
-
-    instance.record.progress = 1
-
-    payment.save()
-    owner.account.save()
-    instance.record.save()
-
-# register the signal
-signals.post_save.connect(create_payment, sender=Order)
-
-
 class Queue(models.Model):
+    order = models.ForeignKey(Order)
     piece = models.ForeignKey(Piece)
     price = models.ForeignKey(Price)
     work_type = models.IntegerField()
 
-    except_user = models.ForeignKey('auth.User', null=True)
+    owner = models.ForeignKey('auth.User', null=True)
+    priority = models.BooleanField(default=False)
+    completed = models.BooleanField(default=False)
     locked = models.BooleanField(default=False)
     locked_time = models.DateTimeField(null=True)
 
-    def make_mp3(self, offset=1.5):
-        if not os.path.isfile(settings.RECORD_ROOT + self.mp3_path()):
-            rec = AudioSegment.from_mp3(
-                settings.RECORD_ROOT + self.piece.record.file_name_format('mp3'))
-            piece = rec[
-                np.round((self.peice.start_at - offset) * 1000):
-                np.ceil((self.piece.end_at + offset) * 1000)
-            ]
-            piece.export(settings.RECORD_ROOT + self.mp3_path())
+    def start_at(self):
+        return np.round(self.piece.start_at)
+
+    def end_at(self):
+        if self.work_type == 0:
+            return np.round(self.piece.end_at)
+        else:
+            next_piece = Piece.objects.filter(
+                        start_at__gte=self.piece.end_at).order_by('start_at')[0]
+            return np.round(
+                next_piece.end_at
+            )
 
     def remove_mp3(self):
         os.remove(settings.RECORD_ROOT + self.mp3_path())
@@ -104,8 +83,8 @@ class Queue(models.Model):
     def mp3_path(self):
         filename = md5("%d%f%f" % (
             self.piece.record.id,
-            self.piece.start_at,
-            self.piece.end_at)).hexdigest()
+            self.start_at(),
+            self.end_at())).hexdigest()
 
         return "%s/%s.mp3" % (self.piece.record.folder(), filename)
 
@@ -121,3 +100,57 @@ class Payment(models.Model):
 
     owner = models.ForeignKey('auth.User', related_name='user-payments')
     time = models.DateTimeField(auto_now=True)
+
+
+
+def create_order_payment(sender, instance, **kwargs):
+    # Берём дефолтный прайс для объекта
+
+    owner = instance.owner
+
+    object_id = ContentType.objects.get_for_model(type(instance)).id
+    price = Price.objects.filter(content_type_id=object_id, default=1)[0]
+    duration = instance.end_at - instance.start_at
+    total = price.price * duration / 60
+
+    payment = Payment(
+        content_object=instance,
+        price=price,
+        total=total,
+        owner=owner)
+
+    owner.account.balance -= total
+
+    payment.save()
+    owner.account.save()
+
+    instance.record.progress = 1
+    instance.record.save()
+
+def create_queue_payment(sender, instance, **kwargs):
+    # Берём дефолтный прайс для объекта
+
+    if not instance.completed:
+        return
+
+    owner = instance.owner
+
+    price = instance.price
+
+    total=0
+
+    payment = Payment(
+        content_object=instance,
+        price=price,
+        total=total,
+        owner=owner)
+
+    owner.account.balance += total
+
+    payment.save()
+    owner.account.save()
+
+# register the signal
+signals.post_save.connect(create_order_payment, sender=Order)
+signals.post_save.connect(create_queue_payment, sender=Queue)
+

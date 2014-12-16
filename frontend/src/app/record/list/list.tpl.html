@@ -1,3 +1,10 @@
+<div class="records-upload" 
+    ng-controller="RecordUploadCtrl">
+    <a href class="btn btn-default" ng-click="upload()">
+        <i class="fa fa-microphone fa-lg"></i> Загрузить запись</a>
+    <input type="file" nv-file-select="" uploader="uploader" />
+</div>
+
 <section class="records">
     <section class="finished" ng-show="(records | filter : { completed_percentage: '100' }).length > 0">
         <h2>Готовые записи</h2>
