@@ -21,3 +21,4 @@ uwsgi
 #    gstreamer0.10-plugins-ugly
 #sudo apt-get install gstreamer1.0* - переименовать с /usr/bin/gst-launch1.0 to gst-launch
 #sudo apt-get install python-dev
+#redis-server
