@@ -45,4 +45,4 @@ class PieceSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("id", "record", "start_at", "end_at", "price")
+        fields = ("id", "record", "start_at", "end_at")

@@ -16,7 +16,7 @@ angular.module( 'transcribe-ninja.record', [
   });
 })
 
-.controller( 'RecordCtrl', function RecordCtrl($scope, $translate, $stateParams, hotkeys, api) {
+.controller( 'RecordCtrl', function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, api) {
   $translate.use("ru");
 
   $scope.wavesurfer = Object.create(WaveSurfer);
@@ -106,6 +106,21 @@ angular.module( 'transcribe-ninja.record', [
 
       }
     });
+
+
+  $scope.order = function (record) {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'order/order.modal.tpl.html',
+      controller: 'OrderModalCtrl',
+      windowClass: 'order-bill',
+      resolve: {
+        record: function () {
+          return record;
+        }
+      }
+    });
+  };
   
   });
 

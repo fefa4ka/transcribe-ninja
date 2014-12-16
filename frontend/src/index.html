@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="transcribe-ninja" ng-controller="AppCtrl">
+<html ng-app="transcribe-ninja" ng-controller="AppCtrl" lang="ru">
   <head>
     <title ng-bind="pageTitle"></title>
 
@@ -72,12 +72,13 @@
                             </li>
                         </ul>
                     </div>
-                    <p>{{ Data.user.balance }} ₷</p>
+                    <p class ="balance">{{ Data.user.balance }} ₷</p>
                 </li>
             </ul>
         </header>
     </div>
     <div class="container" ui-view="main"></div>
+    <div ui-view="modal"></div>
 
   </body>
 </html>

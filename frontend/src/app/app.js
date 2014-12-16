@@ -26,6 +26,27 @@ angular.module( 'transcribe-ninja', [
 
 
 })
+.config(function($translateProvider) {
+    $translateProvider.translations('ru', {
+        'Стенограф': 'Transcribe',
+        HEADLINE: 'Hello there, This is my awesome app!',
+        INTRO_TEXT: 'And it has i18n support!',
+          "{{num}} second": "{{num}} секунда",
+        "{{num}} seconds":  "{{num}} секунд",
+        "{{num}} minute": "{{num}} минута",
+        "{{num}} minutes":  "{{num}} минут",
+        "{{num}} hour":   "{{num}} час",
+        "{{num}} hours":  "{{num}} часов",
+        "{{num}} day":    "{{num}} day",
+        "{{num}} days":   "{{num}} days",
+        "{{num}} week":   "{{num}} week",
+        "{{num}} weeks":  "{{num}} weeks",
+        "{{num}} month":  "{{num}} month",
+        "{{num}} months": "{{num}} months",
+        "{{num}} year":   "{{num}} year",
+        "{{num}} years":  "{{num}} years"
+    });
+})
 .config(['$httpProvider', function($httpProvider){
   // django and angular both support csrf tokens. This tells
   // angular which cookie to add to what header.
@@ -83,7 +104,7 @@ angular.module( 'transcribe-ninja', [
       }
     }),
 
-    order: $resource('/api/orders/:orderId', { orderId: '@id' }, {
+    order: $resource('/api/orders\\/', {}, {
       list: {
         method: 'GET',
         isArray: true
@@ -110,12 +131,14 @@ angular.module( 'transcribe-ninja', [
 .run( function run () {
 })
 
-.controller( 'AppCtrl', function AppCtrl ( $scope, $location, $modal, Data, api ) {
+.controller( 'AppCtrl', function AppCtrl ( $scope, $location, $translate, $modal, Data, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Стенограф' ;
     }
   });
+
+  $translate.use("ru");
 
   $scope.Data = Data;
   $scope.Data.user = api.account.get();

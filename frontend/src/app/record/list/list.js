@@ -1,4 +1,5 @@
 angular.module( 'transcribe-ninja.record.list', [
+  'transcribe-ninja.order',
   'ui.router'
 ])
 
@@ -23,29 +24,23 @@ angular.module( 'transcribe-ninja.record.list', [
   $scope.remove = function ( record ) {
     record.trashed_at = Date.now();
 
-    api.records.remove({ recordId: record.id });
+    api.record.remove({ recordId: record.id });
 
     return record;
   };
 
   $scope.order = function (record) {
-    $modalInstance = $modal.open({
-      templateUrl: 'record/list/list.order.tpl.html',
-      controller: function($scope, $modalInstance, record){
-        $scope.record = record;
-
-        $scope.cancel = function () {
-          $modalInstance.dismiss('cancel');
-        };
-        
-    },
-    resolve: {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'order/order.modal.tpl.html',
+      controller: 'OrderModalCtrl',
+      windowClass: 'order-bill',
+      resolve: {
         record: function () {
           return record;
         }
-      },
-      size: 'sm'
-      });
+      }
+    });
   };
 
 })

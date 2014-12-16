@@ -22,25 +22,27 @@
                     </div>
                 </div>
 
-                <a href="/#/record/{{ record.id }}">{{ record.title }}</a>
-                <span class="label label-success" 
-                        ng-show="record.progress === 2">Распознаётся</span>
-                <span class="label label-default" 
-                        ng-show="record.duration === 0">Подготовка</span>
+                <a href="/#/record/{{ record.id }}">{{ record.title }}</a> 
+                <a class="btn btn-danger btn-xs pull-right" href 
+                    ng-click="record = remove(record)"
+                    ng-show="record.progress === 0 && show"><i class="fa fa-trash-o fa-lg"></i></a>
+
                 
                 
                 <div class="record_list__item-duration" ng-show="record.duration > 0">{{ record.duration | humanSeconds }}</div>
-                <div class="record_list__item-controls" 
-                    ng-show="show">   
-                    <button class="btn btn-default btn-xs" 
-                            ng-show="record.duration > 0"
-                            ng-click="order()">Распознать за {{ (record.duration / 60) * 15 | number: 0 }} ₷</button><span class=""></span>
-
-                    <button class="btn btn-danger btn-xs pull-right" 
-                            ng-click="record = remove(record)">
-                      <i class="fa fa-trash-o fa-lg"></i>
-                    </button>
+                <div class="record_list__item-status">
+                    <span class="label label-success" 
+                            ng-show="record.progress === 1">Распознаётся</span>
+                    <span class="label label-default" 
+                            ng-show="record.duration === 0">Подготовка</span>
                 </div>
+                <div class="record_list__item-controls" 
+                    >   
+                    <button class="btn btn-default btn-xs" 
+                            ng-show="record.duration > 0 && record.progress === 0 && show"
+                            ng-click="order(record)">Распознать за {{ (record.duration / 60) * 15 | number: 0 }} ₷</button>
+                </div>
+
             </li>
         </ul>
     </section>

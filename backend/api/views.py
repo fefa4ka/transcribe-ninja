@@ -8,6 +8,7 @@ from rest_framework import generics
 from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework import mixins
+from rest_framework import status
 
 from rest_framework.views import APIView
 
@@ -86,6 +87,12 @@ class RecordViewSet(mixins.ListModelMixin,
     # def transcription(self, request, *args, **kwargs):
     #     record = self.get_object()
     #     return Response(record.title)
+    def get_queryset(self):
+        """
+        This view should return a list of all the purchases for
+        the user as determined by the username portion of the URL.
+        """
+        return Record.objects.filter(owner=self.request.user)
 
     def create(self, request):
         serializer = RecordSerializer(data=request.data)
@@ -95,6 +102,8 @@ class RecordViewSet(mixins.ListModelMixin,
             backend.transcribe.utils.record_prepare.delay(obj)
 
             return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PieceViewSet(generics.ListAPIView):
@@ -142,10 +151,25 @@ class OrderViewSet(mixins.ListModelMixin,
         serializer = OrderSerializer(data=request.data)
 
         if serializer.is_valid():
-            obj = serializer.save(owner=request.user)
-            # backend.transcribe.utils.record_prepare.delay(obj)
+            duration = float(request.data['end_at']) - float(request.data['start_at'])
 
-            return Response(serializer.data)
+            if duration > 0:
+                object_id = ContentType.objects.get_for_model(Order).id
+                price = Price.objects.filter(content_type_id=object_id, default=1)[0]
+
+                total = price.price * duration / 60
+
+                if request.user.account.balance >= total:
+                    serializer.save(owner=request.user, price=price)
+                    return Response(serializer.data)
+                else:
+                    errors = [{ 'balance': 'Not enought money.' }]
+            else:
+                errors = [{'end_at': 'End_at should be greater that start_at'}]
+                pass
+        else:
+            errors = serializer.errors
+        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         return Order.objects.filter(owner=self.request.user)
