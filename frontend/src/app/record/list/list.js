@@ -23,8 +23,8 @@ angular.module( 'transcribe-ninja.record.list', [
 
   $scope.upload = function() {
     $('input[type=file]').click();
-  }
-  
+  };
+
   $scope.remove = function ( record ) {
     record.trashed_at = Date.now();
 

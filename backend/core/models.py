@@ -20,7 +20,7 @@ def create_account(sender, instance, **kwargs):
     try:
         instance.account
         pass
-    except RelatedObjectDoesNotExist:
+    except instance.RelatedObjectDoesNotExist:
         instance.account = Account()
         instance.account.save()
 
