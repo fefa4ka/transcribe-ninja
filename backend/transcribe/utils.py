@@ -25,3 +25,7 @@ def upload_record_path(instance, file_name):
 @job('diarization')
 def record_prepare(record):
     record.prepare()
+
+@job('web')
+def record_save(serializer, owner):
+    serializer.save(owner=owner)
