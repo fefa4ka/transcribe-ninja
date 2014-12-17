@@ -25,6 +25,7 @@ from backend.api.serializers import *
 from backend.api.permissions import *
 from backend.api.authentication import *
 
+import django_rq
 
 class AuthView(APIView):
     authentication_classes = (QuietBasicAuthentication,)
@@ -98,8 +99,9 @@ class RecordViewSet(mixins.ListModelMixin,
         serializer = RecordSerializer(data=request.data)
 
         if serializer.is_valid():
-            obj = serializer.save(owner=request.user)
-            backend.transcribe.utils.record_prepare.delay(obj)
+            django_rq.enqueue(serializer.save, owner=request.user)
+            # obj = serializer.save(owner=request.user)
+            # backend.transcribe.utils.record_prepare.delay(obj)
 
             return Response(serializer.data)
 

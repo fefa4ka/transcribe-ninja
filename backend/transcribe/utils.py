@@ -22,6 +22,6 @@ def upload_record_path(instance, file_name):
                                  md5(file_name).hexdigest(),
                                  extension))
 
-@job
+@job('diarization')
 def record_prepare(record):
     record.prepare()

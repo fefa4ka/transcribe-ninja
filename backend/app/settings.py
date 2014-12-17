@@ -87,7 +87,14 @@ DATABASES = {
 }
 
 RQ_QUEUES = {
-    'default': {
+    'web': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'diarization': {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
