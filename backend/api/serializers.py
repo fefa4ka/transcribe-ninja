@@ -26,11 +26,10 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RecordSerializer(serializers.ModelSerializer):
     completed = serializers.ReadOnlyField(source='completed_percentage')
-    url = serializers.SerializerMethodField('file_name_mp3')
 
     class Meta:
         model = Record
-        fields = ("id", "title", "file_name", "url", "duration", "completed", "progress")
+        fields = ("id", "title", "file_name", "duration", "completed", "progress")
 
     def file_name_mp3(self, obj):
         return obj.file_name_format('mp3')

@@ -116,8 +116,11 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, "../static/")
 STATIC_URL = '/static/'
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-
+AWS_ACCESS_KEY_ID = 'AKIAJT4XGM5CW5RT2EHQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'transcribe-ninja'
 
 # Rest Framework
 REST_FRAMEWORK = {

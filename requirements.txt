@@ -7,7 +7,9 @@ mysql-python==1.2.5
 http://voiceid.googlecode.com/svn/trunk#egg=voiceid # Скопировать voiceid и LIAM а local/share/voiceid/
 numpy==1.9.1
 pydub==0.9.5
-uwsgi
+boto
+django-storages
+django-s3-folder-storage
 
 #pip
 #virtualenv
@@ -22,3 +24,4 @@ uwsgi
 #sudo apt-get install gstreamer1.0* - переименовать с /usr/bin/gst-launch1.0 to gst-launch
 #sudo apt-get install python-dev
 #redis-server
+#uwsgi

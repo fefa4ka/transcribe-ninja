@@ -3,7 +3,7 @@
 
 from django.db import models
 from django.conf import settings
-from django.core.files.storage import FileSystemStorage
+# from django.core.files.storage import FileSystemStorage
 
 import os
 import time
@@ -41,11 +41,11 @@ class TrashManager(models.Manager):
 
 
 class Record(models.Model):
-    fs = FileSystemStorage(location=settings.RECORD_ROOT)
+    # fs = FileSystemStorage(location=settings.RECORD_ROOT)
 
     title = models.CharField(max_length=200)
     file_name = models.FileField(
-        max_length=200, upload_to=upload_record_path, storage=fs)
+        max_length=200, upload_to=upload_record_path)
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
     progress = models.IntegerField(default=0)
