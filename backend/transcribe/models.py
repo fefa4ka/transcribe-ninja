@@ -21,31 +21,17 @@ import numpy as np
 
 from utils import *
 
-
-class NonTrashManager(models.Manager):
-
-    ''' Query only objects which have not been trashed. '''
-
-    def get_queryset(self):
-        query_set = super(NonTrashManager, self).get_queryset()
-        return query_set.filter(trashed_at__isnull=True)
-
-
-class TrashManager(models.Manager):
-
-    ''' Query only objects which have been trashed. '''
-
-    def get_queryset(self):
-        query_set = super(TrashManager, self).get_queryset()
-        return query_set.filter(trashed_at__isnull=False)
+from backend.core.extra import *
 
 
 class Record(models.Model):
     # fs = FileSystemStorage(location=settings.RECORD_ROOT)
 
     title = models.CharField(max_length=200)
-    file_name = models.FileField(
-        max_length=200, upload_to=upload_record_path)
+    file_name = ContentTypeRestrictedFileField(
+        upload_to=upload_record_path,
+        content_types=["audio/mpeg", "audio/vnd.wav"],
+        max_upload_size=429916160)
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
     progress = models.IntegerField(default=0)
