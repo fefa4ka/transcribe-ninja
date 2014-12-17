@@ -70,6 +70,7 @@ angular.module( 'transcribe-ninja.record', [
   });
 
   $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
+    
       $scope.wavesurfer.load($scope.record.file_name);
   });
 
