@@ -49,8 +49,8 @@ class Record(models.Model):
             self.trashed_at = datetime.now()
             self.save()
         else:
-            self.file_name.delete()
-            super(SomeModel, self).delete()
+            # self.file_name.delete()
+            super(Record, self).delete()
 
     def restore(self, commit=True):
         self.trashed_at = None

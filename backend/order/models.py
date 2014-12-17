@@ -44,8 +44,8 @@ class Order(models.Model):
         if not self.trashed_at and trash:
             self.trashed_at = datetime.now()
             self.save()
-        else:
-            super(SomeModel, self).delete()
+        else:§
+            super(Order, self).delete()
 
     def restore(self, commit=True):
         self.trashed_at = None
