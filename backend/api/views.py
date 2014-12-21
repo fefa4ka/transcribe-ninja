@@ -101,9 +101,9 @@ class RecordViewSet(mixins.ListModelMixin,
         if serializer.is_valid():
             # queue = django_rq.get_queue('web')
             # queue.enqueue(serializer.save, owner=request.user)
-            backend.transcribe.utils.record_save.delay(serializer)
-            # obj = serializer.save(owner=request.user)
-            # backend.transcribe.utils.record_prepare.delay(obj)
+            # backend.transcribe.utils.record_save.delay(serializer)
+            obj = serializer.save(owner=request.user)
+            backend.transcribe.utils.record_prepare.delay(obj)
 
             return Response(serializer.data)
 

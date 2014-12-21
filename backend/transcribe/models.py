@@ -29,6 +29,7 @@ class Record(models.Model):
 
     title = models.CharField(max_length=200)
     file_name = ContentTypeRestrictedFileField(
+        max_length=255,
         upload_to=upload_record_path,
         content_types=["audio/mpeg", "audio/vnd.wav"],
         max_upload_size=429916160)
