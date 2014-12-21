@@ -8,7 +8,7 @@ import django.views.static
 import django_rq.urls 
 
 urlpatterns = (
-    url(r'^', include('backend.api.urls')),
-    url(r'^', include('backend.web.urls')),
+    url(r'^', include('api.urls')),
+    url(r'^', include('frontend.urls')),
     url(r'^django-rq/', include('django_rq.urls'))
 )

@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 """
 Django settings for prototype project.
 
@@ -38,17 +40,17 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     # Core
-    'backend.core',
-    'backend.transcribe',
-    'backend.order',
+    'core',
+    'transcribe',
+    'order',
     'django_rq',
 
     # API
     'rest_framework',
-    'backend.api',
+    'api',
 
     # Web
-    'backend.web',
+    'frontend',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,12 +64,12 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'backend.core.auth_backends.EmailAuthBackend',
+    'core.auth_backends.EmailAuthBackend',
 )
 
-ROOT_URLCONF = 'backend.app.urls'
+ROOT_URLCONF = 'app.urls'
 
-WSGI_APPLICATION = 'backend.app.wsgi.application'
+WSGI_APPLICATION = 'app.wsgi.application'
 
 
 # Database
@@ -116,14 +118,19 @@ USE_L10N = True
 
 USE_TZ = True
 
+DEFAULT_CHARSET = 'utf8'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "../static/")
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "../frontend/build/"),
-)
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+if DEBUG:
+    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
+    STATICFILES_DIRS = (
+        FRONTEND_ROOT,
+    )
+    
 STATIC_URL = '/static/'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -147,12 +154,10 @@ REST_FRAMEWORK = {
 }
 
 #
-MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 # Records
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")
 PIECE_ROOT = os.path.join(MEDIA_ROOT, "piece/")
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "../frontend/build/"),
-)
+

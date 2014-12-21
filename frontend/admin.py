@@ -3,8 +3,8 @@
 
 from django.contrib import admin
 
-from backend.transcribe.models import *
-from backend.order.models import *
+from transcribe.models import *
+from order.models import *
 
 class PieceInline(admin.StackedInline):
     model = Piece

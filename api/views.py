@@ -18,12 +18,12 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-import backend.transcribe.utils
-from backend.core.models import *
+import transcribe.utils
+from core.models import *
 
-from backend.api.serializers import *
-from backend.api.permissions import *
-from backend.api.authentication import *
+from api.serializers import *
+from api.permissions import *
+from api.authentication import *
 
 import django_rq
 
@@ -101,9 +101,9 @@ class RecordViewSet(mixins.ListModelMixin,
         if serializer.is_valid():
             # queue = django_rq.get_queue('web')
             # queue.enqueue(serializer.save, owner=request.user)
-            # backend.transcribe.utils.record_save.delay(serializer)
+            # transcribe.utils.record_save.delay(serializer)
             obj = serializer.save(owner=request.user)
-            backend.transcribe.utils.record_prepare.delay(obj)
+            transcribe.utils.record_prepare.delay(obj)
 
             return Response(serializer.data)
 

@@ -5,7 +5,7 @@ from django.conf.urls import url, include
 
 from rest_framework.routers import DefaultRouter
 
-from backend.api import views
+from api import views
 
 
 # Create a router and register our viewsets with it.

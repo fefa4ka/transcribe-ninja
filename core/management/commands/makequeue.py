@@ -5,7 +5,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 
-from backend.order.models import *
+from order.models import *
 
 from pydub import AudioSegment
 

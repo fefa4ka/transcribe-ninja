@@ -7,8 +7,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 import django.db.models.signals as signals
 
-from backend.core.extra import *
-from backend.transcribe.models import *
+from core.extra import *
+from transcribe.models import *
 
 import os
 

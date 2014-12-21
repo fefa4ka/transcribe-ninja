@@ -21,7 +21,7 @@ import numpy as np
 
 from utils import *
 
-from backend.core.extra import *
+from core.extra import *
 
 
 class Record(models.Model):
