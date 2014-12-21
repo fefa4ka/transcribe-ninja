@@ -1,3 +1,4 @@
+{% verbatim %}
 <!DOCTYPE html>
 <html ng-app="transcribe-ninja" ng-controller="AppCtrl" lang="ru">
   <head>
@@ -22,10 +23,10 @@
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
     <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
-    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+    <link rel="stylesheet" type="text/css" href="static/<%= file %>" /><% }); %>
 
     <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
-    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <script type="text/javascript" src="static/<%= file %>"></script><% }); %>
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
 
 
@@ -78,3 +79,5 @@
 
   </body>
 </html>
+
+{% endverbatim %}
