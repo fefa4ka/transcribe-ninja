@@ -19,7 +19,7 @@ from voiceid.db import GMMVoiceDB
 
 import numpy as np
 
-from utils import *
+from core.utils import *
 
 from core.extra import *
 

@@ -19,6 +19,8 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 import transcribe.utils
+import core.async_jobs
+
 from core.models import *
 
 from api.serializers import *
@@ -26,6 +28,7 @@ from api.permissions import *
 from api.authentication import *
 
 import django_rq
+
 
 class AuthView(APIView):
     authentication_classes = (QuietBasicAuthentication,)
@@ -103,7 +106,7 @@ class RecordViewSet(mixins.ListModelMixin,
             # queue.enqueue(serializer.save, owner=request.user)
             # transcribe.utils.record_save.delay(serializer)
             obj = serializer.save(owner=request.user)
-            transcribe.utils.record_prepare.delay(obj)
+            core.async_jobs.record_prepare.delay(obj)
 
             return Response(serializer.data)
 
@@ -159,15 +162,19 @@ class OrderViewSet(mixins.ListModelMixin,
 
             if duration > 0:
                 object_id = ContentType.objects.get_for_model(Order).id
-                price = Price.objects.filter(content_type_id=object_id, default=1)[0]
+                price = Price.objects.filter(
+                    content_type_id=object_id,
+                    default=1
+                )[0]
 
                 total = price.price * duration / 60
 
                 if request.user.account.balance >= total:
-                    serializer.save(owner=request.user, price=price)
+                    obj = serializer.save(owner=request.user, price=price)
+                    core.async_jobs.make_queue.delay(obj)
                     return Response(serializer.data)
                 else:
-                    errors = [{ 'balance': 'Not enought money.' }]
+                    errors = [{'balance': 'Not enought money.'}]
             else:
                 errors = [{'end_at': 'End_at should be greater that start_at'}]
                 pass

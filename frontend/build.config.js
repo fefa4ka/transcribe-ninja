@@ -79,7 +79,9 @@ module.exports = {
       'vendor/wavesurfer.js/src/audioelement.js',
       'vendor/wavesurfer.js/src/drawer.js',
       'vendor/wavesurfer.js/src/drawer.canvas.js',
-      'vendor/wavesurfer.js/plugin/wavesurfer.regions.js'
+      'vendor/wavesurfer.js/plugin/wavesurfer.regions.js',
+      'vendor/peaks.js/peaks.min.js',
+      'vendor/peaks.js/peaks.min.map'
       // 'vendor/jquery/dist/jquery.js',
       // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
 

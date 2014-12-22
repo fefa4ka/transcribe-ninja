@@ -10,15 +10,24 @@
                     <input ng-model="item.formData[0].title" required name="username"
                            type="text" placeholder="Название записи" class="form-control">
                 </div>
+                
+                <tn-player src="{{ item.formData[0].file | trusted }}" ></tn-player>
+                <audio ng-src="{{ item.formData[0].file | trusted }}" tn-get-duration></audio>
+                
                 <div class="form-group">
                     <div class="btn-group">
                         <label class="btn btn-default" ng-model="item.formData[0].speakers" btn-radio="'1'">1</label>
                         <label class="btn btn-default" ng-model="item.formData[0].speakers" btn-radio="'2'">2</label>
                         <label class="btn btn-default" ng-model="item.formData[0].speakers" btn-radio="'3'">3</label>
+                        <label class="btn btn-default" ng-model="item.formData[0].speakers" btn-radio="'4'">4+</label>
                     </div>
-                    <label class="upload__speakers-label">собеседника</label>
-
+                    <label class="speakers">собеседника</label>
+                    <label class="duration pull-right">{{ item.formData[0].duration | humanSeconds }}
                 </div>
+
+                <p>
+                Вы можете стенографировать запись сами <nobr>или заказать транскрибцию за {{ item.formData[0].duration / 60 * 15 | number: 0 }} ₷</nobr>
+                </p>
                 
             </li>
         </ul>

@@ -102,6 +102,13 @@ RQ_QUEUES = {
         'DB': 0,
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
+    },
+    'queue': {
+        'HOST': 'localhost',
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+        'DEFAULT_TIMEOUT': 360,
     }
 }
 
@@ -160,4 +167,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")
 PIECE_ROOT = os.path.join(MEDIA_ROOT, "piece/")
 
-
+TEMP_DIR = os.path.join(BASE_DIR, "temp/")

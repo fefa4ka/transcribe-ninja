@@ -6,3 +6,5 @@ frontend/vendor/*
 frontend/node_modules/*
 frontend/build/*
 frontend/bin/*
+temp/*
+*.mp3

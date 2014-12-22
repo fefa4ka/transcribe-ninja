@@ -1,6 +1,8 @@
 angular.module( 'transcribe-ninja.record.upload', [
+  'transcribe-ninja.player',
   'ui.router',
-  'angularFileUpload'
+  'angularFileUpload',
+  'humanSeconds'
 ])
 
 .config(function config( $stateProvider ) {
@@ -14,6 +16,22 @@ angular.module( 'transcribe-ninja.record.upload', [
     },
     data:{ pageTitle: 'Загрузка записи' }
   });
+})
+.filter('trusted', ['$sce', function ($sce) {
+    return function(url) {
+        return $sce.trustAsResourceUrl(url);
+    };
+}])
+
+.directive('tnGetDuration', function (Data) {
+  return {
+    link: function (scope, element, attrs) {
+      element.on('canplaythrough', function (e) {
+        scope.item.formData[0].duration = e.target.duration;
+        scope.$apply();
+      });
+    }
+  }
 })
 
 .controller( 'RecordUploadCtrl', function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, api ) {
@@ -47,7 +65,8 @@ angular.module( 'transcribe-ninja.record.upload', [
   $scope.open = function(){
     $modalInstance = $modal.open({
       templateUrl: 'record/upload/upload.list.tpl.html',
-      controller: function($scope, $modalInstance, uploader){
+      windowClass: 'upload-modal',
+      controller: function($scope, $modalInstance, $log, uploader){
         $scope.uploader = uploader;
 
         $scope.cancel = function () {
@@ -65,22 +84,28 @@ angular.module( 'transcribe-ninja.record.upload', [
     });
   };
 
+
   uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
       console.info('onWhenAddingFileFailed', item, filter, options);
   };
+
   uploader.onAfterAddingFile = function(fileItem) {
       console.info('onAfterAddingFile', fileItem);
 
       fileItem.formData.push({
           title: fileItem.file.name,
-          speakers: 2
+          speakers: 2,
+          file: URL.createObjectURL(fileItem._file),
+          duration: 0
       });
+
   };
   uploader.onAfterAddingAll = function(addedFileItems) {
       $scope.open();
 
       console.info('onAfterAddingAll', addedFileItems);
   };
+  
   uploader.onBeforeUploadItem = function(item) {
       console.info('onBeforeUploadItem', item);
   };
@@ -102,6 +127,7 @@ angular.module( 'transcribe-ninja.record.upload', [
   uploader.onCompleteItem = function(fileItem, response, status, headers) {
       console.info('onCompleteItem', fileItem, response, status, headers);
   };
+
   uploader.onCompleteAll = function() {
       uploader.queue = [];
       $modalInstance.dismiss('cancel');

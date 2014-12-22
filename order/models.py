@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 import django.db.models.signals as signals
 
-from core.extra import *
 from transcribe.models import *
 
 import os
@@ -56,8 +55,22 @@ class Order(models.Model):
 class Queue(models.Model):
     order = models.ForeignKey(Order)
     piece = models.ForeignKey(Piece)
+    file_name = models.FileField(
+        max_length=255,
+        upload_to=upload_queue_path
+    )
     price = models.ForeignKey(Price)
-    work_type = models.IntegerField()
+
+    TRANSCRIBE = 0
+    CHECK = 1
+    WORK_TYPE_CHOICES = (
+        (TRANSCRIBE, 0),
+        (CHECK, 1)
+    )
+    work_type = models.IntegerField(
+        choices=WORK_TYPE_CHOICES,
+        default=TRANSCRIBE
+    )
 
     owner = models.ForeignKey('auth.User', null=True)
     priority = models.BooleanField(default=False)
@@ -73,21 +86,10 @@ class Queue(models.Model):
             return np.round(self.piece.end_at)
         else:
             next_piece = Piece.objects.filter(
-                        start_at__gte=self.piece.end_at).order_by('start_at')[0]
+                start_at__gte=self.piece.end_at).order_by('start_at')[0]
             return np.round(
                 next_piece.end_at
             )
-
-    def remove_mp3(self):
-        os.remove(settings.RECORD_ROOT + self.mp3_path())
-
-    def mp3_path(self):
-        filename = md5("%d%f%f" % (
-            self.piece.record.id,
-            self.start_at(),
-            self.end_at())).hexdigest()
-
-        return "%s/%s.mp3" % (self.piece.record.folder(), filename)
 
 
 class Payment(models.Model):
@@ -101,7 +103,6 @@ class Payment(models.Model):
 
     owner = models.ForeignKey('auth.User', related_name='user-payments')
     time = models.DateTimeField(auto_now=True)
-
 
 
 def create_order_payment(sender, instance, **kwargs):
@@ -128,6 +129,7 @@ def create_order_payment(sender, instance, **kwargs):
     instance.record.progress = 1
     instance.record.save()
 
+
 def create_queue_payment(sender, instance, **kwargs):
     # Берём дефолтный прайс для объекта
 
@@ -138,7 +140,7 @@ def create_queue_payment(sender, instance, **kwargs):
 
     price = instance.price
 
-    total=0
+    total = 0
 
     payment = Payment(
         content_object=instance,
@@ -154,4 +156,3 @@ def create_queue_payment(sender, instance, **kwargs):
 # register the signal
 signals.post_save.connect(create_order_payment, sender=Order)
 signals.post_save.connect(create_queue_payment, sender=Queue)
-
