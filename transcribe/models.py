@@ -27,6 +27,18 @@ from core.extra import *
 class Record(models.Model):
     """
     Модель записи, которую стенографируют
+
+    title       - заголовок
+
+    file_name   - аудиофайл записи
+    duration    - продолжительность в секундах
+    speakers    - количество собеседников
+
+    progress    - на какой стадии находится: никакая, в работе, готов
+
+    owner       - хозяин записи
+    created     - когда создана
+
     """
 
     title = models.CharField(max_length=200)
@@ -37,7 +49,7 @@ class Record(models.Model):
         upload_to=upload_record_path,
         content_types=["audio/mpeg", "audio/vnd.wav"],
         max_upload_size=429916160)
-    
+
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
 
@@ -314,11 +326,31 @@ class Record(models.Model):
 
 
 class Speaker(models.Model):
+    """
+        Собеседники в записи
+
+        name   - имя
+        gender - пол
+    """
+
     name = models.CharField(max_length=255)
     gender = models.CharField(max_length=1)
 
 
 class Piece(models.Model):
+    """
+        Часть записи
+
+        record    - запись
+        start_at  - начала куска, относительно записи
+        end_at    - конец куска, относительно записи
+        duration  - продолжительность куска
+        speaker   - собеседник в куске
+
+        transcriptions()       - танскрибции этого куска
+        transcriptions_count() - количество транскрибций
+    """
+
     record = models.ForeignKey(Record)
     start_at = models.FloatField()
     end_at = models.FloatField()
@@ -364,33 +396,70 @@ class Piece(models.Model):
                     'start': float(start_at),
                     'end': float(self.end_at),
                     'duration': float(self.end_at) - float(start_at),
-                    'timestamp': time.strftime("%H:%M:%S", time.gmtime(start_at)),
+                    'timestamp': time.strftime(
+                        "%H:%M:%S",
+                        time.gmtime(start_at)
+                    ),
                     'text': "".join(text)
                 })
 
         return transcriptions
 
     def transcriptions_count(self):
-        return Transcription.objects.filter(piece=self).order_by('index').count()
+        return Transcription.objects.filter(
+            piece=self).order_by('index').count()
 
 
 class Transcription(models.Model):
+    """
+        Транскрипция. Относится к какому-то куску.
+        Транскрипций для куска может быть несколько.
+
+        piece       - кусок
+        index       - порядок в куске
+        text        - транскрибция
+
+        work_type   - в результате чего появилась транскрибция
+                      Queue.TRANSCRIBE - транскрибция
+                      Queue.CHECK      - проверка
+
+        speaker     - какому собеседнику пренадлежит высказывание
+
+        owner       - кто это сделал
+    """
+
     piece = models.ForeignKey(Piece)
-    text = models.TextField()
     index = models.IntegerField(default=0)
+    text = models.TextField()
 
     work_type = models.IntegerField(default=0)
     speaker = models.IntegerField(default=0)
 
     owner = models.ForeignKey('auth.User', related_name='transcription')
-    time = models.DateTimeField(auto_now=True)
 
 
 class Logs(models.Model):
+    """
+        Логи о том, как делали транскрибцию.
+
+        transcription   - транскрибция
+
+        play_log        - плей, пауза, перемотка
+        key_log         - какие клавиши нажимали
+        mouse_log       - как пользовались мышкой
+
+        start_at        - когда началась транскрибция
+        end_at          - когда закончилась
+
+        platform        - откуда делали
+    """
     transcription = models.ForeignKey(Transcription)
+
     play_log = models.TextField()
     key_log = models.TextField()
     mouse_log = models.TextField()
+
     start_at = models.DateTimeField()
     end_at = models.DateTimeField(auto_now=True)
+
     platform = models.CharField(max_length=255)

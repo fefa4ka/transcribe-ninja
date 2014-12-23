@@ -10,6 +10,14 @@ from django.contrib.auth.models import User
 class Account(models.Model):
     """
         Расширенная информация по учётной записи
+
+        user    - пользователь
+
+        phone   - номер телефона
+
+        raing   - рейтинг
+
+        balance - баланс
     """
 
     user = models.OneToOneField(User)
