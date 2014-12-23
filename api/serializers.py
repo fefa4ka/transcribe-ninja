@@ -21,7 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "balance", "records")
+        fields = (
+            "id",
+            "username", "email",
+            "balance",
+            "records")
 
 
 class RecordSerializer(serializers.ModelSerializer):
@@ -29,7 +33,11 @@ class RecordSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Record
-        fields = ("id", "title", "file_name", "duration", "completed", "progress")
+        fields = (
+            "id",
+            "title", "file_name",
+            "duration",
+            "completed", "progress")
 
     def file_name_mp3(self, obj):
         return obj.file_name_format('mp3')
@@ -38,10 +46,15 @@ class RecordSerializer(serializers.ModelSerializer):
 class PieceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Piece
-        fields = ("id", "start_at", "end_at", "duration", "speaker")
+        fields = (
+            "id",
+            "start_at", "end_at", "duration",
+            "speaker")
 
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
-        fields = ("id", "record", "start_at", "end_at")
+        fields = (
+            "id", "record",
+            "start_at", "end_at")

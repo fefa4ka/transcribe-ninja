@@ -17,9 +17,13 @@ router.register(r'orders', views.OrderViewSet)
 # Additionally, we include the login URLs for the browseable API.
 urlpatterns = (
     url(r'api/', include(router.urls)),
-    url(r'^api/records/(?P<record_id>.+)/pieces/$', views.PieceViewSet.as_view()),
+
+    url(r'^api/records/(?P<record_id>.+)/pieces/$',
+        views.PieceViewSet.as_view()),
+
     url(r'^api/account/',
         views.CurrentUserView.as_view()),
+
     url(r'^api/auth/',
         views.AuthView.as_view(),
         name='authenticate'),

@@ -5,20 +5,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 
 from rest_framework import generics
-from rest_framework import renderers
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import status
 
 from rest_framework.views import APIView
 
-from rest_framework.decorators import api_view
-from rest_framework.decorators import detail_route
-
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 
-import transcribe.utils
 import core.async_jobs
 
 from core.models import *
@@ -26,8 +20,6 @@ from core.models import *
 from api.serializers import *
 from api.permissions import *
 from api.authentication import *
-
-import django_rq
 
 
 class AuthView(APIView):

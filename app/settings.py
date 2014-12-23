@@ -122,6 +122,10 @@ RQ_QUEUES = {
     }
 }
 
+# Fixtures
+FIXTURE_DIRS = (
+    os.path.join(BASE_DIR, "app/fixtures/"),
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

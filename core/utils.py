@@ -26,7 +26,7 @@ def upload_queue_path(instance, file_name):
     """
         Папка и имя для аудиофрагмента от записи
     """
-    
+
     filename = md5("queue/%d%f%f%f" % (
         instance.piece.record.id,
         instance.piece.record.folder(),

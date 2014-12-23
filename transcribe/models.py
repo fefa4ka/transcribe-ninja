@@ -3,7 +3,6 @@
 
 from django.db import models
 from django.conf import settings
-# from django.core.files.storage import FileSystemStorage
 
 import os
 import time
@@ -78,7 +77,7 @@ class Record(models.Model):
     trash = TrashManager()
 
     def __unicode__(self):
-        return "Rec %d. %d speakers. %f sec" % (self.id, self.speakers, self.duration)
+        return "%d. %d speakers. %f sec" % (self.id, self.speakers, self.duration)
 
     # Attributes
     def file_name_format(self, format="mp3"):
@@ -90,7 +89,7 @@ class Record(models.Model):
         file_name_format = file_name + ".%s" % format
 
         # Если такой файл есть, то возвращаем путь к файлу
-        if os.path.isfile(settings.RECORD_ROOT + file_name_format):
+        if os.path.isfile(settings.MEDIA_ROOT + file_name_format):
             return file_name_format
         else:
             # TODO: сделать конвертацию
@@ -170,7 +169,7 @@ class Record(models.Model):
         s3_record_file = self.file_name
         record_file_name = str(s3_record_file)
 
-        file_path = settings.RECORD_ROOT + record_file_name
+        file_path = settings.MEDIA_ROOT + record_file_name
 
         # Если файл есть, ничего не делаем, возращаем путь до него
         if os.path.isfile(file_path):
@@ -197,21 +196,26 @@ class Record(models.Model):
             Подготовка записи к распознанию
         """
         # Копируем на локальную машину с S3
-        self.get_file_local()
+        file_path = self.get_file_local()
 
         # Конвертируем в mp3 и wav, оригинал удаляем
         self.convert()
 
         # Получаем длинну записи
         self.duration = self.ffmpeg_length()
-
         self.save()
+
         # TODO: Делим на части
-        # TODO: Определяем собеседников
+
+        # Определяем собеседников
         self.liam_diarization()
         self.save()
 
-        # TODO: удалять все ненужные файлы
+        # Удаляем все файлы
+        import shutil.rmtree as rm_tree
+        rm_tree(
+            os.path.dirname(file_path),
+            ignore_errors=True)
 
     def convert(self):
         """
@@ -226,28 +230,31 @@ class Record(models.Model):
         if extension != '.wav':
             subprocess.call(
                 ['ffmpeg', '-i',
-                 settings.RECORD_ROOT + original_file_name,
-                 settings.RECORD_ROOT + file_name + '.wav'])
+                 settings.MEDIA_ROOT + original_file_name,
+                 settings.MEDIA_ROOT + file_name + '.wav'])
 
         # Потом в mp3
         if self.file_name_format('wav') and extension != ".mp3":
             subprocess.call(
                 ['ffmpeg', '-i',
-                 settings.RECORD_ROOT + original_file_name,
-                 settings.RECORD_ROOT + file_name + '.mp3'])
+                 settings.MEDIA_ROOT + original_file_name,
+                 settings.MEDIA_ROOT + file_name + '.mp3'])
 
         # Если всё сконвертилось, удаляем оригинал с S3,
         # и копируем mp3
-        if "" not in (self.file_name_format('mp3'), self.file_name_format('wav')) and extension != ".mp3":
-            os.remove(settings.RECORD_ROOT + original_file_name)
-
-            self.file_name = self.file_name_format('mp3')
+        if self.file_name_format('mp3') and extension != ".mp3":
+            self.file_name.delete()
+            self.file_name.save(
+                file_name + '.mp3',
+                File(settings.MEDIA_ROOT + file_name + '.mp3')
+            )
+            self.save()
 
     def ffmpeg_length(self):
         """
             Узнаём длину записи в секундах с помощью ffmpeg
         """
-        path = settings.RECORD_ROOT + self.file_name_format('wav')
+        path = settings.MEDIA_ROOT + self.file_name_format('wav')
 
         # Запускаем ffmpeg
         process = subprocess.Popen(
@@ -281,7 +288,7 @@ class Record(models.Model):
         # Загружаем ролик
         db = GMMVoiceDB(settings.VOICEID_DB_PATH)
         voice = Voiceid(
-            db, settings.RECORD_ROOT + self.file_name_format('wav'))
+            db, settings.MEDIA_ROOT + self.file_name_format('wav'))
 
         # Распознаём говорящих
         voice.extract_speakers()
@@ -342,9 +349,11 @@ class Piece(models.Model):
         Часть записи
 
         record    - запись
+
         start_at  - начала куска, относительно записи
         end_at    - конец куска, относительно записи
         duration  - продолжительность куска
+
         speaker   - собеседник в куске
 
         transcriptions()       - танскрибции этого куска
