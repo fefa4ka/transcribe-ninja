@@ -58,11 +58,6 @@ angular.module( 'transcribe-ninja.auth', [
                 $scope.$dismiss();
 
                 $scope.Data.user = api.account.get();
-            }).
-            catch(function(data){
-                // on incorrect username and password
-                
-                alert(data.data.detail);
             });
       };
     }]

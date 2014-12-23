@@ -1,4 +1,5 @@
 angular.module( 'transcribe-ninja.record', [
+  'transcribe-ninja.order',
   'ui.router',
   'cfp.hotkeys'
 ])

@@ -46,7 +46,7 @@ angular.module( 'transcribe-ninja.player', [
 
         scope.duration = scope.wavesurfer.getDuration();
     }
-  }
+  };
 })
 
 ;

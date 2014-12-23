@@ -31,7 +31,7 @@ angular.module( 'transcribe-ninja.record.upload', [
         scope.$apply();
       });
     }
-  }
+  };
 })
 
 .controller( 'RecordUploadCtrl', function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, api ) {
