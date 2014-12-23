@@ -12,6 +12,7 @@ urlpatterns = patterns(
     (r'^admin/', include(admin.site.urls)),
 )
 
+# В продакшене фронтенд отдаёт NGINX
 if settings.DEBUG:
 	urlpatterns += patterns(
 	    'django.contrib.staticfiles.views',

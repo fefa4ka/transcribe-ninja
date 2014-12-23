@@ -112,4 +112,6 @@ class Command(BaseCommand):
                 ((start_at - offset) * 1000):
                 ((end_at + offset) * 1000)
             ]
-            piece.export(settings.RECORD_ROOT + path)
+            # piece.export(settings.RECORD_ROOT + path)
+
+            return piece

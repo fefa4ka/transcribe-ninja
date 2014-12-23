@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 
 
 class Account(models.Model):
+    """
+        Расширенная информация по учётной записи
+    """
+
     user = models.OneToOneField(User)
 
     phone = models.CharField(max_length=50)
@@ -17,6 +21,9 @@ class Account(models.Model):
 
 
 def create_account(sender, instance, **kwargs):
+    """
+        Создание учётки, если она не создана
+    """
     try:
         instance.account
         pass
@@ -25,5 +32,5 @@ def create_account(sender, instance, **kwargs):
         instance.account.save()
 
 
-# register the signal
+# После сохранении User, создаём Account, если ещё не создан
 signals.post_save.connect(create_account, sender=User)

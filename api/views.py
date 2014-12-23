@@ -31,13 +31,21 @@ import django_rq
 
 
 class AuthView(APIView):
+    """
+        Класс аутентификации.
+        post    - залогиниться
+        delete  - разлогиниться
+    """
     authentication_classes = (QuietBasicAuthentication,)
 
     def post(self, request, *args, **kwargs):
-        print request.user.email
         login(request, request.user)
 
-        return Response(UserSerializer(request.user, context={'request': request}).data)
+        return Response(
+            UserSerializer(
+                request.user,
+                context={'request': request}
+            ).data)
 
     def delete(self, request, *args, **kwargs):
         logout(request)
@@ -45,31 +53,20 @@ class AuthView(APIView):
         return Response({})
 
 
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-
-    """
-    This viewset automatically provides `list` and `detail` actions.
-    """
-    model = User
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,
-                          IsOwner,)
-
-    def dispatch(self, request, *args, **kwargs):
-        if kwargs.get('pk') == 'current' and request.user:
-            kwargs['pk'] = request.user.pk
-
-        return super(UserViewSet, self).dispatch(request, *args, **kwargs)
-
-
 class CurrentUserView(APIView):
+    """
+        Информация о текущем пользователе
+    """
     queryset = User
 
     def get(self, request):
+        # Если не залогинен, то отдаё пустой ответ
         if not request.user.id:
             return Response({})
 
-        serializer = UserSerializer(request.user, context={'request': request})
+        serializer = UserSerializer(
+            request.user,
+            context={'request': request})
         return Response(serializer.data)
 
 
@@ -77,9 +74,9 @@ class RecordViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
-
     """
-    Record
+        Обработка данных про записи.
+        Список записей, Просмотр, Удаление.
 
     """
     queryset = Record.objects.all()
@@ -87,36 +84,37 @@ class RecordViewSet(mixins.ListModelMixin,
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
 
-    # @detail_route(renderer_classes=[renderers.StaticHTMLRenderer])
-    # def transcription(self, request, *args, **kwargs):
-    #     record = self.get_object()
-    #     return Response(record.title)
+
     def get_queryset(self):
         """
-        This view should return a list of all the purchases for
-        the user as determined by the username portion of the URL.
+            Выдаём список записей авторизированного пользователя
         """
         return Record.objects.filter(owner=self.request.user)
 
     def create(self, request):
+        """
+            Загрузка и создание записи
+        """
         serializer = RecordSerializer(data=request.data)
 
         if serializer.is_valid():
-            # queue = django_rq.get_queue('web')
-            # queue.enqueue(serializer.save, owner=request.user)
-            # transcribe.utils.record_save.delay(serializer)
+            # Помечаем, какой пользователь создал запись
             obj = serializer.save(owner=request.user)
+
+            # Отправляем на асинхронную подготовку
             core.async_jobs.record_prepare.delay(obj)
 
             return Response(serializer.data)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # Если плохие данные, выдаём ошибку
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST)
 
 
 class PieceViewSet(generics.ListAPIView):
-
     """
-    This viewset automatically provides `list` and `detail` actions.
+        Список кусков записи
     """
     model = Piece
     serializer_class = PieceSerializer
@@ -125,14 +123,17 @@ class PieceViewSet(generics.ListAPIView):
 
     def get_queryset(self):
         """
-        This view should return a list of all the purchases for
-        the user as determined by the username portion of the URL.
+            Список кусков, только для конкретной записи record_id
         """
         record_id = self.kwargs['record_id']
         return Piece.objects.filter(record_id=record_id)
 
 
 class RecordTranscription(generics.GenericAPIView):
+    """
+        Список транскрибций для записи
+        TODO: сделать
+    """
     queryset = Record.objects.all()
     # renderer_classes = (renderers.StaticHTMLRenderer,)
 
@@ -147,7 +148,7 @@ class OrderViewSet(mixins.ListModelMixin,
                    viewsets.GenericViewSet):
 
     """
-    This viewset automatically provides `list` and `detail` actions.
+        Заказ на транскрибцию
     """
     model = Order
     serializer_class = OrderSerializer
@@ -155,32 +156,54 @@ class OrderViewSet(mixins.ListModelMixin,
                           IsOwner,)
 
     def create(self, request):
+        """
+            Создание заказа
+        """
         serializer = OrderSerializer(data=request.data)
 
         if serializer.is_valid():
+            # Продолжительность записи не может быть меньше нуля или равно ему
             duration = float(request.data['end_at']) - float(request.data['start_at'])
 
+            # TODO: разрешить стенографировать только свои записи
+
             if duration > 0:
+                # Загружем цену за стенографирование
                 object_id = ContentType.objects.get_for_model(Order).id
                 price = Price.objects.filter(
                     content_type_id=object_id,
                     default=1
                 )[0]
 
+                # Считаем общую цену.
+                # Прайс за минуту, поэтому продолжительность делим на 60
                 total = price.price * duration / 60
 
+                # Если денег на балансе достаточно, создаём заказ
                 if request.user.account.balance >= total:
+                    # Сохраняем заказ для определённого пользователя
                     obj = serializer.save(owner=request.user, price=price)
+
+                    # Создаём очередь, чтобы работать с записью
                     core.async_jobs.make_queue.delay(obj)
+
+                    # Если всё хорошо, отправляем информацию о созданном заказе
                     return Response(serializer.data)
                 else:
                     errors = [{'balance': 'Not enought money.'}]
+
             else:
                 errors = [{'end_at': 'End_at should be greater that start_at'}]
-                pass
+
         else:
             errors = serializer.errors
-        return Response(errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            errors,
+            status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
+        """
+            Список заказов для текущего пользователя
+        """
         return Order.objects.filter(owner=self.request.user)

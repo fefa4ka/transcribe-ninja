@@ -25,3 +25,4 @@ django-s3-folder-storage
 #sudo apt-get install python-dev
 #redis-server
 #uwsgi
+#ffmpeg https://gist.githubusercontent.com/xdamman/e4f713c8cd1a389a5917/raw/17c0999cf4e757f7d38c5e808f1f810fd378bcee/install_ffmpeg_ubuntu.sh

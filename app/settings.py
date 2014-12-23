@@ -63,15 +63,21 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'core.auth_backends.EmailAuthBackend',
-)
-
 ROOT_URLCONF = 'app.urls'
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
 
+#
+# Auth
+#
+
+AUTHENTICATION_BACKENDS = (
+    'core.auth_backends.EmailAuthBackend',
+)
+
+
+#
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
@@ -88,7 +94,9 @@ DATABASES = {
     }
 }
 
+# Redis queue for async jobs
 RQ_QUEUES = {
+    # Staff
     'web': {
         'HOST': 'localhost',
         'PORT': 6379,
@@ -96,6 +104,7 @@ RQ_QUEUES = {
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     },
+    # Analys audio
     'diarization': {
         'HOST': 'localhost',
         'PORT': 6379,
@@ -103,6 +112,7 @@ RQ_QUEUES = {
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     },
+    # Split audio
     'queue': {
         'HOST': 'localhost',
         'PORT': 6379,
@@ -111,6 +121,7 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -127,24 +138,10 @@ USE_TZ = True
 
 DEFAULT_CHARSET = 'utf8'
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-if DEBUG:
-    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
-    STATICFILES_DIRS = (
-        FRONTEND_ROOT,
-    )
-    
-STATIC_URL = '/static/'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-
-AWS_ACCESS_KEY_ID = 'AKIAJT4XGM5CW5RT2EHQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'transcribe-ninja'
+#
+# API
+#
 
 # Rest Framework
 REST_FRAMEWORK = {
@@ -160,11 +157,53 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
 }
 
+
 #
+# Files
+#
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
+
+if DEBUG:
+    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
+    STATICFILES_DIRS = (
+        FRONTEND_ROOT,
+    )
+
+STATIC_URL = '/static/'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+# S3 Config
+AWS_ACCESS_KEY_ID = 'AKIAJT4XGM5CW5RT2EHQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'transcribe-ninja'
+
+# Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
-# Records
+# Records content
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")
 PIECE_ROOT = os.path.join(MEDIA_ROOT, "piece/")
 
 TEMP_DIR = os.path.join(BASE_DIR, "temp/")
+
+
+
+#
+# Record
+#
+
+# Подсчёт скорости разговора
+# Средняя скорость произношения. Знаков в секунду
+SPEECH_SPEED = 22
+# Сколько минимум записи должно быть распознано, 
+# чтобы посчтитать скорость произоншения
+SPEECH_SPEED_MIN_DURATION = 120 
+
+# Diarization
+VOICEID_DB_PATH = 'transcribe/voiceid'
+
