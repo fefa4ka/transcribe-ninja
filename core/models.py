@@ -86,7 +86,10 @@ class AudioFile(models.Model):
         """
 
         # Скачиваем эмпэтришку с Амазон С3
-        record_file_name = str(self.audio_file)
+        record_file_name = os.path.join(
+            self.id,
+            str(self.audio_file)
+        )
 
         file_path = settings.MEDIA_ROOT + record_file_name
 
