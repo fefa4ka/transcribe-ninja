@@ -4,6 +4,7 @@
 from django.utils.http import urlquote
 
 import os
+import time
 
 from hashlib import md5
 
@@ -16,7 +17,10 @@ def upload_record_path(instance, file_name):
     file_name, extension = os.path.splitext(file_name)
 
     return urlquote("record/%s%s" % (
-                    md5(file_name.encode('utf8')).hexdigest(),
+                    md5(
+                        file_name.encode('utf8'),
+                        time.time()
+                    ).hexdigest(),
                     extension))
 
 
