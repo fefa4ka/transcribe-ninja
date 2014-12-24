@@ -230,15 +230,19 @@ class Record(models.Model):
         if extension != '.wav':
             subprocess.call(
                 ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 settings.MEDIA_ROOT + file_name + '.wav'])
+                settings.MEDIA_ROOT + original_file_name,
+                settings.MEDIA_ROOT + file_name + '.wav'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
 
         # Потом в mp3
         if self.file_name_format('wav') and extension != ".mp3":
             subprocess.call(
                 ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 settings.MEDIA_ROOT + file_name + '.mp3'])
+                settings.MEDIA_ROOT + original_file_name,
+                settings.MEDIA_ROOT + file_name + '.mp3'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT)
 
         # Если всё сконвертилось, удаляем оригинал с S3,
         # и копируем mp3

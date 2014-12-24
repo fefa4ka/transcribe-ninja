@@ -11,6 +11,16 @@ boto
 django-storages
 django-s3-folder-storage
 
+# sudo apt-add-repository ppa:jon-severinsson/ffmpeg 
+# sudo add-apt-repository ppa:gstreamer-developers/ppa
+# sudo add-apt-repository ppa:webupd8team/java
+
+# sudo apt-get update
+# sudo apt-get upgrade
+# sudo apt-get install pip libmysqlclient-dev subversion sox python-dev
+# sudo apt-get install gstreamer0.10-tools gstreamer-tools gstreamer0.10-plugins-base gstreamer0.10-plugins-good gstreamer0.10-plugins-bad
+# sudo apt-get install ffmpeg
+# sudo apt-get install oracle-java7-installer
 #pip
 #virtualenv
 #libmysqlclient-dev
