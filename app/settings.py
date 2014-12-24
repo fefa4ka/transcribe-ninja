@@ -114,10 +114,10 @@ RQ_QUEUES = {
     },
     # Split audio
     'queue': {
-        'HOST': 'localhost',
+        'HOST': 'db.transcribe.ninja',
         'PORT': 6379,
         'DB': 2,
-        'PASSWORD': 'db.transcribe.ninja',
+        'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     }
 }
