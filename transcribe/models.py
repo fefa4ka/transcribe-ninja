@@ -131,9 +131,6 @@ class Record(AudioFile, Trash):
             Подготовка записи к раздаче и к распознанию.
         """
 
-        # Копируем на локальную машину с S3
-        file_path = self.get_file_local()
-
         # Конвертируем в mp3 и сохраняем как оригинал
         # если файл загружен в каком-то другом формате
         if not self.audio_file_format('mp3') and extension != ".mp3":
