@@ -127,23 +127,26 @@ class Record(AudioFile, Trash):
 
         # Конвертируем в mp3 и сохраняем как оригинал
         # если файл загружен в каком-то другом формате
-        if not self.audio_file_format('mp3') and extension != ".mp3":
-            mp3_file = self.audio_file_format("mp3")
+        mp3_file = self.audio_file_format("mp3")
 
+        # Считываем продолжительность записи.
+        # Нужно именно здесь, потому что файл уже скачен и отконвертирован.
+        # Если заменить, то придётся заново запись скачивать с хранилища
+        self.duration = self.audio_file_length()
+
+        if self.audio_file_local() != mp3_file:
             # Заменяем оригинал на мп3
             self.audio_file.delete()
-            self.audi_file.save(
+            self.audio_file.save(
                 mp3_file,
                 File(
                     open(settings.MEDIA_ROOT + mp3_file)
                 )
             )
 
-        self.duration = self.audio_file_length()
-
         # Удаляем все файлы
         shutil.rmtree(
-            os.path.dirname(file_path),
+            os.path.dirname(settings.MEDIA_ROOT + mp3_file),
             ignore_errors=True)
 
     def diarization(self):

@@ -116,7 +116,7 @@ class AudioFile(models.Model):
         """
             Узнаём длину записи в секундах с помощью ffmpeg
         """
-        path = settings.MEDIA_ROOT + self.audio_file_format('wav')
+        path = settings.MEDIA_ROOT + self.audio_file_format('mp3')
 
         # Запускаем ffmpeg
         process = subprocess.Popen(
