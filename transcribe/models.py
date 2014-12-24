@@ -8,6 +8,7 @@ import os
 import time
 import re
 import subprocess
+import shutil
 
 from datetime import datetime
 
@@ -212,8 +213,7 @@ class Record(models.Model):
         self.save()
 
         # Удаляем все файлы
-        import shutil.rmtree as rm_tree
-        rm_tree(
+        shutil.rmtree(
             os.path.dirname(file_path),
             ignore_errors=True)
 
