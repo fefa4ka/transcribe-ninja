@@ -92,7 +92,7 @@ class AudioFile(models.Model):
 
         # Если файл есть, ничего не делаем, возращаем путь до него
         if os.path.isfile(file_path):
-            return file_path
+            return record_file_name
 
         # Если папок нет - создаём
         dir_path = os.path.dirname(file_path)
@@ -110,7 +110,7 @@ class AudioFile(models.Model):
         mp3_file.write(mp3_data)
         mp3_file.close()
 
-        return file_path
+        return record_file_name
 
     def audio_file_length(self):
         """
