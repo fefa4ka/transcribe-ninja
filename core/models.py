@@ -11,6 +11,11 @@ from django.contrib.auth.models import User
 from core.extra import *
 from core.utils import *
 
+import re
+import subprocess
+
+from decimal import Decimal
+
 
 class Account(models.Model):
     """

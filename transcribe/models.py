@@ -7,13 +7,7 @@ from django.core.files import File
 
 import os
 import time
-import re
-import subprocess
 import shutil
-
-from datetime import datetime
-
-from decimal import Decimal
 
 from voiceid.sr import Voiceid
 from voiceid.db import GMMVoiceDB
