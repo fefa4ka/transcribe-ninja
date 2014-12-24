@@ -105,7 +105,7 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     },
     # Analys audio
-    'diarization': {
+    'analys': {
         'HOST': 'db.transcribe.ninja',
         'PORT': 6379,
         'DB': 1,

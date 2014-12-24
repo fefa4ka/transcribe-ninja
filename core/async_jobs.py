@@ -29,7 +29,6 @@ def record_prepare(record):
 @job('analys')
 def record_analys(record):
     record.diarization()
-    record.save()
 
 
 @job('queue')
