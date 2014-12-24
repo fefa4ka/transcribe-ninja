@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': 'transcribe',
         'USER': 'transcribe',
         'PASSWORD': 'transcribe',
-        'HOST': '127.0.0.1',
+        'HOST': '54.93.44.84',
         'OPTIONS': {
             'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'
         }
@@ -98,7 +98,7 @@ DATABASES = {
 RQ_QUEUES = {
     # Staff
     'web': {
-        'HOST': 'localhost',
+        'HOST': '54.93.44.84',
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
@@ -106,9 +106,9 @@ RQ_QUEUES = {
     },
     # Analys audio
     'diarization': {
-        'HOST': 'localhost',
+        'HOST': '54.93.44.84',
         'PORT': 6379,
-        'DB': 0,
+        'DB': 1,
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     },
@@ -116,8 +116,8 @@ RQ_QUEUES = {
     'queue': {
         'HOST': 'localhost',
         'PORT': 6379,
-        'DB': 0,
-        'PASSWORD': '',
+        'DB': 2,
+        'PASSWORD': '54.93.44.84',
         'DEFAULT_TIMEOUT': 360,
     }
 }
