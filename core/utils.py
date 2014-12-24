@@ -18,8 +18,7 @@ def upload_record_path(instance, file_name):
 
     return urlquote("record/%s%s" % (
                     md5(
-                        file_name.encode('utf8'),
-                        time.time()
+                        file_name.encode('utf8') + str(time.time())
                     ).hexdigest(),
                     extension))
 
