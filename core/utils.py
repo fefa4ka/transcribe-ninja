@@ -14,10 +14,8 @@ def upload_record_path(instance, file_name):
     """
 
     file_name, extension = os.path.splitext(file_name)
-    folder = instance.title.encode('utf-8') + file_name.encode('utf-8')
 
-    return urlquote("record/%s/%s%s" % (
-                    md5(folder).hexdigest(),
+    return urlquote("record/%s%s" % (
                     md5(file_name.encode('utf8')).hexdigest(),
                     extension))
 
@@ -29,7 +27,6 @@ def upload_queue_path(instance, file_name):
 
     filename = md5("queue/%d%f%f%f" % (
         instance.piece.record.id,
-        instance.piece.record.folder(),
         instance.start_at(),
         instance.end_at())
     ).hexdigest()

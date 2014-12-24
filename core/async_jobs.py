@@ -13,14 +13,23 @@ from transcribe.models import *
 from pydub import AudioSegment
 
 
-@job('diarization')
+@job('prepare')
 def record_prepare(record):
+    # Сперва подготавливаем запись
     record.prepare()
+    record.save()
+
+    # Потом асихронно анализируем.
+    # Подготовка происходит быстро,
+    # и чтобы не задерживать другие подготовки,
+    # анализ делаем в другой очереди
+    record_analys.delay(record)
 
 
-@job('web')
-def record_save(serializer, owner):
-    serializer.save(owner=owner)
+@job('analys')
+def record_analys(record):
+    record.diarization()
+    record.save()
 
 
 @job('queue')

@@ -9,6 +9,8 @@ import django.db.models.signals as signals
 
 from transcribe.models import *
 
+from core.models import *
+
 import os
 
 
@@ -44,7 +46,7 @@ class Price(models.Model):
         return self.title
 
 
-class Order(models.Model):
+class Order(Trash):
     """
         Зазаз на стенографирование
         record      - стенографируемая запись
@@ -52,7 +54,7 @@ class Order(models.Model):
         end_at      - заканчивать с секунды
 
         price       - по какой цене стенографируется
-        
+
         created     - когда был сделан заказ
         owner       - заказчик стенографирования
 
@@ -65,12 +67,6 @@ class Order(models.Model):
 
     created = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey('auth.User', related_name='user-orders')
-
-    # Чтобы запись не удалялась с первого раза
-    trashed_at = models.DateTimeField(blank=True, null=True)
-
-    objects = NonTrashManager()
-    trash = TrashManager()
 
     # Logic
     def make_queue(self):
@@ -88,21 +84,8 @@ class Order(models.Model):
     def make_check_queue(self):
         pass
 
-    # Service
-    def delete(self, trash=True):
-        if not self.trashed_at and trash:
-            self.trashed_at = datetime.now()
-            self.save()
-        else:
-            super(Order, self).delete()
 
-    def restore(self, commit=True):
-        self.trashed_at = None
-        if commit:
-            self.save()
-
-
-class Queue(models.Model):
+class Queue(AudioFile):
     """
         Элемент очереди, для стенографирования.
         Каждый элемент содержит информацию о работе,
@@ -139,11 +122,6 @@ class Queue(models.Model):
     order = models.ForeignKey(Order)
     piece = models.ForeignKey(Piece)
 
-    audio_file = models.FileField(
-        max_length=255,
-        upload_to=upload_queue_path
-    )
-
     price = models.ForeignKey(Price)
 
     TRANSCRIBE = 0
@@ -163,7 +141,6 @@ class Queue(models.Model):
 
     owner = models.ForeignKey('auth.User', null=True)
     completed = models.DateTimeField(null=True)
-
 
     def start_at(self):
         """

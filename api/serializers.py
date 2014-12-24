@@ -35,7 +35,7 @@ class RecordSerializer(serializers.ModelSerializer):
         model = Record
         fields = (
             "id",
-            "title", "file_name",
+            "title", "audio_file",
             "duration",
             "completed", "progress")
 

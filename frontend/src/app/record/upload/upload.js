@@ -53,7 +53,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
   var uploader = $scope.uploader = new FileUploader({
     url: '/api/records/',
-    alias: 'file_name',
+    alias: 'audio_file',
     headers : {
         'X-CSRFToken': getCookie('csrftoken') // X-CSRF-TOKEN is used for Ruby on Rails Tokens
     }

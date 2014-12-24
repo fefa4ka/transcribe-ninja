@@ -21,17 +21,17 @@ from voiceid.db import GMMVoiceDB
 import numpy as np
 
 from core.utils import *
-
+from core.models import *
 from core.extra import *
 
 
-class Record(models.Model):
+class Record(AudioFile, Trash):
     """
     Модель записи, которую стенографируют
 
     title       - заголовок
 
-    file_name   - аудиофайл записи
+    audio_file  - аудиофайл записи
     duration    - продолжительность в секундах
     speakers    - количество собеседников
 
@@ -43,13 +43,6 @@ class Record(models.Model):
     """
 
     title = models.CharField(max_length=200)
-
-    # Файл хранится на Амазоне С3
-    file_name = ContentTypeRestrictedFileField(
-        max_length=255,
-        upload_to=upload_record_path,
-        content_types=["audio/mpeg", "audio/vnd.wav"],
-        max_upload_size=429916160)
 
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
@@ -72,30 +65,9 @@ class Record(models.Model):
     owner = models.ForeignKey('auth.User', related_name='records')
     created = models.DateTimeField(auto_now=True)
 
-    # Запись первый раз не удаляется
-    trashed_at = models.DateTimeField(blank=True, null=True)
-
-    objects = NonTrashManager()
-    trash = TrashManager()
 
     def __unicode__(self):
         return "%d. %d speakers. %f sec" % (self.id, self.speakers, self.duration)
-
-    # Attributes
-    def file_name_format(self, format="mp3"):
-        """
-            Проверяет, есть ли файл требуемого раширения
-        """
-        # Расчлиняем на имя файла и расширение
-        file_name, extension = os.path.splitext(str(self.file_name))
-        file_name_format = file_name + ".%s" % format
-
-        # Если такой файл есть, то возвращаем путь к файлу
-        if os.path.isfile(settings.MEDIA_ROOT + file_name_format):
-            return file_name_format
-        else:
-            # TODO: сделать конвертацию
-            return ""
 
     def completed_percentage(self):
         """
@@ -149,149 +121,51 @@ class Record(models.Model):
         if duration > 0:
             speed = length / duration
 
-        # Если рааспознали слишком мало, устанавливаем дефолную скорость
+        # Если рааспознали слишком мало, устанавливаем дефолтную скорость
         return settings.SPEECH_SPEED if duration < settings.SPEECH_SPEED_MIN_DURATION else speed
 
-    def absolute_url(self):
-        return "/record/%i/" % self.id
-
-    def folder(self):
-        """
-            Название папки
-        """
-        return os.path.dirname(str(self.file_name))
-
     # Actions
-    def get_file_local(self):
-        """
-            Путь к файлу записи на локальной машине
-        """
-
-        # Скачиваем эмпэтришку с Амазон С3
-        s3_record_file = self.file_name
-        record_file_name = str(s3_record_file)
-
-        file_path = settings.MEDIA_ROOT + record_file_name
-
-        # Если файл есть, ничего не делаем, возращаем путь до него
-        if os.path.isfile(file_path):
-            return file_path
-
-        # Если папок нет - создаём
-        if not os.path.exists(file_path):
-            os.makedirs(os.path.dirname(file_path))
-
-        s3_record_file.open()
-        mp3_data = s3_record_file.read()
-
-        # Сохраняем в файл
-        mp3_file = open(
-            file_path,
-            'w+')
-        mp3_file.write(mp3_data)
-        mp3_file.close()
-
-        return file_path
 
     def prepare(self):
         """
-            Подготовка записи к распознанию
+            Подготовка записи к раздаче и к распознанию.
         """
+
         # Копируем на локальную машину с S3
         file_path = self.get_file_local()
 
-        # Конвертируем в mp3 и wav, оригинал удаляем
-        self.convert()
+        # Конвертируем в mp3 и сохраняем как оригинал
+        # если файл загружен в каком-то другом формате
+        if not self.audio_file_format('mp3') and extension != ".mp3":
+            mp3_file = self.audio_file_format("mp3")
 
-        # Получаем длинну записи
-        self.duration = self.ffmpeg_length()
-        self.save()
+            # Заменяем оригинал на мп3
+            self.audio_file.delete()
+            self.audi_file.save(
+                mp3_file,
+                File(
+                    open(settings.MEDIA_ROOT + mp3_file)
+                )
+            )
 
-        # TODO: Делим на части
-
-        # Определяем собеседников
-        self.liam_diarization()
-        self.save()
+        self.duration = self.audio_file_length()
 
         # Удаляем все файлы
         shutil.rmtree(
             os.path.dirname(file_path),
             ignore_errors=True)
 
-    def convert(self):
-        """
-        Конвертируем записи в формат *.mp3 и *.wav
-        mp3 для веба
-        wav для анализа LIAM, sox
-        """
-        original_file_name = str(self.file_name)
-        file_name, extension = os.path.splitext(str(self.file_name))
-
-        # пробуем конвертить х3ч в wav
-        if extension != '.wav':
-            subprocess.call(
-                ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 settings.MEDIA_ROOT + file_name + '.wav'])
-
-        # Потом в mp3
-        if self.file_name_format('wav') and extension != ".mp3":
-            subprocess.call(
-                ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 settings.MEDIA_ROOT + file_name + '.mp3'])
-
-        # Если всё сконвертилось, удаляем оригинал с S3,
-        # и копируем mp3
-        if self.file_name_format('mp3') and extension != ".mp3":
-            self.file_name.delete()
-            self.file_name.save(
-                file_name + '.mp3',
-                File(
-                    open(settings.MEDIA_ROOT + file_name + '.mp3')
-                )
-            )
-            self.save()
-
-    def ffmpeg_length(self):
-        """
-            Узнаём длину записи в секундах с помощью ffmpeg
-        """
-        path = settings.MEDIA_ROOT + self.file_name_format('wav')
-
-        # Запускаем ffmpeg
-        process = subprocess.Popen(
-            ['ffmpeg', '-i', path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT
-        )
-        stdout, stderr = process.communicate()
-        # Вытаскивам данные о длинне
-        matches = re.search(
-            r"Duration:\s{1}(?P<hours>\d+?):(?P<minutes>\d+?):(?P<seconds>\d+\.\d+?),",
-            stdout,
-            re.DOTALL).groupdict()
-
-        # Переводим данные в секунды
-        hours = Decimal(matches['hours'])
-        minutes = Decimal(matches['minutes'])
-        seconds = Decimal(matches['seconds'])
-
-        total = 0
-        total += 60 * 60 * hours
-        total += 60 * minutes
-        total += seconds
-
-        return total
-
-    def liam_diarization(self):
+    def diarization(self):
         """
             Разделяем запись на собеседников
         """
+
         # Загружаем ролик
+        audio_file_path = settings.MEDIA_ROOT + self.audio_file_format('wav')
+
         db = GMMVoiceDB(settings.VOICEID_DB_PATH)
         voice = Voiceid(
-            db, settings.MEDIA_ROOT + self.file_name_format('wav'))
+            db, audio_file_path)
 
         # Распознаём говорящих
         voice.extract_speakers()
@@ -315,24 +189,12 @@ class Record(models.Model):
                               speaker=speaker)
                 piece.save()
 
-        # for c in voice.get_clusters():
-        #     cluster = voice.get_cluster(c)
-        #     voice.remove_cluster(cluster.get_name())
-        # TO DO: Remove LIAM files
+        # Удаляем все файлы
+        shutil.rmtree(
+            os.path.dirname(audio_file_path),
+            ignore_errors=True)
 
-    # Services
-    def delete(self, trash=True):
-        if not self.trashed_at and trash:
-            self.trashed_at = datetime.now()
-            self.save()
-        else:
-            self.file_name.delete()
-            super(Record, self).delete()
 
-    def restore(self, commit=True):
-        self.trashed_at = None
-        if commit:
-            self.save()
 
 
 class Speaker(models.Model):

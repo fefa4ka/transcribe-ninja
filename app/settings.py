@@ -97,7 +97,7 @@ DATABASES = {
 # Redis queue for async jobs
 RQ_QUEUES = {
     # Staff
-    'web': {
+    'prepare': {
         'HOST': 'db.transcribe.ninja',
         'PORT': 6379,
         'DB': 0,
