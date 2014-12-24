@@ -3,11 +3,14 @@
 
 import django.db.models.signals as signals
 
+from django.conf import settings
+
 from django.db import models
 from django.contrib.auth.models import User
 
 from core.extra import *
 from core.utils import *
+
 
 class Account(models.Model):
     """
