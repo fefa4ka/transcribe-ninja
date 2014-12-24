@@ -81,8 +81,7 @@ class AudioFile(models.Model):
         """
 
         # Скачиваем эмпэтришку с Амазон С3
-        s3_record_file = self.audio_file
-        record_file_name = str(s3_record_file)
+        record_file_name = str(self.audio_file)
 
         file_path = settings.MEDIA_ROOT + record_file_name
 
@@ -91,12 +90,13 @@ class AudioFile(models.Model):
             return file_path
 
         # Если папок нет - создаём
+        dir_path = os.path.dirname(file_path)
         if not os.path.exists(file_path):
-            os.makedirs(os.path.dirname(file_path))
+            os.makedirs(dir_path)
 
         # Скачиваем мп3
-        s3_record_file.open()
-        mp3_data = s3_record_file.read()
+        self.audio_file.open()
+        mp3_data = self.audio_file.read()
 
         # Сохраняем в файл
         mp3_file = open(
