@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': 'transcribe',
         'USER': 'transcribe',
         'PASSWORD': 'transcribe',
-        'HOST': '54.93.44.84',
+        'HOST': 'db.transcribe.ninja',
         'OPTIONS': {
             'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'
         }
@@ -98,7 +98,7 @@ DATABASES = {
 RQ_QUEUES = {
     # Staff
     'web': {
-        'HOST': '54.93.44.84',
+        'HOST': 'db.transcribe.ninja',
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
@@ -106,7 +106,7 @@ RQ_QUEUES = {
     },
     # Analys audio
     'diarization': {
-        'HOST': '54.93.44.84',
+        'HOST': 'db.transcribe.ninja',
         'PORT': 6379,
         'DB': 1,
         'PASSWORD': '',
@@ -117,7 +117,7 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 2,
-        'PASSWORD': '54.93.44.84',
+        'PASSWORD': 'db.transcribe.ninja',
         'DEFAULT_TIMEOUT': 360,
     }
 }

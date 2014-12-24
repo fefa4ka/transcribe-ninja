@@ -3,6 +3,7 @@
 
 from django.db import models
 from django.conf import settings
+from django.core.files import File
 
 import os
 import time
@@ -246,7 +247,9 @@ class Record(models.Model):
             self.file_name.delete()
             self.file_name.save(
                 file_name + '.mp3',
-                File(settings.MEDIA_ROOT + file_name + '.mp3')
+                File(
+                    open(settings.MEDIA_ROOT + file_name + '.mp3')
+                )
             )
             self.save()
 
