@@ -87,7 +87,7 @@ class AudioFile(models.Model):
 
         # Скачиваем эмпэтришку с Амазон С3
         record_file_name = os.path.join(
-            self.id,
+            str(self.id),
             str(self.audio_file)
         )
 
