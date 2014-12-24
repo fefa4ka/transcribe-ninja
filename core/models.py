@@ -60,7 +60,7 @@ class AudioFile(models.Model):
         """
         # Расчлиняем имя на имя файла и расширение
         original_file_name = self.audio_file_local()
-        file_name, extension = os.path.splitext()
+        file_name, extension = os.path.splitext(original_file_name)
 
         # Имя файла в новрм формате
         file_name_format = file_name + ".%s" % audio_format
