@@ -10,13 +10,6 @@ from app import settings
 class DjangoDeployment(Node):
     activate_cmd = '. ~/bin/activate'
 
-    def checkout_git(self, commit):
-        self.host.run("git checkout '%s'" % esc1(commit))
-
-    def git_pull(self):
-        with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
-            self.hosts.run('git pull')
-
     def run_management_command(self, command):
         """ Run Django management command in virtualenv. """
         # Activate the virtualenv.

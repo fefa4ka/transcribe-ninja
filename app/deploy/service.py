@@ -24,7 +24,6 @@ class UpstartService(Node):
 
     def restart(self):
         self.stop()
-        self.link_conf()
         self.start()
 
     def status(self):
