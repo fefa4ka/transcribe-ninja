@@ -218,30 +218,3 @@ SPEECH_SPEED_MIN_DURATION = 120
 
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
-
-
-# Deploy
-from deployer.host import SSHHost, LocalHost
-
-class TranscribeNinjaHost(SSHHost):
-    username = 'ubuntu'
-    password = 'cntyjuhfa,kznm'
-    key_filename = '/Users/fefa4ka/transcribe-eu.pem'
-
-class DeployHost(TranscribeNinjaHost):
-    slug = 'deploy'
-    address = '54.93.50.120'
-
-class WebHost(TranscribeNinjaHost):
-    slug = 'web'
-    address = HOSTS['WEB']
-    username = 'web'
-
-class DatabaseHost(TranscribeNinjaHost):
-    slug = 'database'
-    address = HOSTS['DB']
-
-class EngineHost(TranscribeNinjaHost):
-    slug = 'engine'
-    address = HOSTS['ENGINE']
-    username = 'engine'

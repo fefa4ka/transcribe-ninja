@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from deployer.node import Node, map_roles
+from deployer.utils import esc1
+
+from app import settings
+from app.deploy.service import *
+from app.deploy.django import *
+
+import os.path
+
+
+
+class TranscribeNinjaSystem(Node):
+
+    """
+    The base definition of our web system.
+
+    roles: cache, queue, master_db, slave_db, web.
+    """
+
+    @map_roles(host='engine')
+    class Supervisor(UpstartService):
+        name = 'supervisor'
+
+    @map_roles(host='database')
+    class Database(UpstartService):
+        name = 'mysql'
+
+        def reset(self):
+            pass
+
+    @map_roles(host='database')
+    class Queue(UpstartService):
+        name = 'redis-server'
+
+    @map_roles(host='web')
+    class Nginx(UpstartService):
+        name = 'nginx'
+        config = '/etc/nginx/sites-enabled/transcribe-ninja.conf'
+
+    @map_roles(host='web')
+    class Uwsgi(UpstartService):
+        name = 'uwsgi'
+        config = '/etc/uwsgi/apps-enabled/transcribe-ninja.ini'
+
+    @map_roles(host='web')
+    class Frontend(DjangoDeployment):
+        frontend_path = os.path.join(settings.PROJECT_DIRECTORY, 'frontend')
+
+        def update(self):
+            self.git_pull()
+            self.frontend_compile()
+
+        def frontend_compile(self):
+            with self.hosts.cd(self.frontend_path, expand=True):
+                self.hosts.run('bower install')
+                self.hosts.run('grunt clean')
+                self.hosts.run('grunt --force')
+
+            self.run_management_command('collectstatic --noinput')
+
+    def deploy(self):
+        self.Frontend.update()
+
+        self.Uwsgi.restart()
+        self.Nginx.restart()
