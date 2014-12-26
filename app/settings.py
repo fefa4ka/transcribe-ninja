@@ -28,9 +28,16 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# HOSTS
+PROJECT_DIRECTORY = '~/transcribe-ninja'
+REPOSITORY = 'git@github.com:fefa4ka/transcribe-ninja.git'
+HOSTS = {
+    'DB': 'db.transcribe.ninja',
+    'ENGINE': 'engine.transcribe.ninja',
+    'WEB': 'transcribe.ninja'
+}
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -87,7 +94,7 @@ DATABASES = {
         'NAME': 'transcribe',
         'USER': 'transcribe',
         'PASSWORD': 'transcribe',
-        'HOST': 'db.transcribe.ninja',
+        'HOST': HOSTS['DB'],
         'OPTIONS': {
             'init_command': 'SET storage_engine=INNODB,character_set_connection=utf8,collation_connection=utf8_unicode_ci'
         }
@@ -98,7 +105,7 @@ DATABASES = {
 RQ_QUEUES = {
     # Staff
     'prepare': {
-        'HOST': 'db.transcribe.ninja',
+        'HOST': HOSTS['DB'],
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
@@ -106,7 +113,7 @@ RQ_QUEUES = {
     },
     # Analys audio
     'analys': {
-        'HOST': 'db.transcribe.ninja',
+        'HOST': HOSTS['DB'],
         'PORT': 6379,
         'DB': 1,
         'PASSWORD': '',
@@ -114,7 +121,7 @@ RQ_QUEUES = {
     },
     # Split audio
     'queue': {
-        'HOST': 'db.transcribe.ninja',
+        'HOST': HOSTS['DB'],
         'PORT': 6379,
         'DB': 2,
         'PASSWORD': '',
@@ -207,8 +214,34 @@ TEMP_DIR = os.path.join(BASE_DIR, "temp/")
 SPEECH_SPEED = 22
 # Сколько минимум записи должно быть распознано, 
 # чтобы посчтитать скорость произоншения
-SPEECH_SPEED_MIN_DURATION = 120 
+SPEECH_SPEED_MIN_DURATION = 120
 
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
 
+
+# Deploy
+from deployer.host import SSHHost, LocalHost
+
+class TranscribeNinjaHost(SSHHost):
+    username = 'ubuntu'
+    password = 'cntyjuhfa,kznm'
+    key_filename = '/Users/fefa4ka/transcribe-eu.pem'
+
+class DeployHost(TranscribeNinjaHost):
+    slug = 'deploy'
+    address = '54.93.50.120'
+
+class WebHost(TranscribeNinjaHost):
+    slug = 'web'
+    address = HOSTS['WEB']
+    username = 'web'
+
+class DatabaseHost(TranscribeNinjaHost):
+    slug = 'database'
+    address = HOSTS['DB']
+
+class EngineHost(TranscribeNinjaHost):
+    slug = 'engine'
+    address = HOSTS['ENGINE']
+    username = 'engine'
