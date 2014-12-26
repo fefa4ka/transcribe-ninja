@@ -19,7 +19,14 @@ class RecordAdmin(admin.ModelAdmin):
 
 admin.site.register(Record, RecordAdmin)
 
+
 class PriceAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(Price, PriceAdmin)
+
+
+class OrderAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Order, OrderAdmin)
