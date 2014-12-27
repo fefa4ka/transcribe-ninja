@@ -83,6 +83,7 @@ class PriceAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
+    list_display = ('record', 'owner', 'duration', 'total', 'completed')
     fieldsets = (
         (None, {
             'fields': ('record', 'start_at', 'end_at')
@@ -91,3 +92,32 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('price', 'owner')
         }),
     )
+
+    def has_add_permission(self, request):
+        return False
+
+    def duration(self, instance):
+        return instance.end_at - instance.start_at
+
+    def total(self, instance):
+        order_object_id = ContentType.objects.get_for_model(Order).id
+        payment = Payment.objects.get(content_type_id=order_object_id, object_id=instance.id)
+
+        return payment.total
+
+    def completed(self, instance):
+        return instance.record.completed_percentage()
+
+@admin.register(Queue)
+class QueueAdmin(admin.ModelAdmin):
+    list_display = ('record', 'start_at', 'end_at', 'duration', 'work_type', 'priority')
+    list_filter = ('priority', 'work_type')
+
+    def record(self, instance):
+        return instance.piece.record
+
+    def duration(self, instance):
+        return instance.end_at() - instance.start_at()
+
+    def has_add_permission(self, request):
+        return False

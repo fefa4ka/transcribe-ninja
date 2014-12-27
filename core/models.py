@@ -50,12 +50,6 @@ class Trash(models.Model):
 
 
 class AudioFile(models.Model):
-    audio_file = ContentTypeRestrictedFileField(
-        max_length=255,
-        upload_to=upload_record_path,
-        content_types=["audio/mpeg", "audio/vnd.wav"],
-        max_upload_size=429916160)
-
     class Meta:
         abstract = True
 

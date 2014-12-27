@@ -33,6 +33,9 @@ def record_analys(record):
 
 @job('queue')
 def make_queue(order):
+    order.make_queue()
+
+
     # Берём все заказы, где записи не распознаны
 
     # Создаём очередь на рапознание через один
@@ -40,66 +43,66 @@ def make_queue(order):
     # приоритетные, которые следующие после распознанные.
 
     # Скачиваем эмпэтришку с Амазон С3, во временную папку
-    s3_record_file = order.record.file_name
-    record_file_name = str(s3_record_file)
+    # s3_record_file = order.record.file_name
+    # record_file_name = str(s3_record_file)
 
-    s3_record_file.open()
-    mp3_data = s3_record_file.read()
+    # s3_record_file.open()
+    # mp3_data = s3_record_file.read()
 
-    mp3_file_path = settings.TEMP_DIR + record_file_name
-    if not os.path.exists(mp3_file_path):
-        os.makedirs(os.path.dirname(mp3_file_path))
-    mp3_file = open(
-        mp3_file_path,
-        'w+')
-    mp3_file.write(mp3_data)
-    mp3_file.close()
+    # mp3_file_path = settings.TEMP_DIR + record_file_name
+    # if not os.path.exists(mp3_file_path):
+    #     os.makedirs(os.path.dirname(mp3_file_path))
+    # mp3_file = open(
+    #     mp3_file_path,
+    #     'w+')
+    # mp3_file.write(mp3_data)
+    # mp3_file.close()
 
-    # Загружаем эмпэтришку, черезе AudioSegment для нарезки
-    record = AudioSegment.from_mp3(
-        settings.TEMP_DIR + record_file_name
-    )
+    # # Загружаем эмпэтришку, черезе AudioSegment для нарезки
+    # record = AudioSegment.from_mp3(
+    #     settings.TEMP_DIR + record_file_name
+    # )
 
-    # Цена по умолчанию за транскрибцию
-    transcribe_object_id = ContentType.objects.get_for_model(Piece).id
-    transcribe_price = Price.objects.filter(
-        content_type_id=transcribe_object_id,
-        default=1
-    )[0]
+    # # Цена по умолчанию за транскрибцию
+    # transcribe_object_id = ContentType.objects.get_for_model(Piece).id
+    # transcribe_price = Price.objects.filter(
+    #     content_type_id=transcribe_object_id,
+    #     default=1
+    # )[0]
 
-    # Цена по умолчанию за вычитку
-    check_object_id = ContentType.objects.get_for_model(Transcription).id
-    check_price = Price.objects.filter(
-        content_type_id=check_object_id,
-        default=1
-    )[0]
+    # # Цена по умолчанию за вычитку
+    # check_object_id = ContentType.objects.get_for_model(Transcription).id
+    # check_price = Price.objects.filter(
+    #     content_type_id=check_object_id,
+    #     default=1
+    # )[0]
 
-    # Создаём заявки на транскрибцию каждого куска
-    # Кажный нечётный - приоритетный
-    for index, piece in enumerate(order.record.piece_set.all().order_by('start_at')):
-        queue = Queue(
-            order=order,
-            piece=piece,
-            price=transcribe_price,
-            priority=False if index % 2 == 0 else True,
-            work_type=Queue.TRANSCRIBE)
+    # # Создаём заявки на транскрибцию каждого куска
+    # # Кажный нечётный - приоритетный
+    # for index, piece in enumerate(order.record.piece_set.all().order_by('start_at')):
+    #     queue = Queue(
+    #         order=order,
+    #         piece=piece,
+    #         price=transcribe_price,
+    #         priority=False if index % 2 == 0 else True,
+    #         work_type=Queue.TRANSCRIBE)
 
-        # Вырезаем нужный кусок записи
-        offset = 1.5
-        piece_mp3 = record[
-            ((queue.start_at() - offset) * 1000):
-            ((queue.end_at() + offset) * 1000)
-        ]
-        # Сохраняем его на Амазон С3
-        piece_mp3_file_name = upload_queue_path(queue, record_file_name)
-        piece_mp3_path = settings.TEMP_DIR + piece_mp3_file_name
-        piece_mp3.export(piece_mp3_path)
+    #     # Вырезаем нужный кусок записи
+    #     offset = 1.5
+    #     piece_mp3 = record[
+    #         ((queue.start_at() - offset) * 1000):
+    #         ((queue.end_at() + offset) * 1000)
+    #     ]
+    #     # Сохраняем его на Амазон С3
+    #     piece_mp3_file_name = upload_queue_path(queue, record_file_name)
+    #     piece_mp3_path = settings.TEMP_DIR + piece_mp3_file_name
+    #     piece_mp3.export(piece_mp3_path)
 
-        if not os.path.exists(piece_mp3_path):
-            os.makedirs(os.path.dirnames(piece_mp3_path))
-        piece_mp3 = open(piece_mp3_path)
+    #     if not os.path.exists(piece_mp3_path):
+    #         os.makedirs(os.path.dirnames(piece_mp3_path))
+    #     piece_mp3 = open(piece_mp3_path)
 
-        queue.file_name.save(piece_mp3_file_name, File(piece_mp3_path))
+    #     queue.file_name.save(piece_mp3_file_name, File(piece_mp3_path))
 
 #     # Если нет очереди, создаём для каждого чётного куска
 #     if order.queue_set.count() == 0:

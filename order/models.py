@@ -13,8 +13,11 @@ from core.models import *
 
 import os
 
+from pydub import AudioSegment
+
 
 class Price(models.Model):
+
     """
         Цена за разные работы.
         Цена определяется: типом данных, типом работ.
@@ -39,17 +42,17 @@ class Price(models.Model):
     title = models.CharField(max_length=255)
     work_type = models.IntegerField(default=0)
 
-    WORK_TYPE_TRANCRIBE = 0
+    WORK_TYPE_TRANSCRIBE = 0
     WORK_TYPE_CHECK = 1
     WORK_TYPE_EDIT = 2
     WORK_TYPE_CHOICES = (
-        (WORK_TYPE_TRANCRIBE, 'Transcribe audio piece'),
+        (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
         (WORK_TYPE_CHECK, 'Read and check transcription'),
         (WORK_TYPE_EDIT, 'Transcription edit')
     )
     work_type = models.IntegerField(
         choices=WORK_TYPE_CHOICES,
-        default=WORK_TYPE_TRANCRIBE
+        default=WORK_TYPE_TRANSCRIBE
     )
     price = models.FloatField()
 
@@ -60,6 +63,7 @@ class Price(models.Model):
 
 
 class Order(Trash):
+
     """
         Зазаз на стенографирование
         record      - стенографируемая запись
@@ -86,19 +90,72 @@ class Order(Trash):
         """
             Создаём очередь на распознание
         """
-        mp3_file_path = self.record.save_to_file(path=settings.TEMP_DIR)
+        def make_queue_element(order, as_record, piece, work_type, priority):
+            transcribe_object_id = ContentType.objects.get_for_model(Queue).id
+            transcribe_price = Price.objects.filter(
+                content_type_id=transcribe_object_id,
+                work_type=Price.WORK_TYPE_TRANSCRIBE,
+                default=1)[0]
+
+            check_object_id = ContentType.objects.get_for_model(Queue).id
+            check_price = Price.objects.filter(
+                content_type_id=check_object_id,
+                work_type=Price.WORK_TYPE_CHECK,
+                default=1)[0]
+
+            # work_type = 0 - транскрибция
+            # work_type = 1 - вычитка
+            price = transcribe_price if not work_type else check_price
+
+            queue = Queue(order=self,
+                          piece=piece,
+                          price=price,
+                          work_type=work_type,
+                          priority=priority)
+
+            queue.save()
+
+            queue.audio_file_make(as_record=as_record)
+
+
+        # Загружаем mp3 файл записи
+        mp3_file_path = settings.MEDIA_ROOT + \
+            self.record.audio_file_format("mp3")
 
         # Загружаем эмпэтришку, черезе AudioSegment для нарезки
         record = AudioSegment.from_mp3(mp3_file_path)
 
-    def make_transcribe_queue(self):
-        pass
+        # Если очередь уже существует, то не даём создавать
+        if self.queue.count() > 0:
+            raise QueueError("Queue for Order already exist. \n"
+                             + "Try to flush_queue before make a new.")
 
-    def make_check_queue(self):
-        pass
+        pieces = self.record.pieces.all().order_by('start_at')
+
+        for index, piece in enumerate(pieces):
+            # Очередь на транскрибацию
+            # Нечётные части приоритетные.
+            # Для того, чтобы транскрибция начиналась с первого куска.
+            priority = False if index % 2 else True
+            make_queue_element(self,
+                               as_record=record,
+                               piece=piece,
+                               work_type=0,
+                               priority=priority)
+
+            # Очередь на вычитку
+            make_queue_element(self,
+                               as_record=record,
+                               piece=piece,
+                               work_type=1,
+                               priority=False)
+
+    def flush_queue(self):
+        self.queue.all().delete()
 
 
 class Queue(AudioFile):
+
     """
         Элемент очереди, для стенографирования.
         Каждый элемент содержит информацию о работе,
@@ -132,16 +189,19 @@ class Queue(AudioFile):
         completed   - время, когда задача была выполнена
 
     """
-    order = models.ForeignKey(Order)
-    piece = models.ForeignKey(Piece)
+    order = models.ForeignKey(Order, related_name='queue')
+    piece = models.ForeignKey(Piece, related_name='queue')
+    audio_file = models.FileField(
+        max_length=255,
+        upload_to=upload_queue_path)
 
     price = models.ForeignKey(Price)
 
     TRANSCRIBE = 0
     CHECK = 1
     WORK_TYPE_CHOICES = (
-        (TRANSCRIBE, 0),
-        (CHECK, 1)
+        (TRANSCRIBE, 'Transcribe'),
+        (CHECK, 'Check and edit')
     )
     work_type = models.IntegerField(
         choices=WORK_TYPE_CHOICES,
@@ -152,7 +212,7 @@ class Queue(AudioFile):
 
     locked = models.DateTimeField(null=True)
 
-    owner = models.ForeignKey('auth.User', null=True)
+    owner = models.ForeignKey('auth.User', blank=True, null=True)
     completed = models.DateTimeField(null=True)
 
     def start_at(self):
@@ -174,15 +234,67 @@ class Queue(AudioFile):
         elif self.work_type == self.CHECK:
             # Берём время, когда заканчивается кусок, следующий за текущим.
             next_piece = Piece.objects.filter(
-                start_at__gte=self.piece.end_at).order_by('start_at')[0]
+                start_at__gte=self.piece.end_at).order_by('start_at')
 
             # TODO: Если следующего нет, то ничего не делаем.
+            if not next_piece:
+                return self.piece.end_at
+
             return np.round(
-                next_piece.end_at
+                next_piece.first.end_at
             )
+
+    def audio_file_make(self, as_record=None, offset=1.5):
+        """
+            Создаёт вырезанный кусок в mp3
+
+            rec - можно передать AudioSegment записи, чтобы ускорить процесс
+            offset  - сколько записи по краям оставлять
+        """
+        # Если запись уже создана, возвращаем название файла
+        if self.audio_file:
+            return self.audio_file_local()
+
+        # Если as_record не передали
+        if not as_record:
+            as_record = AudioSegment.from_mp3(
+                settings.MEDIA_ROOT +
+                self.piece.record.audio_file_format("mp3")
+            )
+
+        # Папка записи
+        audio_file_path = os.path.join(
+            str(self.piece.record.id),
+            upload_queue_path(self)
+        )
+
+        audio_dir_path = os.path.dirname(settings.MEDIA_ROOT + audio_file_path)
+
+        if not os.path.isfile(settings.MEDIA_ROOT + audio_dir_path):
+            # Создаём папку, если её не было
+            if not os.path.exists(audio_dir_path):
+                os.makedirs(audio_dir_path)
+
+            piece = as_record[
+                ((self.start_at() - offset) * 1000):
+                ((self.end_at() + offset) * 1000)
+            ]
+            piece.export(settings.MEDIA_ROOT + audio_file_path)
+
+            # Сохраняем на Амазон с3
+            self.audio_file.delete()
+            self.audio_file.save(
+                audio_file_path,
+                File(
+                    open(settings.MEDIA_ROOT + audio_file_path)
+                )
+            )
+
+            return audio_file_path
 
 
 class Payment(models.Model):
+
     """
         История платежей.
         Платежи привязаны к конкретному объекту в базе:
@@ -212,8 +324,9 @@ class Payment(models.Model):
     owner = models.ForeignKey('auth.User', related_name='user-payments')
 
 
-def create_order_payment(sender, instance, **kwargs):
-    # Берём дефолтный прайс для объекта
+def create_order_payment(sender, instance, created, **kwargs):
+    if not created:
+        return
 
     owner = instance.owner
 
@@ -237,7 +350,7 @@ def create_order_payment(sender, instance, **kwargs):
     instance.record.save()
 
 
-def create_queue_payment(sender, instance, **kwargs):
+def create_queue_payment(sender, instance, created, **kwargs):
     # Берём дефолтный прайс для объекта
 
     if not instance.completed:

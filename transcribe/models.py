@@ -37,6 +37,9 @@ class Record(AudioFile, Trash):
     """
 
     title = models.CharField(max_length=200)
+    audio_file = models.FileField(
+        max_length=255,
+        upload_to=upload_queue_path)
 
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
@@ -217,11 +220,11 @@ class Piece(models.Model):
         transcriptions_count() - количество транскрибций
     """
 
-    record = models.ForeignKey(Record)
+    record = models.ForeignKey(Record, related_name='pieces')
     start_at = models.FloatField()
     end_at = models.FloatField()
     duration = models.FloatField()
-    speaker = models.ForeignKey(Speaker, null=True)
+    speaker = models.ForeignKey(Speaker, blank=True, null=True)
 
     def transcriptions(self, empty=True):
         transcriptions = []
