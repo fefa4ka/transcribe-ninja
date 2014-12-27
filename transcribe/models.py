@@ -46,9 +46,9 @@ class Record(AudioFile, Trash):
     PROGRESS_INWORK = 1
     PROGRESS_COMPLETED = 2
     PROGRESS_CHOICES = (
-        (PROGRESS_NONE, 0),
-        (PROGRESS_INWORK, 1),
-        (PROGRESS_COMPLETED, 2)
+        (PROGRESS_NONE, 'Uploaded'),
+        (PROGRESS_INWORK, 'In progress'),
+        (PROGRESS_COMPLETED, 'Completed')
     )
     progress = models.IntegerField(
         choices=PROGRESS_CHOICES,
@@ -61,7 +61,7 @@ class Record(AudioFile, Trash):
 
 
     def __unicode__(self):
-        return "%d. %d speakers. %f sec" % (self.id, self.speakers, self.duration)
+        return "%s" % self.title
 
     def completed_percentage(self):
         """
@@ -189,8 +189,6 @@ class Record(AudioFile, Trash):
             ignore_errors=True)
 
 
-
-
 class Speaker(models.Model):
     """
         Собеседники в записи
@@ -303,7 +301,7 @@ class Transcription(models.Model):
     work_type = models.IntegerField(default=0)
     speaker = models.IntegerField(default=0)
 
-    owner = models.ForeignKey('auth.User', related_name='transcription')
+    owner = models.ForeignKey('auth.User', related_name='transcriptions')
 
 
 class Logs(models.Model):

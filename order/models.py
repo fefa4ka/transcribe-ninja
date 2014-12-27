@@ -38,6 +38,19 @@ class Price(models.Model):
 
     title = models.CharField(max_length=255)
     work_type = models.IntegerField(default=0)
+
+    WORK_TYPE_TRANCRIBE = 0
+    WORK_TYPE_CHECK = 1
+    WORK_TYPE_EDIT = 2
+    WORK_TYPE_CHOICES = (
+        (WORK_TYPE_TRANCRIBE, 'Transcribe audio piece'),
+        (WORK_TYPE_CHECK, 'Read and check transcription'),
+        (WORK_TYPE_EDIT, 'Transcription edit')
+    )
+    work_type = models.IntegerField(
+        choices=WORK_TYPE_CHOICES,
+        default=WORK_TYPE_TRANCRIBE
+    )
     price = models.FloatField()
 
     default = models.BooleanField(default=False)

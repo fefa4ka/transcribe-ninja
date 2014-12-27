@@ -32,7 +32,7 @@ class Account(models.Model):
 
     user = models.OneToOneField(User)
 
-    phone = models.CharField(max_length=50)
+    phone = models.CharField(max_length=50, null=True)
 
     rating = models.FloatField(default=0)
     balance = models.FloatField(default=0)
