@@ -54,7 +54,7 @@ admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
 
-class PieceInline(admin.StackedInline):
+class PieceInline(admin.TabularInline):
     model = Piece
     extra = 0
 
