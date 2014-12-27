@@ -61,7 +61,7 @@ class PieceInline(admin.TabularInline):
 
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
-    list_display = ('title', 'duration', 'speakers', 'progress', 'owner')
+    list_display = ('title', 'duration', 'speakers', 'pieces', 'progress', 'completed', 'owner')
 
     fieldsets = (
         (None, {
@@ -74,6 +74,12 @@ class RecordAdmin(admin.ModelAdmin):
     )
 
     inlines = [PieceInline]
+
+    def completed(self, instance):
+        return instance.completed_percentage()
+
+    def pieces(self, instance):
+        return instance.pieces.count()
 
 
 @admin.register(Price)

@@ -241,7 +241,7 @@ class Queue(AudioFile):
                 return self.piece.end_at
 
             return np.round(
-                next_piece.first.end_at
+                next_piece[0].end_at
             )
 
     def audio_file_make(self, as_record=None, offset=1.5):
