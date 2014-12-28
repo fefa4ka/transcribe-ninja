@@ -40,7 +40,7 @@ class Record(AudioFile, Trash):
     title = models.CharField(max_length=200)
     audio_file = models.FileField(
         max_length=255,
-        upload_to=upload_queue_path)
+        upload_to=upload_record_path)
 
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
@@ -65,7 +65,7 @@ class Record(AudioFile, Trash):
 
 
     def __unicode__(self):
-        return "%s" % self.title
+        return "%s" % self.title.encode('utf-8')
 
     def completed_percentage(self):
         """
@@ -204,6 +204,9 @@ class Speaker(models.Model):
     name = models.CharField(max_length=255)
     gender = models.CharField(max_length=1)
 
+    def __unicode__(self):
+        return "%s: %s" % (gender, name)
+
 
 class Piece(models.Model):
     """
@@ -334,7 +337,7 @@ class Transcription(models.Model):
     work_type = models.IntegerField(default=0)
     speaker = models.IntegerField(default=0)
 
-    queue = models.ForeignKey('order.Queue', related_name='transcriptions')
+    queue = models.ForeignKey('work.Queue', related_name='transcriptions')
 
 
 class Logs(models.Model):

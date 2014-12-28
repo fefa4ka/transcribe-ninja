@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 
 from transcribe.models import *
-from order.models import *
+from work.models import *
 
 
 class UserSerializer(serializers.ModelSerializer):

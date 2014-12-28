@@ -49,7 +49,7 @@ INSTALLED_APPS = (
     # Core
     'core',
     'transcribe',
-    'order',
+    'work',
     'django_rq',
 
     # API

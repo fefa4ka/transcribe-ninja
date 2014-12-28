@@ -6,7 +6,7 @@ from django.core.files import File
 
 from django_rq import job
 
-from order.models import *
+from work.models import *
 
 from transcribe.models import *
 

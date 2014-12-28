@@ -120,7 +120,6 @@ class Order(Trash):
 
             queue.audio_file_make(as_record=as_record)
 
-
         # Загружаем mp3 файл записи
         mp3_file_path = settings.MEDIA_ROOT + \
             self.record.audio_file_format("mp3")
@@ -215,7 +214,10 @@ class Queue(AudioFile):
 
     locked = models.DateTimeField(null=True)
 
-    owner = models.ForeignKey('auth.User', blank=True, null=True)
+    owner = models.ForeignKey('auth.User',
+                              blank=True,
+                              null=True,
+                              related_name='queue')
     completed = models.DateTimeField(null=True)
 
     def start_at(self):

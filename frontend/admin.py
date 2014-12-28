@@ -5,7 +5,7 @@ from django.contrib import admin
 
 from core.models import *
 from transcribe.models import *
-from order.models import *
+from work.models import *
 
 
 # class UserAdmin(admin.ModelAdmin):
@@ -45,9 +45,8 @@ class UserAdmin(UserAdmin):
         return instance.records.count()
 
     def transcriptions_count(self, instance):
-        return instance.transcriptions.count()
-
-
+        # Считаем количество выполненныех очередей на распознание
+        return instance.queue.filter(work_type__exact=0).count()
 
 
 admin.site.unregister(User)
@@ -91,6 +90,11 @@ class PriceAdmin(admin.ModelAdmin):
 class QueueInline(admin.TabularInline):
     model = Queue
     extra = 0
+
+    def __init__(self, *args, **kwargs):
+        super(QueueInline, self).__init__(*args, **kwargs)
+        self.fields['piece'].queryset = Piece.objects.filter(
+                           record__exact=self.instance.record) 
 
 
 @admin.register(Order)
