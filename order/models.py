@@ -85,6 +85,9 @@ class Order(Trash):
     created = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey('auth.User', related_name='user-orders')
 
+    def __unicode__(self):
+        return "%s" % self.record.title
+
     # Logic
     def make_queue(self):
         """
@@ -233,15 +236,14 @@ class Queue(AudioFile):
         # Если проверка, то провремя кусок в связке с соседним.
         elif self.work_type == self.CHECK:
             # Берём время, когда заканчивается кусок, следующий за текущим.
-            next_piece = Piece.objects.filter(
-                start_at__gte=self.piece.end_at).order_by('start_at')
+            next_piece = self.piece.next()
 
             # TODO: Если следующего нет, то ничего не делаем.
             if not next_piece:
                 return self.piece.end_at
 
             return np.round(
-                next_piece[0].end_at
+                next_piece.end_at
             )
 
     def audio_file_make(self, as_record=None, offset=1.5):
@@ -275,10 +277,20 @@ class Queue(AudioFile):
             if not os.path.exists(audio_dir_path):
                 os.makedirs(audio_dir_path)
 
-            piece = as_record[
-                ((self.start_at() - offset) * 1000):
-                ((self.end_at() + offset) * 1000)
-            ]
+            # В первой записи делаем отступ максмум до 0
+            if self.start_at() > offset:
+                start_at = (self.start_at() - offset) * 1000
+            else:
+                start_at = 0
+
+            # В последней не больше, чем длинна записи
+            if self.piece.record.duration > self.end_at() + offset:
+                end_at = self.end_at() * 1000
+            else:
+                end_at = (self.end_at() + offset) * 1000
+
+            # Вырезаем кусок и сохраняем
+            piece = as_record[start_at:end_at]
             piece.export(settings.MEDIA_ROOT + audio_file_path)
 
             # Сохраняем на Амазон с3

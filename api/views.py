@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 
@@ -21,8 +22,11 @@ from api.serializers import *
 from api.permissions import *
 from api.authentication import *
 
+# from lazysignup.decorators import allow_lazy_user
+
 
 class AuthView(APIView):
+
     """
         Класс аутентификации.
         post    - залогиниться
@@ -46,6 +50,7 @@ class AuthView(APIView):
 
 
 class CurrentUserView(APIView):
+
     """
         Информация о текущем пользователе
     """
@@ -66,6 +71,7 @@ class RecordViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
+
     """
         Обработка данных про записи.
         Список записей, Просмотр, Удаление.
@@ -75,7 +81,6 @@ class RecordViewSet(mixins.ListModelMixin,
     serializer_class = RecordSerializer
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
-
 
     def get_queryset(self):
         """
@@ -105,6 +110,7 @@ class RecordViewSet(mixins.ListModelMixin,
 
 
 class PieceViewSet(generics.ListAPIView):
+
     """
         Список кусков записи
     """
@@ -122,6 +128,7 @@ class PieceViewSet(generics.ListAPIView):
 
 
 class RecordTranscription(generics.GenericAPIView):
+
     """
         Список транскрибций для записи
         TODO: сделать
@@ -155,7 +162,8 @@ class OrderViewSet(mixins.ListModelMixin,
 
         if serializer.is_valid():
             # Продолжительность записи не может быть меньше нуля или равно ему
-            duration = float(request.data['end_at']) - float(request.data['start_at'])
+            duration = float(
+                request.data['end_at']) - float(request.data['start_at'])
 
             # TODO: разрешить стенографировать только свои записи
 
@@ -199,3 +207,39 @@ class OrderViewSet(mixins.ListModelMixin,
             Список заказов для текущего пользователя
         """
         return Order.objects.filter(owner=self.request.user)
+
+
+class QueueViewSet(APIView):
+
+    """
+        Элемент из очереди.
+        Последний выданный элемент блокируется за пользователем, и по его номеру сохраняется результат.
+
+    """
+    queryset = Queue
+
+    # @allow_lazy_user
+    def get(self, request):
+        """
+            Выдаёт случайный, приоритетный кусок на распознание.
+            Кусок не должен содержать работу текущего пользователя.
+        """
+
+        # Сбрасываем заблокированную очередь, если была
+        # Помечаем её как пропущенную, чтобы потом считать сложные
+        # и не востребованные куски
+
+
+        # Будем искать очередь, пока не выпадет кусок,
+        # над которым не работал сам пользователеб
+        while not queue:
+            queue = Queue.objects.filter(priority=True,
+                                         completed__isnull=True).order_by('?')
+
+            # Если над какой-то из частей работал этот пользователь - ищем другую часть.
+
+
+        # Блокируем очередь за пользователем  
+
+
+        return queue

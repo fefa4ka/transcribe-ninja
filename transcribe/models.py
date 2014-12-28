@@ -19,6 +19,7 @@ from core.models import *
 from core.extra import *
 
 
+
 class Record(AudioFile, Trash):
     """
     Модель записи, которую стенографируют
@@ -226,6 +227,35 @@ class Piece(models.Model):
     duration = models.FloatField()
     speaker = models.ForeignKey(Speaker, blank=True, null=True)
 
+    def __unicode__(self):
+        return "%d-%d sec" % (self.start_at, self.end_at)
+
+    def previous(self):
+        """
+            Предыдущий кусок
+        """
+
+        prev_piece = Piece.objects.filter(
+            end_at__lte=self.start_at).order_by('-end_at')
+
+        if not prev_piece:
+            return None
+
+        return prev_piece[0]
+
+    def next(self):
+        """
+            Кусок следующий после этого
+        """
+
+        next_piece = Piece.objects.filter(
+            start_at__gte=self.end_at).order_by('start_at')
+
+        if not next_piece:
+            return None
+
+        return next_piece[0]
+
     def transcriptions(self, empty=True):
         transcriptions = []
 
@@ -304,7 +334,7 @@ class Transcription(models.Model):
     work_type = models.IntegerField(default=0)
     speaker = models.IntegerField(default=0)
 
-    owner = models.ForeignKey('auth.User', related_name='transcriptions')
+    queue = models.ForeignKey('order.Queue', related_name='transcriptions')
 
 
 class Logs(models.Model):

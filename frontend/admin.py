@@ -87,6 +87,12 @@ class PriceAdmin(admin.ModelAdmin):
     list_display = ('title', 'content_type', 'price')
 
 
+
+class QueueInline(admin.TabularInline):
+    model = Queue
+    extra = 0
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('record', 'owner', 'duration', 'total', 'completed')
@@ -98,6 +104,8 @@ class OrderAdmin(admin.ModelAdmin):
             'fields': ('price', 'owner')
         }),
     )
+
+    inlines = [QueueInline]
 
     def has_add_permission(self, request):
         return False
@@ -114,10 +122,44 @@ class OrderAdmin(admin.ModelAdmin):
     def completed(self, instance):
         return instance.record.completed_percentage()
 
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ('content_object', 'owner', 'price', 'total', 'status', 'created')
+    list_filter = ('content_type', 'status')
+
+    fieldsets = (
+        ('Payment for', {
+            'fields': ('content_type', 'object_id')
+        }),
+        ('Total', {
+            'fields': ('price', 'total')
+        }),
+        ('Status', {
+            'fields': ('owner', 'status')
+        }),
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+
 @admin.register(Queue)
 class QueueAdmin(admin.ModelAdmin):
     list_display = ('record', 'start_at', 'end_at', 'duration', 'work_type', 'priority')
     list_filter = ('priority', 'work_type')
+
+    fieldsets = (
+        (None, {
+            'fields': ('order', 'piece', 'audio_file')
+        }),
+        ('Work and payment information', {
+            'fields': ('price', 'work_type', 'priority')
+        }),
+        ('Worker', {
+            'fields': ('owner', 'locked', 'completed')
+        }),
+    )
 
     def record(self, instance):
         return instance.piece.record
