@@ -193,6 +193,10 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID = 'AKIAJT4XGM5CW5RT2EHQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'transcribe-ninja'
+AWS_HEADERS = {
+    'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
+    'Cache-Control': 'max-age=2592000',
+}
 
 # Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")

@@ -65,7 +65,7 @@ class Record(AudioFile, Trash):
 
 
     def __unicode__(self):
-        return "%s" % self.title.encode('utf-8')
+        return "%s" % self.title
 
     def completed_percentage(self):
         """
@@ -205,7 +205,7 @@ class Speaker(models.Model):
     gender = models.CharField(max_length=1)
 
     def __unicode__(self):
-        return "%s: %s" % (gender, name)
+        return "%s: %s" % (self.gender, self.name)
 
 
 class Piece(models.Model):

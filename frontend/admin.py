@@ -91,10 +91,7 @@ class QueueInline(admin.TabularInline):
     model = Queue
     extra = 0
 
-    def __init__(self, *args, **kwargs):
-        super(QueueInline, self).__init__(*args, **kwargs)
-        self.fields['piece'].queryset = Piece.objects.filter(
-                           record__exact=self.instance.record) 
+    # TODO: В элементе очереди отображать только 
 
 
 @admin.register(Order)
@@ -102,12 +99,14 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('record', 'owner', 'duration', 'total', 'completed')
     fieldsets = (
         (None, {
-            'fields': ('record', 'start_at', 'end_at')
+            'fields': ('record', 'start_at', 'end_at', 'completed')
         }),
         ('Payment information', {
-            'fields': ('price', 'owner')
+            'fields': ( 'total', 'price', 'owner')
         }),
     )
+
+    readonly_fields = ('total', 'completed')
 
     inlines = [QueueInline]
 

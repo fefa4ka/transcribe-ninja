@@ -86,7 +86,7 @@ class Order(Trash):
     owner = models.ForeignKey('auth.User', related_name='user-orders')
 
     def __unicode__(self):
-        return "%s" % self.record.title
+        return "Record %d. %d-%d" % (self.record.id, self.start_at, self.end_at)
 
     # Logic
     def make_queue(self):
