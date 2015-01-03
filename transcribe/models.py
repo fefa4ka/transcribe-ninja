@@ -19,7 +19,6 @@ from core.models import *
 from core.extra import *
 
 
-
 class Record(AudioFile, Trash):
     """
     Модель записи, которую стенографируют
@@ -65,7 +64,7 @@ class Record(AudioFile, Trash):
 
 
     def __unicode__(self):
-        return "%s" % self.title
+        return "%d: %d sec" % (self.id, self.duration)
 
     def completed_percentage(self):
         """

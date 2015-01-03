@@ -1,7 +1,7 @@
 # Deploy
 from deployer.host import SSHHost, LocalHost
 
-from app import settings 
+from app import settings
 
 
 class TranscribeNinjaHost(SSHHost):
