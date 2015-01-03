@@ -58,3 +58,11 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = (
             "id", "record",
             "start_at", "end_at")
+
+
+class QueueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Queue
+        fields = (
+            "id", "audio_file",
+            "work_type")

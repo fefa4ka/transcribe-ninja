@@ -93,7 +93,7 @@ class AudioFile(models.Model):
 
         # Если папок нет - создаём
         dir_path = os.path.dirname(file_path)
-        if not os.path.exists(file_path):
+        if not os.path.exists(dir_path):
             os.makedirs(dir_path)
 
         # Скачиваем мп3

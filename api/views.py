@@ -22,6 +22,8 @@ from api.serializers import *
 from api.permissions import *
 from api.authentication import *
 
+from datetime import datetime
+
 # from lazysignup.decorators import allow_lazy_user
 
 
@@ -209,7 +211,7 @@ class OrderViewSet(mixins.ListModelMixin,
         return Order.objects.filter(owner=self.request.user)
 
 
-class QueueViewSet(APIView):
+class QueueView(APIView):
 
     """
         Элемент из очереди.
@@ -225,21 +227,52 @@ class QueueViewSet(APIView):
             Кусок не должен содержать работу текущего пользователя.
         """
 
-        # Сбрасываем заблокированную очередь, если была
-        # Помечаем её как пропущенную, чтобы потом считать сложные
-        # и не востребованные куски
+        # Сбрасываем ранее выданную очередь
+        self.unlock_queue()
 
+        # Берём задачу, связанную с кусками,
+        # над который текущий пользователь не работал
+        queue = self.get_queue()
+        serializer = QueueSerializer(
+            queue,
+            context={'request': request})
 
-        # Будем искать очередь, пока не выпадет кусок,
-        # над которым не работал сам пользователеб
-        while not queue:
-            queue = Queue.objects.filter(priority=True,
-                                         completed__isnull=True).order_by('?')
+        return Response(serializer.data)
 
-            # Если над какой-то из частей работал этот пользователь - ищем другую часть.
+    def get_queue(self):
+        queue = Queue.objects.filter(priority=True,
+                                     completed__isnull=True).order_by('?')
+        for q in queue:
+            # Если над какой-то из частей работал этот пользователь - ищем
+            # другую часть.
+            pieces = [q.piece.previous(), q.piece, q.piece.next()]
+            for piece in pieces:
+                if piece.queue.filter(completed=True, owner=self.request.user).count():
+                    queue = None
+                    break
 
+            # Если всё ок, берём очередь в работу
+            if q:
+                # Блокируем очередь за пользователем
+                q.locked = datetime.now()
+                q.owner = self.request.user
+                q.save()
 
-        # Блокируем очередь за пользователем  
+                return q
 
+        return None
 
-        return queue
+    def unlock_queue(self):
+        """
+            Сбрасываем заблокированную очередь, если была
+            Помечаем её как пропущенную, чтобы потом считать сложные
+            и не востребованные куски
+        """
+        queue = Queue.objects.filter(owner=self.request.user, completed__isnull=True)
+
+        for q in queue:
+            q.locked = None
+            q.owner = None
+            q.skipped += 1
+
+            q.save()

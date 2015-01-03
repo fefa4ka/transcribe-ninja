@@ -18,13 +18,16 @@ router.register(r'orders', views.OrderViewSet)
 urlpatterns = (
     url(r'api/', include(router.urls)),
 
-    url(r'^api/records/(?P<record_id>.+)/pieces/$',
-        views.PieceViewSet.as_view()),
+    url(r'^api/auth/',
+        views.AuthView.as_view(),
+        name='authenticate'),
 
     url(r'^api/account/',
         views.CurrentUserView.as_view()),
 
-    url(r'^api/auth/',
-        views.AuthView.as_view(),
-        name='authenticate'),
+    url(r'^api/records/(?P<record_id>.+)/pieces/$',
+        views.PieceViewSet.as_view()),
+
+    url(r'^api/queue/',
+        views.QueueView.as_view()),
 )

@@ -129,8 +129,8 @@ class Order(Trash):
 
         # Если очередь уже существует, то не даём создавать
         if self.queue.count() > 0:
-            raise QueueError("Queue for Order already exist. \n"
-                             + "Try to flush_queue before make a new.")
+            print "Queue for Order already exist. \n Try to flush_queue before make a new."
+            raise
 
         pieces = self.record.pieces.all().order_by('start_at')
 
@@ -213,6 +213,7 @@ class Queue(AudioFile):
     priority = models.BooleanField(default=False)
 
     locked = models.DateTimeField(null=True)
+    skipped = models.IntegerField(default=0)
 
     owner = models.ForeignKey('auth.User',
                               blank=True,
