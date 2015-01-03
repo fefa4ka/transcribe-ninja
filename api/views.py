@@ -247,8 +247,8 @@ class QueueView(APIView):
             # другую часть.
             pieces = [q.piece.previous(), q.piece, q.piece.next()]
             for piece in pieces:
-                if piece.queue.filter(completed=True, owner=self.request.user).count():
-                    queue = None
+                if piece.queue.filter(completed=True, owner=self.request.user).count() > 0:
+                    q = None
                     break
 
             # Если всё ок, берём очередь в работу
