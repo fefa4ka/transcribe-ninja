@@ -4,8 +4,6 @@
 from deployer.node import Node
 from deployer.utils import esc1
 
-from app import settings
-
 
 class DjangoDeployment(Node):
     activate_cmd = '. ~/bin/activate'

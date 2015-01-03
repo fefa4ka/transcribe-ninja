@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from django.db import connection
+
+
 from deployer.client import start
 
 from deployer.node import Node

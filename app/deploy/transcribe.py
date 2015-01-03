@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# from django.db import connection
+
 from deployer.node import Node, map_roles
 from deployer.utils import esc1
 
@@ -22,14 +24,11 @@ class TranscribeNinjaSystem(Node):
     @map_roles(host='engine')
     class Supervisor(UpstartService):
         name = 'supervisor'
-        config = '/etc/supervisor/conf.d/transcribe.confё'
+        config = '/etc/supervisor/conf.d/transcribe.conf'
 
     @map_roles(host='database')
     class Database(UpstartService):
         name = 'mysql'
-
-        def reset(self):
-            pass
 
     @map_roles(host='database')
     class Queue(UpstartService):
@@ -71,6 +70,10 @@ class TranscribeNinjaSystem(Node):
 
         def update(self):
             self.git_pull()
+
+        def reset_db(self):
+            self.run_management_command('reset')
+            self.run_management_command('syncdb')
 
     def deploy(self):
         self.Git.pull()
