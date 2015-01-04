@@ -258,7 +258,7 @@ class Piece(models.Model):
 
         return next_piece[0]
 
-    def transcriptions(self, empty=True):
+    def g_transcriptions(self, empty=True):
         transcriptions = []
 
         p_transcriptions = Transcription.objects.filter(
@@ -329,7 +329,7 @@ class Transcription(models.Model):
         owner       - кто это сделал
     """
 
-    piece = models.ForeignKey(Piece)
+    piece = models.ForeignKey(Piece, related_name='transcriptions')
     index = models.IntegerField(default=0)
     text = models.TextField()
 

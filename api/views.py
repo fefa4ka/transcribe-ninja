@@ -11,8 +11,9 @@ from rest_framework import mixins
 from rest_framework import status
 
 from rest_framework.views import APIView
-
 from rest_framework.response import Response
+
+import rest_framework_bulk.mixins
 
 import core.async_jobs
 
@@ -241,13 +242,15 @@ class QueueView(APIView):
 
     def get_queue(self):
         queue = Queue.objects.filter(priority=True,
+                                     locked__isnull=True,
                                      completed__isnull=True).order_by('?')
         for q in queue:
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
             pieces = [q.piece.previous(), q.piece, q.piece.next()]
+
             for piece in pieces:
-                if piece.queue.filter(completed=True, owner=self.request.user).count() > 0:
+                if piece.queue.filter(completed__isnull=False, owner=self.request.user).count():
                     q = None
                     break
 
@@ -268,7 +271,8 @@ class QueueView(APIView):
             Помечаем её как пропущенную, чтобы потом считать сложные
             и не востребованные куски
         """
-        queue = Queue.objects.filter(owner=self.request.user, completed__isnull=True)
+        queue = Queue.objects.filter(
+            owner=self.request.user, completed__isnull=True)
 
         for q in queue:
             q.locked = None
@@ -276,3 +280,19 @@ class QueueView(APIView):
             q.skipped += 1
 
             q.save()
+
+
+class TranscriptionViewSet(rest_framework_bulk.mixins.BulkCreateModelMixin,
+                           viewsets.ModelViewSet):
+
+    """
+        Обработка данных про транскрибции.
+        Список транскрибций, добавление.
+
+    """
+
+    model = Transcription
+    queryset = Transcription.objects.all()
+    serializer_class = TranscriptionSerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)

@@ -13,6 +13,8 @@ router = DefaultRouter()
 router.register(r'records', views.RecordViewSet)
 router.register(r'orders', views.OrderViewSet)
 
+router.register(r'transcriptions', views.TranscriptionViewSet)
+
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browseable API.
 urlpatterns = (
@@ -30,4 +32,5 @@ urlpatterns = (
 
     url(r'^api/queue/',
         views.QueueView.as_view()),
+
 )

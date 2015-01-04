@@ -192,7 +192,20 @@ class Queue(AudioFile):
 
     """
     order = models.ForeignKey(Order, related_name='queue')
+
     piece = models.ForeignKey(Piece, related_name='queue')
+
+    def set_pieces(self, val):
+        self._piece = val
+
+    def get_pieces(self):
+        if self.work_type == self.CHECK:
+            return [self.piece, self.piece.next()]
+        else:
+            return [self.piece]
+
+    pieces = property(get_pieces, set_pieces)
+
     audio_file = models.FileField(
         max_length=255,
         upload_to=upload_queue_path)
@@ -220,6 +233,12 @@ class Queue(AudioFile):
                               null=True,
                               related_name='queue')
     completed = models.DateTimeField(null=True)
+
+
+
+
+    def __unicode__(self):
+        return "%d: %d-%d sec" % (self.id, self.start_at(), self.end_at())
 
     def start_at(self):
         """

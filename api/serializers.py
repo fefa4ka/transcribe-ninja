@@ -28,8 +28,29 @@ class UserSerializer(serializers.ModelSerializer):
             "records")
 
 
+class TranscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transcription
+        fields = (
+            "piece", "queue",
+            "index", "text")
+
+
+class PieceSerializer(serializers.ModelSerializer):
+    transcriptions = TranscriptionSerializer(many=True)
+
+    class Meta:
+        model = Piece
+        fields = (
+            "id",
+            "start_at", "end_at", "duration",
+            "speaker",
+            "transcriptions")
+
+
 class RecordSerializer(serializers.ModelSerializer):
     completed = serializers.ReadOnlyField(source='completed_percentage')
+    pieces = PieceSerializer(many=True)
 
     class Meta:
         model = Record
@@ -37,19 +58,12 @@ class RecordSerializer(serializers.ModelSerializer):
             "id",
             "title", "audio_file",
             "duration",
-            "completed", "progress")
+            "completed", "progress",
+            "pieces")
+
 
     def file_name_mp3(self, obj):
         return obj.file_name_format('mp3')
-
-
-class PieceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Piece
-        fields = (
-            "id",
-            "start_at", "end_at", "duration",
-            "speaker")
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -61,8 +75,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class QueueSerializer(serializers.ModelSerializer):
+    pieces = PieceSerializer(many=True)
+
     class Meta:
         model = Queue
         fields = (
             "id", "audio_file",
-            "work_type")
+            "work_type", "pieces")

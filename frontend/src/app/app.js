@@ -85,7 +85,16 @@ angular.module( 'transcribe-ninja', [
 
     account: $resource('/api/account/', {}, {
       get: {
-          method: 'GET'
+        method: 'GET'
+      }
+    }),
+
+    queue: $resource('/api/queue/', {}, {
+      get: {
+        method: 'GET'
+      },
+      create: {
+        method: 'POST'
       }
     }),
 

@@ -10,6 +10,7 @@ pydub==0.9.5
 boto
 django-storages
 django-s3-folder-storage
+djangorestframework-bulk==0.1.3
 
 # sudo apt-add-repository ppa:jon-severinsson/ffmpeg 
 # sudo add-apt-repository ppa:gstreamer-developers/ppa
