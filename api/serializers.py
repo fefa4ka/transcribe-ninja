@@ -28,13 +28,34 @@ class UserSerializer(serializers.ModelSerializer):
             "records")
 
 
-class TranscriptionSerializer(serializers.ModelSerializer):
+class TranscriptionQueueSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        many = kwargs.pop('many', True)
+        super(TranscriptionQueueSerializer, self).__init__(many=many, *args, **kwargs)
+
     class Meta:
         model = Transcription
         fields = (
             "piece", "queue",
             "index", "text")
 
+    def validate(self, data):
+        """
+        Check that the start is before the stop.
+        """
+        print data["text"]
+
+        if data["text"] == "hui":
+            raise serializers.ValidationError("Blog post is not about Django")
+        return data
+
+class TranscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Transcription
+        fields = (
+            "start_at", "end_at",
+            "piece", "index",
+            "text")
 
 class PieceSerializer(serializers.ModelSerializer):
     transcriptions = TranscriptionSerializer(many=True)
@@ -50,7 +71,8 @@ class PieceSerializer(serializers.ModelSerializer):
 
 class RecordSerializer(serializers.ModelSerializer):
     completed = serializers.ReadOnlyField(source='completed_percentage')
-    pieces = PieceSerializer(many=True)
+    # pieces = PieceSerializer(many=True)
+    transcriptions = TranscriptionSerializer(many=True)
 
     class Meta:
         model = Record
@@ -59,7 +81,7 @@ class RecordSerializer(serializers.ModelSerializer):
             "title", "audio_file",
             "duration",
             "completed", "progress",
-            "pieces")
+            "transcriptions")
 
 
     def file_name_mp3(self, obj):

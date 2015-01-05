@@ -20,6 +20,7 @@ from core.extra import *
 
 
 class Record(AudioFile, Trash):
+
     """
     Модель записи, которую стенографируют
 
@@ -62,7 +63,22 @@ class Record(AudioFile, Trash):
     owner = models.ForeignKey('auth.User', related_name='records')
     created = models.DateTimeField(auto_now=True)
 
+    # Список транскрибций
+    def get_transcriptions(self, empty=True):
+        """
+            Список транскрибций
+        """
+        transcriptions = []
 
+        # Собираем транскрипции с  отсортированных по порядку кусков
+        for piece in self.pieces.all():
+            transcriptions += piece.transcriptions.all().order_by('index')
+
+        return transcriptions
+
+    transcriptions = property(get_transcriptions)
+
+    # Не отображать в названии utf-8, потому что django-rq ругается
     def __unicode__(self):
         return "%d: %d sec" % (self.id, self.duration)
 
@@ -71,35 +87,26 @@ class Record(AudioFile, Trash):
             Какой процент записи распознан
         """
         # Узнаём длинну частей, которые нужно стенографировать
-        duration = np.sum([p.duration for p in self.g_pieces()])
+        duration = np.sum([p.duration for p
+                           in self.pieces.all().order_by('start_at')])
 
         # Сколько секунд уже стенографировали
+        # completed_duration = np.sum(
+        #     [t['duration'] for t in self.transcriptions(empty=False)])
+        from django.db.models import Count
+
+        completed_pieces = self.pieces\
+            .annotate(transcriptions_count=Count('transcriptions'))\
+            .filter(transcriptions_count__gt=0)
+
         completed_duration = np.sum(
-            [t['duration'] for t in self.transcriptions(empty=False)])
+            [piece.end_at - piece.start_at for piece in completed_pieces])
 
         # Если у нас есть все данные, считаем сколько процентов готово
         if duration > 0 and completed_duration > 0:
             return int((100 / duration) * completed_duration)
         else:
             return 0
-
-    def g_pieces(self):
-        """
-            Части в порядке возрастания
-        """
-        return Piece.objects.filter(record=self).order_by('start_at')
-
-    def transcriptions(self, empty=True):
-        """
-            Список транскрибций
-        """
-        transcriptions = []
-
-        # Собираем транскрипции с  отсортированных по порядку кусков
-        for piece in self.g_pieces():
-            transcriptions += piece.transcriptions(empty=empty)
-
-        return transcriptions
 
     def speed(self):
         """
@@ -193,6 +200,7 @@ class Record(AudioFile, Trash):
 
 
 class Speaker(models.Model):
+
     """
         Собеседники в записи
 
@@ -208,6 +216,7 @@ class Speaker(models.Model):
 
 
 class Piece(models.Model):
+
     """
         Часть записи
 
@@ -237,26 +246,30 @@ class Piece(models.Model):
             Предыдущий кусок
         """
 
-        prev_piece = Piece.objects.filter(
+        piece = Piece.objects.filter(
             end_at__lte=self.start_at).order_by('-end_at')
 
-        if not prev_piece:
+        if not piece:
             return None
 
-        return prev_piece[0]
+        return piece[0]
 
     def next(self):
         """
             Кусок следующий после этого
         """
 
-        next_piece = Piece.objects.filter(
+        piece = Piece.objects.filter(
             start_at__gte=self.end_at).order_by('start_at')
 
-        if not next_piece:
+        if not piece:
             return None
 
-        return next_piece[0]
+        return piece[0]
+
+    def letters_per_sec(self):
+        return self.duration / \
+            np.sum([len(t.text) for t in self.transcriptions.all()])
 
     def g_transcriptions(self, empty=True):
         transcriptions = []
@@ -312,6 +325,7 @@ class Piece(models.Model):
 
 
 class Transcription(models.Model):
+
     """
         Транскрипция. Относится к какому-то куску.
         Транскрипций для куска может быть несколько.
@@ -338,8 +352,50 @@ class Transcription(models.Model):
 
     queue = models.ForeignKey('work.Queue', related_name='transcriptions')
 
+    def get_start_at(self):
+        return self.piece.start_at if self.index == 0\
+            else self.previous().end_at
+
+    def set_start_at(self, val):
+        pass
+
+    start_at = property(get_start_at, set_start_at)
+
+    def get_end_at(self):
+        return self.start_at + len(self.text) * self.piece.letters_per_sec()
+
+    def set_end_at(self, val):
+        pass
+
+    end_at = property(get_end_at, set_end_at)
+
+    def previous(self):
+        """
+            Предыдущий кусок
+        """
+
+        transcription = Transcription.objects.filter(piece=self.piece, index__exact=self.index - 1)
+
+        if not transcription:
+            return None
+
+        return transcription[0]
+
+    def next(self):
+        """
+            Кусок следующий после этого
+        """
+
+        transcription = Transcription.objects.filter(piece=self.piece, index__exact=self.index + 1)
+
+        if not transcription:
+            return None
+
+        return transcription[0]
+
 
 class Logs(models.Model):
+
     """
         Логи о том, как делали транскрибцию.
 

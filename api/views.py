@@ -282,8 +282,7 @@ class QueueView(APIView):
             q.save()
 
 
-class TranscriptionViewSet(rest_framework_bulk.mixins.BulkCreateModelMixin,
-                           viewsets.ModelViewSet):
+class TranscriptionViewSet(viewsets.ModelViewSet):
 
     """
         Обработка данных про транскрибции.
@@ -293,6 +292,18 @@ class TranscriptionViewSet(rest_framework_bulk.mixins.BulkCreateModelMixin,
 
     model = Transcription
     queryset = Transcription.objects.all()
-    serializer_class = TranscriptionSerializer
+    serializer_class = TranscriptionQueueSerializer
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
+
+    def create(self, request, *args, **kwargs):
+        # Каждая транскрипция связанна с каким-то заказом, либо
+        # queue = Queue.objects.get(id=request.DATA['queue'], owner=request.user)
+
+        serializer = self.get_serializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

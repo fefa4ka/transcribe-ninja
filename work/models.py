@@ -196,7 +196,7 @@ class Queue(AudioFile):
     piece = models.ForeignKey(Piece, related_name='queue')
 
     def set_pieces(self, val):
-        self._piece = val
+        self.piece = val
 
     def get_pieces(self):
         if self.work_type == self.CHECK:

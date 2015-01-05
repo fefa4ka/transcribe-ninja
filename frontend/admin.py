@@ -58,6 +58,10 @@ class PieceInline(admin.TabularInline):
     extra = 0
 
 
+class TranscriptionInline(admin.TabularInline):
+    model = Transcription
+    extra = 0
+
 @admin.register(Record)
 class RecordAdmin(admin.ModelAdmin):
     list_display = ('title', 'duration', 'speakers', 'pieces', 'progress', 'completed', 'owner')
