@@ -14,7 +14,7 @@ $.fn.selectRange = function(start, end) {
     });
 };
 
-angular.module( 'transcribe-ninja.record', [
+angular.module( 'transcribe-ninja.work', [
   'transcribe-ninja.order',
   'ui.router',
   'cfp.hotkeys'
@@ -141,7 +141,7 @@ angular.module( 'transcribe-ninja.record', [
     if($input.is('textarea') == false || $input.val() == "") {
       return;
     }
-    
+
     // Если курсор в самом начале, и предыдущая пустая, то ничего не делаем
 
     // Если разделяем существующую транскрипцию

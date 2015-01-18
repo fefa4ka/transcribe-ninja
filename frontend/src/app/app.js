@@ -6,6 +6,7 @@ angular.module( 'transcribe-ninja', [
   'transcribe-ninja.record',
   'transcribe-ninja.record.list',
   'transcribe-ninja.record.upload',
+  'transcribe-ninja.work',
 
   'ui.router',
   'ui.bootstrap',
