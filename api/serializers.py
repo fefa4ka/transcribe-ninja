@@ -43,10 +43,16 @@ class TranscriptionQueueSerializer(serializers.ModelSerializer):
         """
         Check that the start is before the stop.
         """
-        print data["text"]
 
-        if data["text"] == "hui":
-            raise serializers.ValidationError("Blog post is not about Django")
+        if not data["queue"].locked:
+            raise serializers.ValidationError("You are not in queue")
+
+        if data["queue"].completed:
+            raise serializers.ValidationError("Queue already completed")
+
+        if not data["piece"] in data["queue"].pieces:
+            raise serializers.ValidationError("Piece not in queue")
+
         return data
 
 class TranscriptionSerializer(serializers.ModelSerializer):

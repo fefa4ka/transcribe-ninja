@@ -13,6 +13,7 @@ router = DefaultRouter()
 router.register(r'records', views.RecordViewSet)
 router.register(r'orders', views.OrderViewSet)
 
+router.register(r'queue', views.QueueViewSet)
 router.register(r'transcriptions', views.TranscriptionViewSet)
 
 # The API URLs are now determined automatically by the router.
@@ -30,7 +31,7 @@ urlpatterns = (
     url(r'^api/records/(?P<record_id>.+)/pieces/$',
         views.PieceViewSet.as_view()),
 
-    url(r'^api/queue/',
-        views.QueueView.as_view()),
+    # url(r'^api/queue/',
+    #     views.QueueView.as_view()),
 
 )

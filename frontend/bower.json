@@ -14,7 +14,8 @@
     "angular-bootstrap": "~0.10.0",
     "angular-ui-router": "~0.2",
     "wavesurfer.js": "*",
-    "peaks.js": "*"
+    "peaks.js": "*",
+    "jquery-autosize": "1.18.17"
   },
   "dependencies": {}
 }

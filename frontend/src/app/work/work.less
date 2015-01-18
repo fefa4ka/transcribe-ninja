@@ -1,9 +1,3 @@
-.record_detail__path {
-     margin-bottom: 7px;
-
-     fon-size: 16px;
-}
-
 #player {
     position: absolute;
     left: 0;
@@ -23,17 +17,6 @@
     margin-left: -15px;
 }
 
-.record_detail-list {
-    margin-top: 20px;
-    
-    font-weight: 300;
-
-    .label {
-        font-weight: 100;
-        font-size: 12px;
-    }
-}
-
 .btn-circle {
     width: 40px;
     height: 40px;
@@ -42,4 +25,48 @@
     font-size: 12px;
     line-height: 1.42;
     border-radius: 20px;
+}
+
+.instruction {
+    font-size: 18px;
+    margin: 10px 0;
+    
+    p {
+        font-size: 14px;
+    }
+
+    .green {
+        background: rgba(183,211,170,0.2);
+    }
+}
+.transcription {
+  margin-top: 20px;
+}
+
+ul.queue-transcriptions {
+  list-style: none;
+  padding-left: 0;
+    
+  font-size: 20px;
+
+    li {
+      text-indent: -1em;
+
+      textarea {
+        width: 100%;
+
+        padding-left: 10px;
+      }
+    }
+
+    li:before {
+      content: "—";
+      padding-right: 5px;
+      font-size: 27px;
+      padding-left: 10px;
+
+      vertical-align: top;
+
+      margin-left: -22px;
+    }
 }

@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-import rest_framework_bulk.mixins
+# import rest_framework_bulk.mixins
 
 import core.async_jobs
 
@@ -212,17 +212,17 @@ class OrderViewSet(mixins.ListModelMixin,
         return Order.objects.filter(owner=self.request.user)
 
 
-class QueueView(APIView):
+class QueueViewSet(viewsets.ViewSet):
 
     """
         Элемент из очереди.
         Последний выданный элемент блокируется за пользователем, и по его номеру сохраняется результат.
 
     """
-    queryset = Queue
+    model = Queue
 
     # @allow_lazy_user
-    def get(self, request):
+    def list(self, request):
         """
             Выдаёт случайный, приоритетный кусок на распознание.
             Кусок не должен содержать работу текущего пользователя.
@@ -300,10 +300,13 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # Каждая транскрипция связанна с каким-то заказом, либо
         # queue = Queue.objects.get(id=request.DATA['queue'], owner=request.user)
 
-        serializer = self.get_serializer(data=request.data, many=True)
-        if serializer.is_valid():
+        for data in request.data:
+            serializer = self.get_serializer(data=data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        for data in request.data:
+            serializer = self.get_serializer(data=data)
             serializer.save()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
