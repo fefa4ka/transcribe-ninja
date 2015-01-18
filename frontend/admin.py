@@ -168,6 +168,8 @@ class QueueAdmin(admin.ModelAdmin):
         }),
     )
 
+    inlines = [TranscriptionInline]
+
     def record(self, instance):
         return instance.piece.record
 

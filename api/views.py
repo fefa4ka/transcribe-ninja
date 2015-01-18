@@ -307,6 +307,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
         for data in request.data:
             serializer = self.get_serializer(data=data)
-            serializer.save()
+            if serializer.is_valid():
+                serializer.save()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({ 'done': 'ok' }, status=status.HTTP_201_CREATED)

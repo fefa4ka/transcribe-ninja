@@ -98,6 +98,15 @@ angular.module( 'transcribe-ninja', [
       }
     }),
 
+    transcription: $resource('/api/transcriptions\\/:transcriptionId', { transcriptionId: '@id' }, {
+      list: {
+        method: 'GET'
+      },
+      create: {
+        method: 'POST'
+      }
+    }),
+
     record: $resource('/api/records/:recordId', { recordId: '@id'}, {
       list: {
         method: 'GET',
@@ -125,13 +134,6 @@ angular.module( 'transcribe-ninja', [
       create: {
         method: 'POST',
         isArray: false
-      }
-    }),
-
-    transcription: $resource('/api/records/:recordId/pieces/', { recordId: '@id'}, {
-      list: {
-        method: 'GET',
-        isArray: true
       }
     })
   };

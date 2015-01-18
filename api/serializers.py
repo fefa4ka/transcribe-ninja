@@ -43,7 +43,7 @@ class TranscriptionQueueSerializer(serializers.ModelSerializer):
         """
         Check that the start is before the stop.
         """
-
+        print data["queue"].locked
         if not data["queue"].locked:
             raise serializers.ValidationError("You are not in queue")
 
