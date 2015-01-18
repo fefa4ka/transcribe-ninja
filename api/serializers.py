@@ -78,7 +78,7 @@ class PieceSerializer(serializers.ModelSerializer):
 class RecordSerializer(serializers.ModelSerializer):
     completed = serializers.ReadOnlyField(source='completed_percentage')
     # pieces = PieceSerializer(many=True)
-    transcriptions = TranscriptionSerializer(many=True)
+    # transcriptions = TranscriptionSerializer(many=True)
 
     class Meta:
         model = Record
@@ -86,8 +86,7 @@ class RecordSerializer(serializers.ModelSerializer):
             "id",
             "title", "audio_file",
             "duration",
-            "completed", "progress",
-            "transcriptions")
+            "completed", "progress")
 
 
     def file_name_mp3(self, obj):
