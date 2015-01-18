@@ -10,7 +10,7 @@ angular.module( 'transcribe-ninja.order', [
     $scope.record = record;
 
     $scope.cancel = function () {
-    $modalInstance.dismiss('cancel');
+        $modalInstance.dismiss('cancel');
     };
 
     $scope.order = function (record) {
@@ -19,6 +19,8 @@ angular.module( 'transcribe-ninja.order', [
             start_at: 0,
             end_at: record.duration
         });
+
+        $modalInstance.dismiss();
     };
 
 })

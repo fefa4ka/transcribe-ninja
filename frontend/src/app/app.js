@@ -24,7 +24,6 @@ angular.module( 'transcribe-ninja', [
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
   $urlRouterProvider.otherwise( '/upload' );
 
-
 })
 .config(function($translateProvider) {
     $translateProvider.translations('ru', {
@@ -56,14 +55,7 @@ angular.module( 'transcribe-ninja', [
 
 
 // API 
-// auth
-//   .login
-//   .logout
-// .account
-// .records
-//   .get
-//   .list
-// .transcription
+
 .factory('api', function($http, $resource){
   function add_auth_header(data, headersGetter){
     // as per HTTP authentication spec [1], credentials must be
