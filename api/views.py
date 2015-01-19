@@ -241,15 +241,17 @@ class QueueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_queue(self):
-        queue = Queue.objects.filter(priority=True,
-                                     locked__isnull=True,
-                                     completed__isnull=True).order_by('?')
+        queue = Queue.objects.filter(piece_id=2).order_by('?')
         for q in queue:
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
             pieces = [q.piece.previous(), q.piece, q.piece.next()]
 
             for piece in pieces:
+                # Каких-то кусков может не быть
+                if not piece:
+                    continue
+
                 if piece.queue.filter(completed__isnull=False, owner=self.request.user).count():
                     q = None
                     break
@@ -298,16 +300,34 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         # Каждая транскрипция связанна с каким-то заказом, либо
-        # queue = Queue.objects.get(id=request.DATA['queue'], owner=request.user)
+        queue = Queue.objects.get(id=request.data[0]['queue'], owner=request.user)
 
         for data in request.data:
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+            if data['queue'] != queue.id:
+                return Response( { 'error': 'Queue should be the same' }, status=status.HTTP_400_BAD_REQUEST)
+
         for data in request.data:
             serializer = self.get_serializer(data=data)
             if serializer.is_valid():
                 serializer.save()
+
+        # Помечаем очередь как прочитанную
+        queue.completed = datetime.now()
+        queue.save()
+
+        # Делаем следующий кусок приоритетным, если необходимо
+        next_queue = Queue.objects.filter(piece=queue.piece.next(), priority=False, completed=False)
+
+        if next_queue:
+            next_queue.priority = True
+            next_queue.save()
+
+        # Если предыдущий кусок тоже готов, то для него делаем проверку
+
+        # Если следующий кусок тоже готов, то для текущего делаем проверку
 
         return Response({ 'done': 'ok' }, status=status.HTTP_201_CREATED)

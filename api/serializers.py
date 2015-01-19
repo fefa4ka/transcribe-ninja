@@ -103,9 +103,14 @@ class OrderSerializer(serializers.ModelSerializer):
 
 class QueueSerializer(serializers.ModelSerializer):
     pieces = PieceSerializer(many=True)
+    price = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='price')
 
     class Meta:
         model = Queue
         fields = (
             "id", "audio_file",
-            "work_type", "pieces")
+            "work_type", "price",
+            "previous_part", "next_part",
+            "pieces")

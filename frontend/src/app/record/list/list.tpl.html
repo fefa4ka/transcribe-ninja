@@ -19,12 +19,12 @@
         <h2>В работе</h2>
 
         <ul>
-            <li ng-repeat="record in records | filter : { completed_percentage: '!100' }" 
+            <li ng-repeat="record in records | filter : { completed: '!100' }" 
                 ng-mouseenter="show = true" 
                 ng-mouseleave="show = false" 
                 ng-hide="record.trashed_at > 0">
                 <div class="progress records_list__progress">
-                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ record.completed_percentage }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ record.completed_percentage }}%">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ record.completed }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ record.completed }}%">
                         <span class="sr-only"></span>
                     </div>
                 </div>

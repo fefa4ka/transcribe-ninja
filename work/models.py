@@ -268,6 +268,48 @@ class Queue(AudioFile):
                 next_piece.end_at
             )
 
+    @property
+    def previous_part(self):
+        # Если распознана предыдущая часть, даём три последних слова
+        if self.piece.previous() and self.piece.previous().transcriptions.count() > 0:
+            last_transcription = self.piece.previous().transcriptions.all().last().text.split(" ")
+
+            index = 0 if len(last_transcription) < 3 else len(last_transcription) - 3
+
+            return " ".join(last_transcription[index:len(last_transcription)])
+        else:
+            return ""
+
+    @property
+    def next_part(self):
+        # Если распознана следующая часть, то даём три первых слова
+        if self.piece.next() and self.piece.next().transcriptions.count() > 0:
+            last_transcription = self.piece.next().transcriptions.all().first().text.split(" ")
+
+            index = len(last_transcription) if len(last_transcription) < 3 else 3
+
+            return " ".join(last_transcription[0:index])
+        else:
+            return ""
+
+    def total_price(self):
+        # Считаем длинну всей транскрипции
+        length = 0
+        for piece in self.pieces:
+            for transcription in piece.transcriptions.all():
+                length += len(transcription.text)
+
+        # Если стенографирование, то считаем за символ
+        if self.work_type == self.TRANSCRIBE:
+            return length * self.price.price
+        # Если проверка. То отдельно за проверку и за каждое исправление
+        else:
+            # TODO: Считаем разницу
+            diff_price = 0
+
+            return self.price.price + diff_price
+
+
     def audio_file_make(self, as_record=None, offset=1.5):
         """
             Создаёт вырезанный кусок в mp3
@@ -394,7 +436,7 @@ def create_queue_payment(sender, instance, created, **kwargs):
 
     price = instance.price
 
-    total = 0
+    total = instance.total_price()
 
     payment = Payment(
         content_object=instance,

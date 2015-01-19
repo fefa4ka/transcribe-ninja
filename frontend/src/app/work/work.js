@@ -132,6 +132,14 @@ angular.module( 'transcribe-ninja.work', [
     });
   };
 
+  $scope.earnMoneyValue = function () {
+    var length = 0;
+
+    $('textarea').each(function(index) { length += $(this).val().length } );
+
+    return length * $scope.queue.price;
+  };
+
   $scope.applyTranscriptionChange = function ($input) {
     var text = $input.val()
           index = 0;
