@@ -69,6 +69,7 @@ angular.module( 'transcribe-ninja.work', [
   hotkeys.bindTo($scope).add({
       combo: 'esc',
       description: 'Play or pause',
+      allowIn: ['TEXTAREA'],
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.playPause();
@@ -77,6 +78,7 @@ angular.module( 'transcribe-ninja.work', [
   add({
       combo: 'alt+left',
       description: 'Backward',
+      allowIn: ['TEXTAREA'],
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.skipBackward();
@@ -85,6 +87,7 @@ angular.module( 'transcribe-ninja.work', [
   add({
       combo: 'alt+right',
       description: 'Forward',
+      allowIn: ['TEXTAREA'],
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.skipForward();
@@ -112,9 +115,12 @@ angular.module( 'transcribe-ninja.work', [
 
     $scope.applyTranscriptionChange($('#new-transcription'));
 
+    // Для красоты убираем текстариа
+    $("#new-transcription").parent().hide();
+
     for(var p_index in $scope.queue.pieces) {
       var piece = $scope.queue.pieces[p_index];
-
+      console.log(piece);
       for (var t_index in piece.transcriptions) {
         var transcription = piece.transcriptions[t_index];
 
@@ -129,6 +135,7 @@ angular.module( 'transcribe-ninja.work', [
 
     api.transcription.create(transcriptions, function () {
       $scope.loadQueue();
+      $("#new-transcription").parent().show();
     });
   };
 
@@ -184,7 +191,7 @@ angular.module( 'transcribe-ninja.work', [
       piece = $scope.queue.pieces[$scope.queue.pieces.length-1];
       index = (piece.transcriptions && piece.transcriptions.length) || 0;
 
-      if($input[0].selectionStart == $input.val().length ) {
+      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart == 0) {
         piece.transcriptions.push({
           piece: piece.id,
           text: text
@@ -220,22 +227,60 @@ angular.module( 'transcribe-ninja.work', [
       $scope.applyTranscriptionChange($input);
     }
   })
-  .add({
-    combo: 'backspace',
-    description: 'Join',
-    allowIn: ['TEXTAREA'],
-    callback: function(event, hotkey) {
-      var $input = $(event.target),
-          text = $input.val(),
-          index = $input.data('index');
-      
-      // Если событие произошло не в инпуте иил инпут пустой
-      if($input.is('textarea') == false || index == 0 || typeof index == "undefined") {
-        return;
-      }
+    .add({
+      combo: 'backspace',
+      description: 'Join',
+      allowIn: ['TEXTAREA'],
+      callback: function(event, hotkey) {
+        var $input = $(event.target),
+            text = $input.val(),
+            index = $input.data('index');
+        
+        // Если событие произошло не в инпуте иил инпут пустой
+        if($input.is('textarea') == false || index == 0 || typeof index == "undefined") {
+          return;
+        }
 
-      if($input[0].selectionStart == 0) {
-        event.preventDefault();
+        if($input[0].selectionStart == 0) {
+          event.preventDefault();
+
+          // Ищем кусок с нужным айди
+          for(index in $scope.queue.pieces) {
+            piece = $scope.queue.pieces[index];
+            if (piece.id == $input.data('piece')) {
+              break;
+            }
+          }
+
+          index = $input.data('index') - 1;
+          // К предыдущей добавляем содержание текущией
+          $previous_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
+          length = $previous_input.val().length;
+
+          $previous_input.val( $previous_input.val() + $input.val() );
+
+          $previous_input.focus();
+          // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
+          $previous_input.selectRange(length);
+
+          // Удаляем текущую
+          piece.transcriptions.splice(index + 1, 1);
+        }
+
+      }
+    }).add({
+      combo: 'down',
+      description: 'Next',
+      allowIn: ['TEXTAREA'],
+      callback: function(event, hotkey) {
+        var $input = $(event.target),
+            text = $input.val(),
+            index = $input.data('index');
+        
+        // Если событие произошло не в инпуте иил инпут пустой
+        if($input.is('textarea') == false) {
+          return;
+        }
 
         // Ищем кусок с нужным айди
         for(index in $scope.queue.pieces) {
@@ -245,108 +290,70 @@ angular.module( 'transcribe-ninja.work', [
           }
         }
 
-        index = $input.data('index') - 1;
+        index = $input.data('index') + 1;
+        
         // К предыдущей добавляем содержание текущией
-        $previous_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
-        length = $previous_input.val().length;
+        $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
+        
+        if($next_input.length == 0) {
+          $next_input = $('#new-transcription');
+        }
 
-        $previous_input.val( $previous_input.val() + $input.val() );
-
-        $previous_input.focus();
-        // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
-        $previous_input.selectRange(length);
-
-        // Удаляем текущую
-        piece.transcriptions.splice(index + 1, 1);
-      }
+        if($input[0].selectionStart == $input.val().length) {
+          $next_input.focus();
+          $next_input.selectRange(0);
+        }
 
     }
   }).add({
-    combo: 'down',
-    description: 'Next',
-    allowIn: ['TEXTAREA'],
-    callback: function(event, hotkey) {
-      var $input = $(event.target),
-          text = $input.val(),
-          index = $input.data('index');
-      
-      // Если событие произошло не в инпуте иил инпут пустой
-      if($input.is('textarea') == false) {
-        return;
-      }
-
-      // Ищем кусок с нужным айди
-      for(index in $scope.queue.pieces) {
-        piece = $scope.queue.pieces[index];
-        if (piece.id == $input.data('piece')) {
-          break;
+      combo: 'up',
+      description: 'Previous',
+      allowIn: ['TEXTAREA'],
+      callback: function(event, hotkey) {
+        var $input = $(event.target),
+            text = $input.val(),
+            index = $input.data('index');
+        
+        // Если событие произошло не в инпуте иил инпут пустой
+        if($input.is('textarea') == false) {
+          return;
         }
-      }
 
-      index = $input.data('index') + 1;
-      
-      // К предыдущей добавляем содержание текущией
-      $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
-      
-      if($next_input.length == 0) {
-        $next_input = $('#new-transcription');
-      }
+        // Ищем кусок с нужным айди
+        for(index in $scope.queue.pieces) {
+          piece = $scope.queue.pieces[index];
 
-      if($input[0].selectionStart == $input.val().length) {
-        $next_input.focus();
-        $next_input.selectRange(0);
-      }
+          if(index == 0) {
+            previous_piece = piece;
+          } else {
+            previous_piece = $scope.queue.pieces[index-1];
+          }
 
-  }
-}).add({
-    combo: 'up',
-    description: 'Previous',
-    allowIn: ['TEXTAREA'],
-    callback: function(event, hotkey) {
-      var $input = $(event.target),
-          text = $input.val(),
-          index = $input.data('index');
-      
-      // Если событие произошло не в инпуте иил инпут пустой
-      if($input.is('textarea') == false) {
-        return;
-      }
+          if (piece.id == $input.data('piece')) {
+            break;
+          }
+        }
 
-      // Ищем кусок с нужным айди
-      for(index in $scope.queue.pieces) {
-        piece = $scope.queue.pieces[index];
-
-        if(index == 0) {
-          previous_piece = piece;
+        if($input.data('piece') > 0) {
+          index = $input.data('index') - 1;
         } else {
-          previous_piece = $scope.queue.pieces[index-1];
+          index = piece.transcriptions.length - 1;
+        }
+        
+        // К предыдущей добавляем содержание текущией
+        $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
+        
+        if($next_input.length == 0) {
+          $next_input = $('textarea[data-piece=' + previous_piece.id + '][data-index=' + previous_piece.transcriptions.length  + ']');
         }
 
-        if (piece.id == $input.data('piece')) {
-          break;
+
+        if($input[0].selectionStart == 0) {
+          $next_input.focus();
+          $next_input.selectRange($next_input.val().length);
         }
-      }
-
-      if($input.data('piece') > 0) {
-        index = $input.data('index') - 1;
-      } else {
-        index = piece.transcriptions.length - 1;
-      }
-      
-      // К предыдущей добавляем содержание текущией
-      $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index  + ']');
-      
-      if($next_input.length == 0) {
-        $next_input = $('textarea[data-piece=' + previous_piece.id + '][data-index=' + previous_piece.transcriptions.length  + ']');
-      }
-
-
-      if($input[0].selectionStart == 0) {
-        $next_input.focus();
-        $next_input.selectRange($next_input.val().length);
-      }
-  }
-});
+    }
+  });
 
  
   $scope.wavesurfer.on('ready', function() {

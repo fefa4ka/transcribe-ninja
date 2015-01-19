@@ -304,6 +304,9 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # Каждая транскрипция связанна с каким-то заказом, либо
         queue = Queue.objects.get(id=request.data[0]['queue'], owner=request.user)
 
+        if queue.completed:
+            return Response( { 'error': 'Queue already completed' }, status=status.HTTP_400_BAD_REQUEST)
+
         for data in request.data:
             serializer = self.get_serializer(data=data)
             if not serializer.is_valid():
@@ -322,7 +325,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         queue.save()
 
         # Делаем следующий кусок приоритетным, если необходимо
-        next_queue = Queue.objects.filter(piece=queue.piece.next(), priority=False, completed=False)
+        next_queue = Queue.objects.filter(piece=queue.piece.next(), priority=False).first()
 
         if next_queue:
             next_queue.priority = True
