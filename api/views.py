@@ -241,7 +241,9 @@ class QueueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_queue(self):
-        queue = Queue.objects.filter(piece_id=2).order_by('?')
+        queue = Queue.objects.filter(priority=True,
+                                     locked__isnull=True,
+                                     completed__isnull=True).order_by('?')
         for q in queue:
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
