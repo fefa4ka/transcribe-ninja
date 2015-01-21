@@ -347,8 +347,8 @@ class Queue(AudioFile):
                 start_at = 0
 
             # В последней не больше, чем длинна записи
-            if self.piece.record.duration < self.end_at + offset:
-                end_at = self.end_at * 1000
+            if self.end_at + offset > self.piece.record.duration:
+                end_at = self.piece.record.duration
             else:
                 end_at = (self.end_at + offset) * 1000
 
