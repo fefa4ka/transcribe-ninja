@@ -31,8 +31,8 @@ def upload_queue_path(instance, file_name=""):
     filename = md5("%d%s%f%f" % (
         instance.piece.record.id,
         instance.piece.record.title.encode('utf8'),
-        instance.start_at(),
-        instance.end_at())
+        instance.start_at,
+        instance.end_at)
     ).hexdigest()
 
     return urlquote("queue/%s.mp3" % (filename))
