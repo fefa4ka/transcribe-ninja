@@ -281,8 +281,8 @@ class Queue(AudioFile):
     @property
     def next_part(self):
         # Если распознана следующая часть, то даём три первых слова
-        if self.piece.next and self.piece.next.transcriptions.count() > 0:
-            last_transcription = self.piece.next.transcriptions.all().first().text.split(" ")
+        if self.pieces[-1].next and self.pieces[-1].next.transcriptions.count() > 0:
+            last_transcription = self.pieces[-1].next.transcriptions.all().first().text.split(" ")
 
             index = len(last_transcription) if len(last_transcription) < 3 else 3
 

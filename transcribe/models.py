@@ -364,7 +364,7 @@ class Transcription(models.Model):
 
     @property
     def end_at(self):
-        return self.start_at + len(self.text) * self.piece.letters_per_sec()
+        return self.start_at + len(self.text) * self.piece.letters_per_sec
 
     @property
     def previous(self):

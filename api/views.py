@@ -25,6 +25,8 @@ from api.authentication import *
 
 from datetime import datetime
 
+from itertools import chain
+
 # from lazysignup.decorators import allow_lazy_user
 
 
@@ -241,15 +243,14 @@ class QueueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_queue(self):
-        queue = Queue.objects.filter(priority=2,
+        queue_priority = Queue.objects.filter(priority=2,
                                      locked__isnull=True,
                                      completed__isnull=True).order_by('?')
-        if queue.count() == 0:
-            queue = Queue.objects.filter(priority=1,
+        queue = Queue.objects.filter(priority=1,
                                          locked__isnull=True,
                                          completed__isnull=True).order_by('?')
 
-        for q in queue:
+        for q in list(chain(queue_priority, queue)):
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
             pieces = [q.piece.previous, q.piece, q.piece.next]
@@ -345,8 +346,25 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
             next_queue.priority = 2
             next_queue.save()
 
-        # Если предыдущий кусок тоже готов, то для него делаем проверку
+        # Проверяем готовы ли окружающие куски
+        # Если готовы, то отправляем их на проверку
+        pieces_blocks = (
+            (queue.piece.previous.id, queue.piece.id),
+            (queue.piece.id, queue.piece.next.id),
+        )
 
-        # Если следующий кусок тоже готов, то для текущего делаем проверку
+        for pieces in pieces_blocks:
+            # Ищем выполненные очереди транскрибции
+            completed_pieces = Queue.objects.filter(
+                piece__id__in=pieces, work_type=0, completed__isnull=False)
+
+            check_queue = Queue.objects.get(piece_id=pieces[0], work_type=1)
+
+            # Если очереди готовы и этот кусок уже не проверен
+            # Повышаем его в приоритете
+            if completed_pieces.count() == 2 and check_queue.priority == 0:
+                check_queue.priority = 2
+                check_queue.save()
+
 
         return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)

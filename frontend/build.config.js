@@ -82,7 +82,8 @@ module.exports = {
       'vendor/wavesurfer.js/plugin/wavesurfer.regions.js',
       'vendor/peaks.js/peaks.min.js',
       'vendor/peaks.js/peaks.min.map',
-      'vendor/jquery-autosize/jquery.autosize.min.js'
+      'vendor/angular-elastic/elastic.js',
+      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js'
       // 'vendor/jquery/dist/jquery.js',
       // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
 
@@ -90,6 +91,7 @@ module.exports = {
       
     ],
     css: [
+      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.css'
     ],
     assets: [
     ]
