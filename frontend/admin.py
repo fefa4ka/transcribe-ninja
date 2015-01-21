@@ -78,9 +78,6 @@ class RecordAdmin(admin.ModelAdmin):
 
     inlines = [PieceInline]
 
-    def completed(self, instance):
-        return instance.completed_percentage()
-
     def pieces(self, instance):
         return instance.pieces.count()
 
@@ -174,7 +171,7 @@ class QueueAdmin(admin.ModelAdmin):
         return instance.piece.record
 
     def duration(self, instance):
-        return instance.end_at() - instance.start_at()
+        return instance.end_at - instance.start_at
 
     def has_add_permission(self, request):
         return False

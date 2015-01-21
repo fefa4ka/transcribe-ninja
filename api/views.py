@@ -241,13 +241,18 @@ class QueueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_queue(self):
-        queue = Queue.objects.filter(priority=True,
+        queue = Queue.objects.filter(priority=2,
                                      locked__isnull=True,
                                      completed__isnull=True).order_by('?')
+        if queue.count() == 0:
+            queue = Queue.objects.filter(priority=1,
+                                         locked__isnull=True,
+                                         completed__isnull=True).order_by('?')
+
         for q in queue:
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
-            pieces = [q.piece.previous(), q.piece, q.piece.next()]
+            pieces = [q.piece.previous, q.piece, q.piece.next]
 
             for piece in pieces:
                 # Каких-то кусков может не быть
@@ -300,12 +305,19 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
 
+    def get_queryset(self):
+        """
+            Выдаём список записей авторизированного пользователя
+        """
+        return Transcription.objects.filter(queue__owner=self.request.user)
+
     def create(self, request, *args, **kwargs):
         # Каждая транскрипция связанна с каким-то заказом, либо
-        queue = Queue.objects.get(id=request.data[0]['queue'], owner=request.user)
+        queue = Queue.objects.get(
+            id=request.data[0]['queue'], owner=request.user)
 
         if queue.completed:
-            return Response( { 'error': 'Queue already completed' }, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Queue already completed'}, status=status.HTTP_400_BAD_REQUEST)
 
         for data in request.data:
             serializer = self.get_serializer(data=data)
@@ -313,7 +325,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
             if data['queue'] != queue.id:
-                return Response( { 'error': 'Queue should be the same' }, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Queue should be the same'}, status=status.HTTP_400_BAD_REQUEST)
 
         for data in request.data:
             serializer = self.get_serializer(data=data)
@@ -322,17 +334,19 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
         # Помечаем очередь как прочитанную
         queue.completed = datetime.now()
+        # TODO: Удалить аудиофайл
         queue.save()
 
         # Делаем следующий кусок приоритетным, если необходимо
-        next_queue = Queue.objects.filter(piece=queue.piece.next(), priority=False).first()
+        next_queue = Queue.objects.filter(
+            piece=queue.piece.next, priority=0, work_type=0).first()
 
         if next_queue:
-            next_queue.priority = True
+            next_queue.priority = 2
             next_queue.save()
 
         # Если предыдущий кусок тоже готов, то для него делаем проверку
 
         # Если следующий кусок тоже готов, то для текущего делаем проверку
 
-        return Response({ 'done': 'ok' }, status=status.HTTP_201_CREATED)
+        return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)

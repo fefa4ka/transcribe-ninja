@@ -138,7 +138,7 @@ class Order(Trash):
             # Очередь на транскрибацию
             # Нечётные части приоритетные.
             # Для того, чтобы транскрибция начиналась с первого куска.
-            priority = False if index % 2 else True
+            priority = 0 if index % 2 else 1
             make_queue_element(self,
                                as_record=record,
                                piece=piece,
@@ -195,17 +195,6 @@ class Queue(AudioFile):
 
     piece = models.ForeignKey(Piece, related_name='queue')
 
-    def set_pieces(self, val):
-        self.piece = val
-
-    def get_pieces(self):
-        if self.work_type == self.CHECK:
-            return [self.piece, self.piece.next()]
-        else:
-            return [self.piece]
-
-    pieces = property(get_pieces, set_pieces)
-
     audio_file = models.FileField(
         max_length=255,
         upload_to=upload_queue_path)
@@ -223,7 +212,7 @@ class Queue(AudioFile):
         default=TRANSCRIBE
     )
 
-    priority = models.BooleanField(default=False)
+    priority = models.IntegerField(default=0, max_length=1)
 
     locked = models.DateTimeField(null=True)
     skipped = models.IntegerField(default=0)
@@ -238,14 +227,23 @@ class Queue(AudioFile):
 
 
     def __unicode__(self):
-        return "%d: %d-%d sec" % (self.id, self.start_at(), self.end_at())
+        return "%d: %d-%d sec" % (self.id, self.start_at, self.end_at)
 
+    @property
+    def pieces(self):
+        if self.work_type == self.CHECK:
+            return [self.piece, self.piece.next]
+        else:
+            return [self.piece]
+
+    @property
     def start_at(self):
         """
             Начала куска относительно всей записи
         """
         return np.round(self.piece.start_at)
 
+    @property
     def end_at(self):
         """
             Конец куска относительно всей записи
@@ -258,7 +256,7 @@ class Queue(AudioFile):
         # Если проверка, то провремя кусок в связке с соседним.
         elif self.work_type == self.CHECK:
             # Берём время, когда заканчивается кусок, следующий за текущим.
-            next_piece = self.piece.next()
+            next_piece = self.piece.next
 
             # TODO: Если следующего нет, то ничего не делаем.
             if not next_piece:
@@ -271,8 +269,8 @@ class Queue(AudioFile):
     @property
     def previous_part(self):
         # Если распознана предыдущая часть, даём три последних слова
-        if self.piece.previous() and self.piece.previous().transcriptions.count() > 0:
-            last_transcription = self.piece.previous().transcriptions.all().last().text.split(" ")
+        if self.piece.previous and self.piece.previous.transcriptions.count() > 0:
+            last_transcription = self.piece.previous.transcriptions.all().last().text.split(" ")
 
             index = 0 if len(last_transcription) < 3 else len(last_transcription) - 3
 
@@ -283,8 +281,8 @@ class Queue(AudioFile):
     @property
     def next_part(self):
         # Если распознана следующая часть, то даём три первых слова
-        if self.piece.next() and self.piece.next().transcriptions.count() > 0:
-            last_transcription = self.piece.next().transcriptions.all().first().text.split(" ")
+        if self.piece.next and self.piece.next.transcriptions.count() > 0:
+            last_transcription = self.piece.next.transcriptions.all().first().text.split(" ")
 
             index = len(last_transcription) if len(last_transcription) < 3 else 3
 
@@ -292,6 +290,7 @@ class Queue(AudioFile):
         else:
             return ""
 
+    @property
     def total_price(self):
         # Считаем длинну всей транскрипции
         length = 0
@@ -342,16 +341,16 @@ class Queue(AudioFile):
                 os.makedirs(audio_dir_path)
 
             # В первой записи делаем отступ максмум до 0
-            if self.start_at() > offset:
-                start_at = (self.start_at() - offset) * 1000
+            if self.start_at > offset:
+                start_at = (self.start_at - offset) * 1000
             else:
                 start_at = 0
 
             # В последней не больше, чем длинна записи
-            if self.piece.record.duration > self.end_at() + offset:
-                end_at = self.end_at() * 1000
+            if self.piece.record.duration < self.end_at + offset:
+                end_at = self.end_at * 1000
             else:
-                end_at = (self.end_at() + offset) * 1000
+                end_at = (self.end_at + offset) * 1000
 
             # Вырезаем кусок и сохраняем
             piece = as_record[start_at:end_at]
@@ -432,11 +431,13 @@ def create_queue_payment(sender, instance, created, **kwargs):
     if not instance.completed:
         return
 
+    # TODO: Если платёж по этому объекту уже есть, то ничего не делать
+
     owner = instance.owner
 
     price = instance.price
 
-    total = instance.total_price()
+    total = instance.total_price
 
     payment = Payment(
         content_object=instance,

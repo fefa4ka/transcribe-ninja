@@ -76,9 +76,6 @@ class PieceSerializer(serializers.ModelSerializer):
 
 
 class RecordSerializer(serializers.ModelSerializer):
-    completed = serializers.ReadOnlyField(source='completed_percentage')
-    # pieces = PieceSerializer(many=True)
-    # transcriptions = TranscriptionSerializer(many=True)
 
     class Meta:
         model = Record

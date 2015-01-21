@@ -63,8 +63,14 @@ class Record(AudioFile, Trash):
     owner = models.ForeignKey('auth.User', related_name='records')
     created = models.DateTimeField(auto_now=True)
 
+
+    # Не отображать в названии utf-8, потому что django-rq ругается
+    def __unicode__(self):
+        return "%d: %d sec" % (self.id, self.duration)
+
     # Список транскрибций
-    def get_transcriptions(self, empty=True):
+    @property
+    def transcriptions(self):
         """
             Список транскрибций
         """
@@ -76,13 +82,8 @@ class Record(AudioFile, Trash):
 
         return transcriptions
 
-    transcriptions = property(get_transcriptions)
-
-    # Не отображать в названии utf-8, потому что django-rq ругается
-    def __unicode__(self):
-        return "%d: %d sec" % (self.id, self.duration)
-
-    def completed_percentage(self):
+    @property
+    def completed(self):
         """
             Какой процент записи распознан
         """
@@ -108,6 +109,7 @@ class Record(AudioFile, Trash):
         else:
             return 0
 
+    @property
     def speed(self):
         """
             Скорость печати. Знаков в секунду.
@@ -241,6 +243,7 @@ class Piece(models.Model):
     def __unicode__(self):
         return "%d-%d sec" % (self.start_at, self.end_at)
 
+    @property
     def previous(self):
         """
             Предыдущий кусок
@@ -254,6 +257,7 @@ class Piece(models.Model):
 
         return piece[0]
 
+    @property
     def next(self):
         """
             Кусок следующий после этого
@@ -267,6 +271,7 @@ class Piece(models.Model):
 
         return piece[0]
 
+    @property
     def letters_per_sec(self):
         return self.duration / \
             np.sum([len(t.text) for t in self.transcriptions.all()])
@@ -352,23 +357,16 @@ class Transcription(models.Model):
 
     queue = models.ForeignKey('work.Queue', related_name='transcriptions')
 
-    def get_start_at(self):
+    @property
+    def start_at(self):
         return self.piece.start_at if self.index == 0\
-            else self.previous().end_at
+            else self.previous.end_at
 
-    def set_start_at(self, val):
-        pass
-
-    start_at = property(get_start_at, set_start_at)
-
-    def get_end_at(self):
+    @property
+    def end_at(self):
         return self.start_at + len(self.text) * self.piece.letters_per_sec()
 
-    def set_end_at(self, val):
-        pass
-
-    end_at = property(get_end_at, set_end_at)
-
+    @property
     def previous(self):
         """
             Предыдущий кусок
@@ -381,6 +379,7 @@ class Transcription(models.Model):
 
         return transcription[0]
 
+    @property
     def next(self):
         """
             Кусок следующий после этого
