@@ -119,9 +119,9 @@ class Record(AudioFile, Trash):
         speed = 0
 
         # Считаем общую длинну стенографированного текста и время
-        for t in self.transcriptions(empty=False):
-            length += len(t['text'])
-            duration += t['end'] - t['start']
+        for transcription in self.transcriptions:
+            length += len(transcription.text)
+            duration += transcription.end_at - transcription.start_at
 
         # Если хотя бы что-то рапознали, считаем
         if duration > 0:
@@ -275,58 +275,6 @@ class Piece(models.Model):
     def letters_per_sec(self):
         return self.duration / \
             np.sum([len(t.text) for t in self.transcriptions.all()])
-
-    def g_transcriptions(self, empty=True):
-        transcriptions = []
-
-        p_transcriptions = Transcription.objects.filter(
-            piece=self).order_by('index')
-        start_at = self.start_at
-
-        speed = [0.1]
-
-        if self.transcriptions_count() > 0:
-            piece_duration_per_sec = self.duration / \
-                np.sum([len(t.text) for t in p_transcriptions])
-
-            speed.append(piece_duration_per_sec)
-
-            for t in p_transcriptions:
-                end_at = start_at + len(t.text) * piece_duration_per_sec
-                transcriptions.append({
-                    'start': start_at,
-                    'end': end_at,
-                    'duration': end_at - start_at,
-                    'timestamp': time.strftime("%H:%M:%S", time.gmtime(start_at)),
-                    'text': t.text
-                })
-
-                start_at = end_at
-        else:
-            if empty:
-                length = (self.end_at - start_at) * (1 / np.average(speed))
-
-                text = ["_"] * int(length)
-                for w in range(int(length / 5)):
-                    index = np.random.random_integers(0, length - 1)
-                    text[index] = " "
-
-                transcriptions.append({
-                    'start': float(start_at),
-                    'end': float(self.end_at),
-                    'duration': float(self.end_at) - float(start_at),
-                    'timestamp': time.strftime(
-                        "%H:%M:%S",
-                        time.gmtime(start_at)
-                    ),
-                    'text': "".join(text)
-                })
-
-        return transcriptions
-
-    def transcriptions_count(self):
-        return Transcription.objects.filter(
-            piece=self).order_by('index').count()
 
 
 class Transcription(models.Model):

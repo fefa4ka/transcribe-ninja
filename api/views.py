@@ -244,11 +244,11 @@ class QueueViewSet(viewsets.ViewSet):
 
     def get_queue(self):
         queue_priority = Queue.objects.filter(priority=2,
+                                              locked__isnull=True,
+                                              completed__isnull=True).order_by('?')
+        queue = Queue.objects.filter(priority=1,
                                      locked__isnull=True,
                                      completed__isnull=True).order_by('?')
-        queue = Queue.objects.filter(priority=1,
-                                         locked__isnull=True,
-                                         completed__isnull=True).order_by('?')
 
         for q in list(chain(queue_priority, queue)):
             # Если над какой-то из частей работал этот пользователь - ищем
@@ -348,10 +348,12 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
         # Проверяем готовы ли окружающие куски
         # Если готовы, то отправляем их на проверку
-        pieces_blocks = (
-            (queue.piece.previous.id, queue.piece.id),
-            (queue.piece.id, queue.piece.next.id),
-        )
+        pieces_blocks = []
+
+        if queue.piece.previous:
+            pieces_blocks.append((queue.piece.previous.id, queue.piece.id))
+        if queue.piece.next:
+            pieces_blocks.append((queue.piece.id, queue.piece.next.id))
 
         for pieces in pieces_blocks:
             # Ищем выполненные очереди транскрибции
@@ -365,6 +367,5 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
             if completed_pieces.count() == 2 and check_queue.priority == 0:
                 check_queue.priority = 2
                 check_queue.save()
-
 
         return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)

@@ -108,6 +108,6 @@ class QueueSerializer(serializers.ModelSerializer):
         model = Queue
         fields = (
             "id", "audio_file",
-            "work_type", "price",
-            "previous_part", "next_part",
+            "work_type", "price", "total_price",
+            "offset_parts",
             "pieces")

@@ -3,7 +3,7 @@
 <div class="instruction">
     Переведите <span class="green">выделенный кусок</span> в текст
     <p>
-        За стенографирование {{ queue.duration | humanSeconds }} заработаете около <strong>{{ queue.duration / 60 * 1000 * queue.price | number : 2 }} ₷</strong>
+        За стенографирование {{ queue.duration | humanSeconds }} заработаете около <strong>{{ queue.total_price | number : 2 }} ₷</strong>
     </p>
 </div>
 
@@ -23,7 +23,7 @@
 
         <ul class="queue-transcriptions" ng-show="queue.previous_part">
             <li>
-                {{ queue.previous_part }}
+                {{ queue.offset_parts.0 }}
             </li>
         </ul>
 
@@ -41,7 +41,7 @@
 
         <ul class="queue-transcriptions" ng-show="queue.next_part">
             <li>
-                {{ queue.next_part }}
+                {{ queue.offset_parts.1 }}
             </li>
         </ul>
         

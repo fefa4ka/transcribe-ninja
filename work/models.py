@@ -267,36 +267,44 @@ class Queue(AudioFile):
             )
 
     @property
-    def previous_part(self):
+    def offset_parts(self):
+        parts = []
+
         # Если распознана предыдущая часть, даём три последних слова
         if self.piece.previous and self.piece.previous.transcriptions.count() > 0:
             last_transcription = self.piece.previous.transcriptions.all().last().text.split(" ")
 
             index = 0 if len(last_transcription) < 3 else len(last_transcription) - 3
 
-            return " ".join(last_transcription[index:len(last_transcription)])
+            previous_part = " ".join(last_transcription[index:len(last_transcription)])
         else:
-            return ""
+            previous_part = ""
 
-    @property
-    def next_part(self):
         # Если распознана следующая часть, то даём три первых слова
         if self.pieces[-1].next and self.pieces[-1].next.transcriptions.count() > 0:
             last_transcription = self.pieces[-1].next.transcriptions.all().first().text.split(" ")
 
             index = len(last_transcription) if len(last_transcription) < 3 else 3
 
-            return " ".join(last_transcription[0:index])
+            next_part = " ".join(last_transcription[0:index])
         else:
-            return ""
+            next_part = ""
+
+        return (previous_part, next_part)
 
     @property
     def total_price(self):
         # Считаем длинну всей транскрипции
         length = 0
+        duration = 0
+
         for piece in self.pieces:
+            duration += piece.duration
             for transcription in piece.transcriptions.all():
-                length += len(transcription.text)
+                length += len(transcription.text) + 1
+
+        if length == 0:
+            length = self.order.record.speed * duration
 
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:
@@ -307,7 +315,6 @@ class Queue(AudioFile):
             diff_price = 0
 
             return self.price.price + diff_price
-
 
     def audio_file_make(self, as_record=None, offset=1.5):
         """
