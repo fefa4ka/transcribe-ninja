@@ -23,7 +23,7 @@ angular.module( 'transcribe-ninja', [
 })
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-  $urlRouterProvider.otherwise( '/upload' );
+  $urlRouterProvider.otherwise( '/work' );
 
 })
 .config(function($translateProvider) {
