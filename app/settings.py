@@ -58,6 +58,7 @@ INSTALLED_APPS = (
 
     # Web
     'frontend',
+    'social_auth'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -81,8 +82,14 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 AUTHENTICATION_BACKENDS = (
     'core.auth_backends.EmailAuthBackend',
+    'social_auth.backends.facebook.FacebookBackend',
+    # 'social_auth.backends.google.GoogleOAuth2Backend',
+    # 'social_auth.backends.contrib.vk.VKOAuth2Backend',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
+FACEBOOK_APP_ID              = '981908478505313'
+FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
 
 #
 # Database

@@ -24,6 +24,7 @@ urlpatterns = (
     url(r'^api/auth/',
         views.AuthView.as_view(),
         name='authenticate'),
+    url(r'api/social/', include('social_auth.urls')),
 
     url(r'^api/account/',
         views.CurrentUserView.as_view()),
