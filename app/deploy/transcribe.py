@@ -53,6 +53,7 @@ class TranscribeNinjaSystem(Node):
             with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
                 self.hosts.run('git pull')
 
+
     @map_roles(host='web')
     class Frontend(DjangoDeployment):
         frontend_path = os.path.join(settings.PROJECT_DIRECTORY, 'frontend')
@@ -77,6 +78,9 @@ class TranscribeNinjaSystem(Node):
 
     def deploy(self):
         self.Git.pull()
+
+        self.Frontend.python_packages_install()
+        self.Engine.python_packages_install()
 
         self.Uwsgi.restart()
         self.Nginx.restart()

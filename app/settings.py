@@ -79,6 +79,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 #
 # Auth
 #
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 AUTHENTICATION_BACKENDS = (
     'core.auth_backends.EmailAuthBackend',
@@ -90,6 +91,7 @@ AUTHENTICATION_BACKENDS = (
 
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
+FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
 #
 # Database
