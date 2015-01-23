@@ -253,6 +253,7 @@ class QueueViewSet(viewsets.ViewSet):
         queue_priority = Queue.objects.filter(priority=2,
                                               locked__isnull=True,
                                               completed__isnull=True).order_by('?')
+
         queue = Queue.objects.filter(priority=1,
                                      locked__isnull=True,
                                      completed__isnull=True).order_by('?')

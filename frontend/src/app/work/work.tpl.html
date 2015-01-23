@@ -21,7 +21,7 @@
             <li><span class="hotkeys-key">alt + &rarr;</span> – перемотать вперёд</li>
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.previous_part">
+        <ul class="queue-transcriptions" ng-show="queue.offset_parts.0">
             <li>
                 {{ queue.offset_parts.0 }}
             </li>
@@ -39,7 +39,7 @@
             </li>
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.next_part">
+        <ul class="queue-transcriptions" ng-show="queue.offset_parts.1">
             <li>
                 {{ queue.offset_parts.1 }}
             </li>
