@@ -29,13 +29,13 @@
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
             <li ng-repeat="transcription in piece.transcriptions">
-                <textarea type="text" class="msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                <textarea class="msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
             </li>
         </ul>
 
         <ul class="queue-transcriptions">
             <li>
-                <textarea id="new-transcription" data-ng-model="newTranscription"></textarea>
+                <textarea id="new-transcription" class="msd-elastic" data-ng-model="newTranscription"></textarea>
             </li>
         </ul>
 
