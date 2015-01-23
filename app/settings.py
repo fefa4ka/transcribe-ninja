@@ -89,6 +89,8 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']

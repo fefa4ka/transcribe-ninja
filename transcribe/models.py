@@ -240,7 +240,10 @@ class Piece(models.Model):
     duration = models.FloatField()
     speaker = models.ForeignKey(Speaker, blank=True, null=True)
 
-    def __unicode__(self):
+    # По умолчанию показывать только последнии трансприпции
+    # Отдавать транскрипции, время выполнении очереди у которой последний.
+
+    def __unicode__(self): 
         return "%d-%d sec" % (self.start_at, self.end_at)
 
     @property
