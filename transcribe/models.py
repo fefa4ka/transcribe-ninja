@@ -97,7 +97,7 @@ class Record(AudioFile, Trash):
         from django.db.models import Count
 
         completed_pieces = self.pieces\
-            .annotate(transcriptions_count=Count('transcriptions'))\
+            .annotate(transcriptions_count=Count('all_transcriptions'))\
             .filter(transcriptions_count__gt=0)
 
         completed_duration = np.sum(
@@ -242,8 +242,15 @@ class Piece(models.Model):
 
     # По умолчанию показывать только последнии трансприпции
     # Отдавать транскрипции, время выполнении очереди у которой последний.
+    @property
+    def transcriptions(self):
+        last_completed= self.all_transcriptions.order_by('-queue__completed').first()
+        if last_completed:
+            return self.all_transcriptions.filter(queue=last_completed.queue).order_by('index')
+        else:
+            return Transcription.objects.none()
 
-    def __unicode__(self): 
+    def __unicode__(self):
         return "%d-%d sec" % (self.start_at, self.end_at)
 
     @property
@@ -299,7 +306,7 @@ class Transcription(models.Model):
         owner       - кто это сделал
     """
 
-    piece = models.ForeignKey(Piece, related_name='transcriptions')
+    piece = models.ForeignKey(Piece, related_name='all_transcriptions')
     index = models.IntegerField(default=0)
     text = models.TextField()
 
@@ -307,6 +314,7 @@ class Transcription(models.Model):
     speaker = models.IntegerField(default=0)
 
     queue = models.ForeignKey('work.Queue', related_name='transcriptions')
+
 
     @property
     def start_at(self):
