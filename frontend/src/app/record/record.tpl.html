@@ -24,3 +24,15 @@
             ng-click="order(record)">Распознать за {{ (record.duration / 60) * 15 | number: 0 }} ₷</button>    
     </li>
 </ul>
+
+<div class="row">
+    <div class="col-xs-12 col-md-8">
+        <ul class="record_transcriptions">
+            <li ng-repeat="transcription in record.transcriptions">{{ transcription.text }}</li>
+        </ul>
+    </div>
+
+    <div class="col-xs-6 col-md-4">
+        Скачать
+    </div>
+</div>

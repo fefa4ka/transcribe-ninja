@@ -20,31 +20,6 @@ angular.module( 'transcribe-ninja.record', [
 .controller( 'RecordCtrl', function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, api) {
   $translate.use("ru");
 
-  $scope.wavesurfer = Object.create(WaveSurfer);
-
-  $scope.wavesurfer.init({
-      container: document.querySelector('#player'),
-      waveColor: '#c1c1c1',
-      cursorColor: '#337ab7',
-      progressColor: '#337ab7',
-      // height: 64,
-      minPxPerSec: 40
-      // scrollParent: true,
-      // pixelRatio: 1
-  });
-
-  $scope.wavesurfer.on('play', function () {
-      $('.fa-play')
-          .removeClass('fa-play')
-          .addClass('fa-pause');
-  });
-
-  $scope.wavesurfer.on('pause', function () {
-      $('.fa-pause')
-          .removeClass('fa-pause')
-      .addClass('fa-play');
-  });
-
   hotkeys.bindTo($scope).add({
       combo: 'esc',
       description: 'Play or pause',
@@ -70,12 +45,31 @@ angular.module( 'transcribe-ninja.record', [
       }
   });
 
-  $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
-    
-      $scope.wavesurfer.load($scope.record.audio_file);
+  $scope.wavesurfer = Object.create(WaveSurfer);
+
+  $scope.wavesurfer.init({
+      container: document.querySelector('#player'),
+      waveColor: '#c1c1c1',
+      cursorColor: '#337ab7',
+      progressColor: '#337ab7',
+      // height: 64,
+      minPxPerSec: 40
+      // scrollParent: true,
+      // pixelRatio: 1
   });
 
-  
+  $scope.wavesurfer.on('play', function () {
+      $('.fa-play')
+          .removeClass('fa-play')
+          .addClass('fa-pause');
+  });
+
+  $scope.wavesurfer.on('pause', function () {
+      $('.fa-pause')
+          .removeClass('fa-pause')
+      .addClass('fa-play');
+  });
+
   $scope.wavesurfer.on('ready', function() {/**
        * Random RGBA color.
        */
@@ -108,7 +102,17 @@ angular.module( 'transcribe-ninja.record', [
 
       }
     });
+  });
+  
 
+  $scope.$on('$destroy', function iVeBeenDismissed() {
+    $scope.wavesurfer.destroy();
+  });
+
+
+  $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
+    $scope.wavesurfer.load($scope.record.audio_file);
+  });
 
   $scope.order = function (record) {
     $modalInstance = $modal.open(
@@ -124,11 +128,6 @@ angular.module( 'transcribe-ninja.record', [
     });
   };
   
-  });
+  
 
-  $scope.$on('$destroy', function iVeBeenDismissed() {
-    $scope.wavesurfer.destroy();
-  });
-})
-
-;
+});

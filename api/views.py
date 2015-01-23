@@ -4,6 +4,7 @@
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
+from django.shortcuts import get_object_or_404
 
 from rest_framework import generics
 from rest_framework import viewsets
@@ -73,7 +74,6 @@ class CurrentUserView(APIView):
 
 
 class RecordViewSet(mixins.ListModelMixin,
-                    mixins.RetrieveModelMixin,
                     mixins.DestroyModelMixin,
                     viewsets.GenericViewSet):
 
@@ -112,6 +112,13 @@ class RecordViewSet(mixins.ListModelMixin,
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        queryset = Record.objects.all()
+        record = get_object_or_404(queryset, pk=pk)
+        serializer = RecordDetailSerializer(record)
+
+        return Response(serializer.data)
 
 
 class PieceViewSet(generics.ListAPIView):

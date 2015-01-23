@@ -43,3 +43,31 @@
     line-height: 1.42;
     border-radius: 20px;
 }
+
+ul.record_transcriptions {
+  list-style: none;
+  padding-left: 0;
+    
+  font-size: 20px;
+
+    li {
+      text-indent: -1em;
+      margin-bottom: 9px;
+
+      textarea {
+        width: 100%;
+
+        padding-left: 10px;
+
+        resize: none;
+      }
+    }
+
+    li:before {
+      content: "—";
+      padding-right: 5px;
+
+      vertical-align: top;
+
+    }
+}

@@ -86,9 +86,16 @@ class RecordSerializer(serializers.ModelSerializer):
             "completed", "progress")
 
 
-    def file_name_mp3(self, obj):
-        return obj.file_name_format('mp3')
-
+class RecordDetailSerializer(serializers.ModelSerializer):
+    transcriptions = TranscriptionSerializer(many=True)
+    class Meta:
+        model = Record
+        fields = (
+            "id",
+            "title", "audio_file",
+            "duration",
+            "completed", "progress",
+            "transcriptions")
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
