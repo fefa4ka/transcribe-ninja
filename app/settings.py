@@ -89,7 +89,19 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+SOCIAL_AUTH_PIPELINE = (
+  'social_auth.backends.pipeline.social.social_auth_user',
+  'social_auth.backends.pipeline.associate.associate_by_email',
+  'social_auth.backends.pipeline.misc.save_status_to_session',
+  'social_auth.backends.pipeline.user.create_user',
+  'social_auth.backends.pipeline.social.associate_user',
+  'social_auth.backends.pipeline.social.load_extra_data',
+  'social_auth.backends.pipeline.user.update_user_details',
+  'social_auth.backends.pipeline.misc.save_status_to_session',
+)
+
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SOCIAL_AUTH_SLUGIFY_USERNAMES = False
 
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
