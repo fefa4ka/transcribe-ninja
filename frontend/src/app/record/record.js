@@ -73,37 +73,34 @@ angular.module( 'transcribe-ninja.record', [
   $scope.wavesurfer.on('ready', function() {/**
        * Random RGBA color.
        */
-    $scope.transcription = api.transcription.list({ recordId: $stateParams.recordId }, function () {
-      function randomColor(alpha) {
-          return 'rgba(' + [
-              ~~(Math.random() * 255),
-              ~~(Math.random() * 255),
-              ~~(Math.random() * 255),
-              alpha || 1
-          ] + ')';
+    function randomColor(alpha) {
+        return 'rgba(' + [
+            ~~(Math.random() * 255),
+            ~~(Math.random() * 255),
+            ~~(Math.random() * 255),
+            alpha || 1
+        ] + ')';
 
-      }
+    }
 
-      var colors = {};
-      
-      for(var i in $scope.record.transcriptions) {
-          var transcription = $scope.record.transcriptions[i];
+    var colors = {};
 
-          if(typeof colors[transcription.name] == "undefined") {
-              colors[transcription.name] = randomColor(0.1);
-          }
-          
-          $scope.wavesurfer.addRegion({ 
-              start: transcription.start_at,
-              end: transcription.end_at,
-              color: colors[transcription.name],
-              drag: false,
-              resize: false
-          });
-          
+    for(var i in $scope.record.transcriptions) {
+        var transcription = $scope.record.transcriptions[i];
 
-      }
-    });
+        if(typeof colors[transcription.name] == "undefined") {
+            colors[transcription.name] = randomColor(0.1);
+        }
+        
+        $scope.wavesurfer.addRegion({ 
+            start: transcription.start_at,
+            end: transcription.end_at,
+            color: colors[transcription.name],
+            drag: false,
+            resize: false
+        });
+    }
+
   });
   
 
