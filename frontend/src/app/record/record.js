@@ -100,15 +100,29 @@ angular.module( 'transcribe-ninja.record', [
 
   });
   
+  $scope.$on('$viewContentLoaded', function() {
+    $scope.resize_transcription_layout();
+  });
 
   $scope.$on('$destroy', function iVeBeenDismissed() {
     $scope.wavesurfer.destroy();
   });
 
 
+  
+
   $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
     $scope.wavesurfer.load($scope.record.audio_file);
   });
+
+  $scope.resize_transcription_layout = function () {
+    var $element = $('.record_transcriptions'),
+        vpw = $(window).width(),
+        vph = $(window).height(),
+        height = vph - $element.offset().top;
+
+    $('.record_transcriptions').css({'height': height + 'px'});
+  }
 
   $scope.order = function (record) {
     $modalInstance = $modal.open(
