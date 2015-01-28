@@ -61,7 +61,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         fields = (
             "start_at", "end_at",
             "piece", "index",
-            "text")
+            "text", "name")
 
 class PieceSerializer(serializers.ModelSerializer):
     transcriptions = TranscriptionSerializer(many=True)

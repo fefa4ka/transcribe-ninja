@@ -69,7 +69,6 @@ module.exports = {
       'vendor/angular-inflector/dist/angular-inflector.js',
       'vendor/es5-shim/es5-shim.js',
       'vendor/angular-translate/angular-translate.min.js',
-      'vendor/angular-humanSeconds/angular-humanSeconds.js',
       'vendor/angular-file-upload/angular-file-upload.js',
       'vendor/angular-hotkeys/build/hotkeys.min.js',
       'vendor/angular-resource/angular-resource.js',

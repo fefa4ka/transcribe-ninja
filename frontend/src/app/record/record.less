@@ -52,8 +52,7 @@ ul.record_transcriptions {
   font-weight: 300;
 
     li {
-      text-indent: -1em;
-      margin-bottom: 7px;
+      margin-bottom: 8px;
 
       textarea {
         width: 100%;
@@ -62,13 +61,26 @@ ul.record_transcriptions {
 
         resize: none;
       }
-    }
+      
+      .info {
+        display: inline-block;
+        width: 110px;
 
-    li:before {
-      content: "—";
-      padding-right: 4px;
+        vertical-align: top;
+      }
 
-      vertical-align: top;
+      .text {
+        display: inline-block;
+        width: 600px;
+      }
 
+      .speaker {
+        opacity: 0.5;
+      }
+
+      .time { 
+        opacity: 0.4;
+        font-size: 14px;
+      }
     }
 }

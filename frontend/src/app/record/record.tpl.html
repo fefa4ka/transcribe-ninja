@@ -25,14 +25,16 @@
     </li>
 </ul>
 
-<div class="row">
-    <div class="col-xs-12 col-md-8">
-        <ul class="record_transcriptions">
-            <li ng-repeat="transcription in record.transcriptions">{{ transcription.text }}</li>
-        </ul>
-    </div>
+    <ul class="record_transcriptions">
+        <li ng-repeat="transcription in record.transcriptions">
+            <div class="info">
+                <div class="speaker"> {{ transcription.name | translate }}</div>
+                <div class="time">{{ transcription.start_at | secondsHms }}</div>
+            </div>
+            <div class="text">
+                {{ transcription.text }}
+            </div>
+        </li>
+    </ul>
 
-    <div class="col-xs-6 col-md-4">
-        Скачать
-    </div>
 </div>

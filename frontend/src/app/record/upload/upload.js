@@ -1,9 +1,8 @@
 angular.module( 'transcribe-ninja.record.upload', [
   'transcribe-ninja.player',
   'ui.router',
-  'angularFileUpload',
-  'humanSeconds'
-])
+  'angularFileUpload'
+  ])
 
 .config(function config( $stateProvider ) {
   $stateProvider.state( 'record-upload', {

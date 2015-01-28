@@ -77,7 +77,7 @@ class Record(AudioFile, Trash):
         transcriptions = []
 
         # Собираем транскрипции с  отсортированных по порядку кусков
-        for piece in self.pieces.all():
+        for piece in self.pieces.all().order_by('start_at'):
             transcriptions += piece.transcriptions.all().order_by('index')
 
         return transcriptions
@@ -324,6 +324,22 @@ class Transcription(models.Model):
     @property
     def end_at(self):
         return self.start_at + len(self.text) * self.piece.letters_per_sec
+
+    @property
+    def name(self):
+        if self.speaker:
+            speaker = self.speaker
+        else:
+            speaker = self.piece.speaker
+
+        # Если нет имени
+        # Проверяем, входит ли в основной набор собеседников
+        if not speaker.name:
+            # Если да, и собеседников двое
+            # то имена «Женщина» или «Мужчина»
+            name = "Female" if speaker.gender == "F" else "Male"
+
+        return name
 
     @property
     def previous(self):
