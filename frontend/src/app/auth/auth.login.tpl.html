@@ -1,8 +1,15 @@
 <form id="id_auth_form" ng-submit="login()">
     <div class="modal-header">
-        <h3 class="modal-title">Вход</h3>
+        <h3 class="modal-title">Вход через социальную сеть</h3>
     </div>
     <div class="modal-body">
+            <div class="centered-text">
+                <div class="social" aria-hidden="true" data-icon="&#xe003;"></div>
+                <a href="/api/social/login/facebook/"><div class="social" aria-hidden="true" data-icon="&#xe021;"></div></a>
+                <div class="social" aria-hidden="true" data-icon="&#xe01b;"></div>
+                <div class="social" aria-hidden="true" data-icon="&#xe001;"></div>
+                <h4>или используя логин и пароль</h4>
+            </div>
             <div class="form-group">
                 <label>Электропочта:</label>
                 <input ng-model="username" required name="username"
@@ -14,6 +21,7 @@
                        placeholder="Пароль" class="form-control">
             </div>
             <a href="#">Вспомнить пароль</a>
+            
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="dismiss()">Отмена</button>
