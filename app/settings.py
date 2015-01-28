@@ -94,7 +94,7 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 AUTHENTICATION_BACKENDS = (
     'core.auth_backends.EmailAuthBackend',
     'social_auth.backends.facebook.FacebookBackend',
-    # 'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
     'social_auth.backends.contrib.vk.VKOAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -123,6 +123,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social_auth.backends.pipeline.user.update_user_details'
 )
 
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
+
+GOOGLE_OAUTH2_CLIENT_ID = '923396664540-1ok2s8c2q8v23c7jpffkjv74m2a5n431.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'vuDE6XLSEhZS_mC-ScqnXr5V'
+
 
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
@@ -130,7 +135,7 @@ FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
 VK_APP_ID = '4754043'
 VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
-
+# VK_EXTRA_SCOPE = ['email']
 #
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
