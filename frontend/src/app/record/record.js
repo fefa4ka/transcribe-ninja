@@ -82,6 +82,13 @@ angular.module( 'transcribe-ninja.record', [
             colors[transcription.name] = pallete.pop();
         }
         
+        console.log({ 
+            start: transcription.start_at,
+            end: transcription.end_at,
+            color: colors[transcription.name],
+            drag: false,
+            resize: false
+        });
         $scope.wavesurfer.addRegion({ 
             start: transcription.start_at,
             end: transcription.end_at,
