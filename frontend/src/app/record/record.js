@@ -70,26 +70,16 @@ angular.module( 'transcribe-ninja.record', [
       .addClass('fa-play');
   });
 
-  $scope.wavesurfer.on('ready', function() {/**
-       * Random RGBA color.
-       */
-    function randomColor(alpha) {
-        return 'rgba(' + [
-            ~~(Math.random() * 255),
-            ~~(Math.random() * 255),
-            ~~(Math.random() * 255),
-            alpha || 1
-        ] + ')';
+  $scope.wavesurfer.on('ready', function() {
 
-    }
-
-    var colors = ['RGB(251, 121, 123, 0.1)', 'RGB(219, 246, 120, 0.1)', 'RGB(94, 223, 214, 0.1)', 'RGB(184, 149, 181, 0.1)', 'RGB(94, 111, 125, 0.1)'];
+    var pallete = ['RGB(251, 121, 123, 0.1)', 'RGB(219, 246, 120, 0.1)', 'RGB(94, 223, 214, 0.1)', 'RGB(184, 149, 181, 0.1)', 'RGB(94, 111, 125, 0.1)'],
+        colors = {};
 
     for(var i in $scope.record.transcriptions) {
         var transcription = $scope.record.transcriptions[i];
 
         if(typeof colors[transcription.name] == "undefined") {
-            colors[transcription.name] = colors.pop();
+            colors[transcription.name] = pallete.pop();
         }
         
         $scope.wavesurfer.addRegion({ 
