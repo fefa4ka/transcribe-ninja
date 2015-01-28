@@ -86,17 +86,19 @@ angular.module( 'transcribe-ninja.record', [
 
       var colors = {};
       
-      for(var i in $scope.transcription) {
-          var transcription = $scope.transcription[i];
+      for(var i in $scope.record.transcriptions) {
+          var transcription = $scope.record.transcriptions[i];
 
-          if(typeof colors[transcription.speaker] == "undefined") {
-              colors[transcription.speaker] = randomColor(0.1);
+          if(typeof colors[transcription.name] == "undefined") {
+              colors[transcription.name] = randomColor(0.1);
           }
           
           $scope.wavesurfer.addRegion({ 
               start: transcription.start_at,
               end: transcription.end_at,
-              color: colors[transcription.speaker]
+              color: colors[transcription.name],
+              drag: false,
+              resize: false
           });
           
 
