@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 #
 TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.request',
+    # 'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
 )
 
@@ -95,7 +95,7 @@ AUTHENTICATION_BACKENDS = (
     'core.auth_backends.EmailAuthBackend',
     'social_auth.backends.facebook.FacebookBackend',
     # 'social_auth.backends.google.GoogleOAuth2Backend',
-    # 'social_auth.backends.contrib.vk.VKOAuth2Backend',
+    'social_auth.backends.contrib.vk.VKOAuth2Backend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -127,6 +127,9 @@ SOCIAL_AUTH_PIPELINE = (
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
+
+VK_APP_ID = '4754043'
+VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 
 #
 # Database
