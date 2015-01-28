@@ -83,13 +83,13 @@ angular.module( 'transcribe-ninja.record', [
 
     }
 
-    var colors = {};
+    var colors = ['RGB(251, 121, 123, 0.1)', 'RGB(219, 246, 120, 0.1)', 'RGB(94, 223, 214, 0.1)', 'RGB(184, 149, 181, 0.1)', 'RGB(94, 111, 125, 0.1)'];
 
     for(var i in $scope.record.transcriptions) {
         var transcription = $scope.record.transcriptions[i];
 
         if(typeof colors[transcription.name] == "undefined") {
-            colors[transcription.name] = randomColor(0.1);
+            colors[transcription.name] = colors.pop();
         }
         
         $scope.wavesurfer.addRegion({ 
@@ -99,7 +99,7 @@ angular.module( 'transcribe-ninja.record', [
             drag: false,
             resize: false
         });
-    }
+    }§
 
   });
   
