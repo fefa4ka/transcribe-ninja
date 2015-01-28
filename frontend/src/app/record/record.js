@@ -72,7 +72,7 @@ angular.module( 'transcribe-ninja.record', [
 
   $scope.wavesurfer.on('ready', function() {
 
-    var pallete = ['RGB(251, 121, 123, 0.1)', 'RGB(219, 246, 120, 0.1)', 'RGB(94, 223, 214, 0.1)', 'RGB(184, 149, 181, 0.1)', 'RGB(94, 111, 125, 0.1)'],
+    var pallete = ['rgba(251, 121, 123, 0.1)', 'rgba(219, 246, 120, 0.1)', 'rgba(94, 223, 214, 0.1)', 'rgba(184, 149, 181, 0.1)', 'rgba(94, 111, 125, 0.1)'],
         colors = {};
 
     for(var i in $scope.record.transcriptions) {
