@@ -99,7 +99,7 @@ angular.module( 'transcribe-ninja.record', [
             drag: false,
             resize: false
         });
-    }§
+    }
 
   });
   
