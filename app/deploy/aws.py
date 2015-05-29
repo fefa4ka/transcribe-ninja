@@ -154,10 +154,12 @@ class AWS(Node):
         """
         Moves a file from local computer to server
         """
-        self.hosts.put_file(
-            self._render(params['file']),
-            self._render(params['destination'])
-        )
+        for host in self.hosts.get_hosts():
+            host = host()
+            host.put_file(
+                self._render(params['file']),
+                self._render(params['destination'])
+            )
 
     def _put_template(self, params):
         """

@@ -35,7 +35,7 @@ ACTIVATE = '%s/bin/activate' % ENV_DIR
 REPOSITORY = 'git@github.com:fefa4ka/%s.git' % PROJECT_NAME
 GIT_USERNAME = 'fefa4ka'
 ADMIN_EMAIL = 'fefa4ka@gmail.com'
-GIT_KEY_PATH = '/Users/fefa4ka/Documents/.ssh/github_rsa'
+GIT_KEY_PATH = '/Users/fefa4ka/.ssh/deploy_rsa'
 GIT_KEY_NAME = 'github_rsa'
 
 HOSTS = {
