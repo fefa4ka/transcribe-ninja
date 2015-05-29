@@ -93,7 +93,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
       fileItem.formData.push({
           title: fileItem.file.name,
-          speakers: 2,
+          speakers: fileItem.file.speakers,
           file: URL.createObjectURL(fileItem._file),
           duration: 0
       });

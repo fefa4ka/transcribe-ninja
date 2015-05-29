@@ -1,3 +1,4 @@
+
 <div ng-show="queue.duration > 0">
 
 <div class="instruction">
@@ -7,11 +8,8 @@
     </p>
 </div>
 
-<div id="player">
-
-</div>
-
-<button class="btn btn-default btn-circle record_detail__play" ng-click="wavesurfer.playPause()"><i class="fa fa-play"></i></button>
+{{ queue.audio_file }}
+<tn-player audio-file="{{ queue.audio_file }}"></tn-player>
 
 <div class="transcription row">
     <div class="col-xs-12 col-md-8">

@@ -16,6 +16,8 @@ $.fn.selectRange = function(start, end) {
 
 angular.module( 'transcribe-ninja.work', [
   'transcribe-ninja.order',
+  'transcribe-ninja.player',
+
   'ui.router',
   'monospaced.elastic',
   'cfp.hotkeys'
@@ -251,64 +253,66 @@ angular.module( 'transcribe-ninja.work', [
     }
   });
 
-  // Player
-  $scope.wavesurfer = Object.create(WaveSurfer);
+  // // Player
+  // $scope.wavesurfer = Object.create(WaveSurfer);
 
-  $scope.wavesurfer.init({
-      container: document.querySelector('#player'),
-      waveColor: '#c1c1c1',
-      cursorColor: '#337ab7',
-      progressColor: '#337ab7',
-      // height: 64,
-      minPxPerSec: 40
-      // scrollParent: true,
-      // pixelRatio: 1
-  });
+  // $scope.wavesurfer.init({
+  //     container: document.querySelector('.player'),
+  //     waveColor: '#c1c1c1',
+  //     cursorColor: '#337ab7',
+  //     progressColor: '#337ab7',
+  //     // height: 64,
+  //     minPxPerSec: 40
+  //     // scrollParent: true,
+  //     // pixelRatio: 1
+  // });
 
-  $scope.wavesurfer.on('play', function () {
-      $('.fa-play')
-          .removeClass('fa-play')
-          .addClass('fa-pause');
-  });
+  // $scope.wavesurfer.on('play', function () {
+  //     $('.fa-play')
+  //         .removeClass('fa-play')
+  //         .addClass('fa-pause');
+  // });
 
-  $scope.wavesurfer.on('pause', function () {
-      $('.fa-pause')
-          .removeClass('fa-pause')
-      .addClass('fa-play');
-  });
+  // $scope.wavesurfer.on('pause', function () {
+  //     $('.fa-pause')
+  //         .removeClass('fa-pause')
+  //     .addClass('fa-play');
+  // });
+  
+  $scope.playerInit = function () {
+    $scope.wavesurfer.on('ready', function() {
+        // Выделяем кусок, который нужно распознать
 
-  $scope.wavesurfer.on('ready', function() {
-      // Выделяем кусок, который нужно распознать
+        // Если начало куска, раньше чем через 1.5 сек, то распознаем раньше
+        start_at = 1.5;
 
-      // Если начало куска, раньше чем через 1.5 сек, то распознаем раньше
-      start_at = 1.5;
+        if($scope.queue.pieces[0].start_at < start_at) {
+          start_at = 0;
+        } 
+        
+        end_at = start_at + $scope.queue.duration;
 
-      if($scope.queue.pieces[0].start_at < start_at) {
-        start_at = 0;
-      } 
-      
-      end_at = start_at + $scope.queue.duration;
+        $scope.wavesurfer.addRegion({ 
+           start: start_at,
+           end: end_at,
+           color: 'rgba(183,211,170,0.2)',
+           drag: false,
+           resize: false
+        });
+        
+    });
 
-      $scope.wavesurfer.addRegion({ 
-         start: start_at,
-         end: end_at,
-         color: 'rgba(183,211,170,0.2)',
-         drag: false,
-         resize: false
-      });
-      
-  });
+    
+  };
 
   $scope.$on('$destroy', function iVeBeenDismissed() {
     $scope.wavesurfer.destroy();
   });
-   
+
+
 
   // Загрузка задачи
-  $scope.loadQueue = function () {
-    // Очищаем 
-    $scope.wavesurfer.clearRegions();
-    
+  $scope.loadQueue = function () {  
     $scope.queue = {};
 
     // Загружаем 
@@ -321,7 +325,9 @@ angular.module( 'transcribe-ninja.work', [
 
       $scope.queue.duration = duration;
 
+      console.log($scope);
       // Подгружаем аудиофайл
+      $scope.wavesurfer.clearRegions();
       $scope.wavesurfer.load($scope.queue.audio_file);
     });
   };
@@ -366,9 +372,11 @@ angular.module( 'transcribe-ninja.work', [
   $scope.earnMoneyValue = function () {
     var length = 0;
 
-    $('textarea').each(function(index) { length += $(this).val().length } );
+    if($scope.queue) {
+      $('textarea').each(function(index) { length += $(this).val().length } );
 
-    return length * $scope.queue.price;
+      return length * $scope.queue.price;
+    }
   };
 
   // Добавить данные в модель
@@ -439,44 +447,10 @@ angular.module( 'transcribe-ninja.work', [
       $input.val("");
     }
 
-    
-    
   };
 
   $scope.loadQueue();
 
-
-  //      * Random RGBA color.
-  //      */
-  //   $scope.transcription = api.transcription.list({ recordId: $stateParams.recordId }, function () {
-  //     function randomColor(alpha) {
-  //         return 'rgba(' + [
-  //             ~~(Math.random() * 255),
-  //             ~~(Math.random() * 255),
-  //             ~~(Math.random() * 255),
-  //             alpha || 1
-  //         ] + ')';
-
-  //     }
-
-  //     var colors = {};
-      
-  //     for(var i in $scope.transcription) {
-  //         var transcription = $scope.transcription[i];
-
-  //         if(typeof colors[transcription.speaker] == "undefined") {
-  //             colors[transcription.speaker] = randomColor(0.1);
-  //         }
-          
-  //         $scope.wavesurfer.addRegion({ 
-  //             start: transcription.start_at,
-  //             end: transcription.end_at,
-  //             color: colors[transcription.speaker]
-  //         });
-          
-
-  //     }
-  //   });
 })
 
 ;

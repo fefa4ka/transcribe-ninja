@@ -6,13 +6,12 @@ angular.module( 'transcribe-ninja.player', [
   return {
     restrict: 'E',
     templateUrl: 'player/player.tpl.html',
-
     link: function (scope, element, attrs) {
-        var player = element.children()[0],
-            file_path = attrs['src'];
+        var player = element.children()[0];
+
 
         scope.wavesurfer = Object.create(WaveSurfer);
-        scope.loading_percent =0;
+        scope.loading_percent = 0;
         
         scope.wavesurfer.init({
           container: player,
@@ -41,10 +40,22 @@ angular.module( 'transcribe-ninja.player', [
             scope.$apply();
         });
 
-        scope.wavesurfer.load(file_path);
+        scope.$watch(attrs.audioFile, function(value) {
+          console.log(value, 'watch');
+
+          if(typeof value == "undefined") 
+            return;
+
+          scope.wavesurfer.clearRegions();
+          scope.wavesurfer.load(value.audio_file);
+        });
 
 
         scope.duration = scope.wavesurfer.getDuration();
+
+
+        // scope.$parent.playerInit();
+
     }
   };
 })
