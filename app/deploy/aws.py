@@ -9,6 +9,7 @@ from deployer.utils import esc1
 import boto
 
 import os
+import time
 
 class AWS(Node):
 
@@ -29,7 +30,7 @@ class AWS(Node):
 
         return False
 
-        def create_instance(self, name, tcp_ports):
+    def create_instance(self, name, tcp_ports):
         connection = self.aws_connect()
 
         name = security_group = "%s-%s" % (settings.PROJECT_NAME, name)
@@ -67,6 +68,15 @@ class AWS(Node):
 
         return instance.public_dns_name
 
+    def configure_instance(self, name, tasks):
+        # Configure the instance that was just created
+        for item in tasks:
+            try:
+                print item['message']
+            except KeyError:
+                pass
+
+            getattr(self, "_" + item['action'])(item['params'])
 
     def aws_get_instance(self, name):
         connection = self.aws_connect()
@@ -104,3 +114,87 @@ class AWS(Node):
             pass
 
 
+    # Actions
+    # def _virtualenv(params):
+    #     """
+    #     Allows running commands on the server
+    #     with an active virtualenv
+    #     """
+    #     with cd(fabconf['APPS_DIR']):
+    #         _virtualenv_command(_render(params))
+    def _apt(self, params):
+        """
+        Runs apt-get install commands
+        """
+        for pkg in params:
+            self._sudo("apt-get install -qq %s" % pkg)
+
+    def _pip(self, params):
+        """
+        Runs pip install commands
+        """
+        for pkg in params:
+            self._sudo("pip install %s" % pkg)
+
+    def _run(self, params):
+        """
+        Runs command with active user
+        """
+        command = self._render(params)
+        self.hosts.run(command)
+
+    def _sudo(self, params):
+        """
+        Run command as root
+        """
+        command = self._render(params)
+        self.hosts.sudo(command)
+
+    def _put(self, params):
+        """
+        Moves a file from local computer to server
+        """
+        self.hosts.put_file(
+            self._render(params['file']),
+            self._render(params['destination'])
+        )
+
+    def _put_template(self, params):
+        """
+        Same as _put() but it loads a file and does variable replacement
+        """
+        f = open(self._render(params['template']), 'r')
+        template = f.read()
+
+        self.hosts.run(
+            self._write_to(
+                self._render(template),
+                self._render(params['destination'])
+            )
+        )
+
+    def _render(self, template, context=settings.__dict__):
+        """
+        Does variable replacement
+        """
+        return template % context
+
+    def _write_to(self, string, path):
+        """
+        Writes a string to a file on the server
+        """
+        return "echo '" + string + "' > " + path
+
+    def _append_to(self, string, path):
+        """
+        Appends to a file on the server
+        """
+        return "echo '" + string + "' >> " + path
+
+    def _virtualenv_command(self, command):
+        """
+        Activates virtualenv and runs command
+        """
+        with self.hosts.prefix(settings.ACTIVATE):
+            with self.hosts.cd(settings.PROJECT_DIR, expand=True):
+                self.hosts.sudo(command)

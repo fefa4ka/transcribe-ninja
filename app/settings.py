@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_NAME = 'transcribe-ninja'
@@ -26,9 +27,17 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# HOSTS
-PROJECT_DIRECTORY = '~/' + PROJECT_NAME
+
+PROJECT_DIR = '~/' + PROJECT_NAME
+ENV_DIR = '%s/env' % PROJECT_DIR
+ACTIVATE = '%s/bin/activate' % ENV_DIR
+
 REPOSITORY = 'git@github.com:fefa4ka/%s.git' % PROJECT_NAME
+GIT_USERNAME = 'fefa4ka'
+ADMIN_EMAIL = 'fefa4ka@gmail.com'
+GIT_KEY_PATH = '/Users/fefa4ka/Documents/.ssh/github_rsa'
+GIT_KEY_NAME = 'github_rsa'
+
 HOSTS = {
     'DB': 'db.transcribe.ninja',
     'ENGINE': 'engine.transcribe.ninja',
@@ -123,14 +132,16 @@ SOCIAL_AUTH_PIPELINE = (
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
+# Google Oauth2
 GOOGLE_OAUTH2_CLIENT_ID = '923396664540-1ok2s8c2q8v23c7jpffkjv74m2a5n431.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'vuDE6XLSEhZS_mC-ScqnXr5V'
 
-
+# Facebook API
 FACEBOOK_APP_ID              = '981908478505313'
 FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
 FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 
+# VK Api
 VK_APP_ID = '4754043'
 VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 # VK_EXTRA_SCOPE = ['email']
@@ -256,6 +267,7 @@ EC2_INSTANCE_TYPE = 't2.micro'
 EC2_AMI = 'ami-accff2b1'
 EC2_KEY_PAIR_DIR = "%s/app/conf" % BASE_DIR
 EC2_KEY_PAIR = "%s/%s.pem" % (EC2_KEY_PAIR_DIR, PROJECT_NAME)
+EC2_SERVER_USERNAME = 'ubuntu'
 
 # Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")

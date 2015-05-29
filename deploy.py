@@ -9,7 +9,7 @@ from deployer.client import start
 from deployer.node import Node
 
 from app.deploy import hosts
-from app.deploy.main import TranscribeNinjaSystem
+from app.deploy.transcribe import TranscribeNinjaSystem
 
 
 class RootNode(Node):

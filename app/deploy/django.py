@@ -9,7 +9,7 @@ from deployer.utils import esc1
 from app.deploy.aws import *
 
 
-class DjangoDeployment(AWS):
+class DjangoDeployment(Node):
     activate_cmd = '. ~/bin/activate'
 
     def run_management_command(self, command):
@@ -28,5 +28,5 @@ class DjangoDeployment(AWS):
         """ Run Django management command in virtualenv. """
         # Activate the virtualenv.
         with self.hosts.prefix(self.activate_cmd):
-            with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
+            with self.hosts.cd(settings.PROJECT_DIR, expand=True):
                 self.hosts.sudo('pip install -r requirements.txt')

@@ -10,7 +10,7 @@ import boto
 import boto.ec2
 
 class TranscribeNinjaHost(SSHHost):
-    username = 'ubuntu'
+    username = settings.EC2_SERVER_USERNAME
     password = 'cntyjuhfa,kznm'
     key_filename = settings.EC2_KEY_PAIR
 
@@ -40,14 +40,13 @@ class TranscribeNinjaHost(SSHHost):
         return False
 
 
-
 class DeployHost(TranscribeNinjaHost):
     slug = 'deploy'
-    address = '54.93.50.120'
 
 
 class WebHost(TranscribeNinjaHost):
     slug = 'web'
+    ports = [80, 22]
     # address = settings.HOSTS['WEB']
     # username = 'web'
 
@@ -59,5 +58,6 @@ class DatabaseHost(TranscribeNinjaHost):
 
 class EngineHost(TranscribeNinjaHost):
     slug = 'engine'
+    ports = [22]
     # address = settings.HOSTS['ENGINE']
     # username = 'engine'
