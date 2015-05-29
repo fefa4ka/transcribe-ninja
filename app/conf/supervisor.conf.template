@@ -1,0 +1,29 @@
+[program:transribe_prepare]
+user=%(EC2_SERVER_USERNAME)s
+command=%(ENV_DIR)s/bin/python %(PROJECT_DIR)s/manage.py rqworker prepare
+directory=%(PROJECT_DIR)s
+stdout_logfile=%(LOGS_DIR)s/rq_prepare.log
+stderr_logfile=%(LOGS_DIR)s/rq_prepare.err.log
+autostart=true
+autorestart=true
+redirect_stderr=true
+
+[program:transribe_analys]
+user=%(EC2_SERVER_USERNAME)s
+command=%(ENV_DIR)s/bin/python %(PROJECT_DIR)s/manage.py rqworker analys
+directory=%(PROJECT_DIR)s
+stdout_logfile=%(LOGS_DIR)s/rq_prepare.log
+stderr_logfile=%(LOGS_DIR)s/rq_prepare.err.log
+autostart=true
+autorestart=true
+redirect_stderr=true
+
+[program:transribe_queue]
+user=%(EC2_SERVER_USERNAME)s
+command=%(ENV_DIR)s/bin/python %(PROJECT_DIR)s/manage.py rqworker queue
+directory=%(PROJECT_DIR)s
+stdout_logfile=%(LOGS_DIR)s/rq_prepare.log
+stderr_logfile=%(LOGS_DIR)s/rq_prepare.err.log
+autostart=true
+autorestart=true
+redirect_stderr=true

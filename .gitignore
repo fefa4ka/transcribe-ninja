@@ -8,3 +8,4 @@ frontend/build/*
 frontend/bin/*
 temp/*
 *.mp3
+*.conf

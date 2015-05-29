@@ -34,33 +34,34 @@ Tasks include:
 
 # Spawns a new EC2 instance (as definied in djangofab_conf.py) and return's it's public dns
 # This takes around 8 minutes to complete.
-configure_instance = [
-
-    # First command as regular user
+common_configure = [
     {"action": "sudo", "params": "rm -rf ~/*"},
+    # First command as regular user
     {"action": "run", "params": "whoami"},
 
-    # # sudo apt-get update
-    # {"action": "sudo", "params": "add-apt-repository ppa:webupd8team/java",
-    #     "message": "Add java apt repository"},
-    # {"action": "sudo", "params": "add-apt-repository ppa:gstreamer-developers/ppa",
-    #     "message": "Add gstreamer apt repository"},
-    # {"action": "sudo", "params": "apt-get update -qq",
-    #     "message": "Updating apt-get"},
+    # sudo apt-get update
+    {"action": "sudo", "params": "sudo add-apt-repository ppa:kirillshkrogalev/ffmpeg-next",
+        "message": "Add ffmpeg apt repository"},
+    {"action": "sudo", "params": "add-apt-repository ppa:webupd8team/java",
+        "message": "Add java apt repository"},
+    {"action": "sudo", "params": "add-apt-repository ppa:gstreamer-developers/ppa",
+        "message": "Add gstreamer apt repository"},
+    {"action": "sudo", "params": "apt-get update -qq",
+        "message": "Updating apt-get"},
 
-    # # List of APT packages to install
-    # {"action": "apt",
-    #     "params": ["libpq-dev", "nginx", "git",
-    #                "python-setuptools", "python-dev", "build-essential", "python-pip",
-    #                "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer", "mp3split",
-    #                "gstreamer0.10-tools", "gstreamer-tools", "gstreamer0.10-plugins-base", "gstreamer0.10-plugins-good", "gstreamer0.10-plugins-bad"],
-    #     "message":"Installing apt-get packages" },
+    # List of APT packages to install
+    {"action": "apt",
+        "params": ["libpq-dev", "git",
+                   "python-setuptools", "python-dev", "build-essential", "python-pip", "redis-server", "ffmpeg",
+                   "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer", "mp3split",
+                   "gstreamer0.10-tools", "gstreamer-tools", "gstreamer0.10-plugins-base", "gstreamer0.10-plugins-good", "gstreamer0.10-plugins-bad"],
+        "message":"Installing apt-get packages" },
 
-    # # List of pypi packages to install
-    # {"action": "pip", "params": ["virtualenv", "supervisor"],
-    #     "message":"Installing pip packages"},
+    # List of pypi packages to install
+    {"action": "pip", "params": ["virtualenv", "supervisor"],
+        "message":"Installing pip packages"},
 
-    # project directory
+    #project directory
     {"action": "run",  "params": "mkdir -p %(PROJECT_DIR)s", "message": "Create project folder" },
     {"action": "sudo", "params": "chown -R %(EC2_SERVER_USERNAME)s: %(PROJECT_DIR)s"},
 
@@ -96,9 +97,26 @@ configure_instance = [
     {"action": "run", "params": "source /home/%(EC2_SERVER_USERNAME)s/.profile"},
 
     {"action": "virtualenv", "params":
-        "pip install -r %(PROJECT_PATH)s/requirements/common.txt --upgrade"},
+        "pip install -r %(PROJECT_DIR)s/requirements/common.txt --upgrade"},
+]
 
+web_configure = [
+    # List of APT packages to install
+    {"action": "apt",
+        "params": ["nginx", "uwsgi", "nodejs", "npm"],
+        "message":"Installing apt-get packages"},
+    {"action": "sudo", "params": "npm install -g bower"},
 
+    {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
+    {"action": "sudo", "params":
+     "ln -s %(PROJECT_DIR)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s"},
+
+    {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default"},
+    {"action": "sudo", "params":
+     "ln -s %(PROJECT_DIR)s/app/conf/uwsgi.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s"},
+
+]
+a=[
     # {"action": "run", "params": """echo "alias webapps='cd %(APPS_DIR)s'" >> /home/%(SERVER_USERNAME)s/.profile""",
     #     "message": "Creating webapps alias"},
 

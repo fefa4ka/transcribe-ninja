@@ -16,6 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_NAME = 'transcribe-ninja'
+DOMAIN = 'transcrib.ninja'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
@@ -30,7 +31,7 @@ ALLOWED_HOSTS = []
 
 PROJECT_DIR = '~/' + PROJECT_NAME
 ENV_DIR = '%s/env' % PROJECT_DIR
-ACTIVATE = '%s/bin/activate' % ENV_DIR
+ACTIVATE = '. %s/bin/activate' % ENV_DIR
 
 REPOSITORY = 'git@github.com:fefa4ka/%s.git' % PROJECT_NAME
 GIT_USERNAME = 'fefa4ka'

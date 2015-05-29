@@ -9,7 +9,7 @@ from deployer.utils import esc1
 from app import settings
 from app.deploy.service import *
 from app.deploy.django import *
-import app.deploy.tasks
+import app.deploy.tasks as tasks
 
 import boto
 import boto.ec2
@@ -18,7 +18,7 @@ import os.path
 
 import time
 
-class TranscribeNinjaSystem(DjangoDeployment):
+class TranscribeNinjaSystem(Node):
 
     """
     The base definition of our web system.
@@ -51,12 +51,6 @@ class TranscribeNinjaSystem(DjangoDeployment):
 
     @map_roles(host=('web', 'engine'))
     class Git(Node):
-        def clone(self):
-            self.hosts.run("mkdir %s" % settings.PROJECT_DIR)
-
-            with self.hosts.cd(settings.PROJECT_DIR, expand=True):
-                self.hosts.run("git clone %s ." % settings.REPOSITORY)
-
         def checkout(self, commit):
             self.host.run("git checkout '%s'" % esc1(commit))
 
@@ -78,40 +72,19 @@ class TranscribeNinjaSystem(DjangoDeployment):
 
     @map_roles(host='engine')
     class Engine(DjangoDeployment):
-
-        def update(self):
-            self.git_pull()
-
         def reset_db(self):
             self.run_management_command('reset')
             self.run_management_command('syncdb')
 
-    @map_roles(host=('web', 'engine'))
-    class EC2(AWS):
-        def version(self):
-            self.hosts.run('uname -a')
+    def create(self):
+        self.Frontend.create([
+            tasks.common_configure,
+            tasks.web_configure
+        ])
 
-        def init(self):
-            # start_time = time.time()
-            print "Started..."
-
-            # Генерим ключ
-            self.aws_create_key()
-
-            # Создаём машины
-            for host in self.hosts.get_hosts():
-                self.create_instance(host.slug, host.ports)
-
-            print "Waiting 60 seconds for server to boot..."
-            # time.sleep(60)
-
-            # end_time = time.time()
-            # print "Runtime: %f minutes" % ((end_time - start_time) / 60)
-
-            # self.__create_database()
-        def configure(self):
-            # Настраиваем машины
-            self.configure_instance('web', app.deploy.tasks.configure_instance)
+        self.Engine.create([
+            tasks.common_configure
+        ])
 
     def deploy(self):
         self.Git.pull()
@@ -125,15 +98,4 @@ class TranscribeNinjaSystem(DjangoDeployment):
         self.Supervisor.restart()
 
         self.Frontend.compile()
-
-
-    # def configure_instance(self):
-    #     # Настраиваем машины
-    #     print app.deploy.tasks.configure_instance
-    #     # self.configure_instance('web', app.deploy.tasks.configure_instance)
-
-
-    # def __create_database(self):
-    #     self.__create_postgresql()
-    #     self.__create_redis()
 

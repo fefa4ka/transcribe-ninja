@@ -4,11 +4,11 @@ gid=web
 
 # Настройки, связанные с Django
 # Корневая папка проекта (полный путь)
-chdir           = /home/web/transcribe-ninja
+chdir           = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s
 # Django wsgi файл
 module          = app.wsgi
 # полный путь к виртуальному окружению
-home            = /home/web
+home            = /home/%(EC2_SERVER_USERNAME)s
 
 # общие настройки
 # master
@@ -16,7 +16,7 @@ master          = true
 # максимальное количество процессов
 processes       = 10
 # полный путь к файлу сокета
-socket          = /home/web/transcribe-ninja/app/wsgi.sock
+socket          = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi.sock
 # права доступа к файлу сокета
 chmod-socket    = 666 
 # очищать окружение от служебных файлов uwsgi по завершению

@@ -18,6 +18,29 @@ class AWS(Node):
         return boto.ec2.connect_to_region(
             settings.EC2_REGION, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
+    def create(self, configs):
+        # start_time = time.time()
+        print "Started..."
+
+        # Генерим ключ
+        self.aws_create_key()
+
+        # Создаём машины
+        for host in self.hosts.get_hosts():
+            self.create_instance(host.slug, host.ports)
+
+        print "Waiting 60 seconds for server to boot..."
+        time.sleep(60)
+
+        for config in configs:
+            self.configure_instance(config)
+
+        end_time = time.time()
+        print "Runtime: %f minutes" % ((end_time - start_time) / 60)
+
+        # self.__create_database()
+
+
     # Проверяем есть ли нужная группа безопасности
     def aws_check_security_group_exist(self, name):
         connection = self.aws_connect()
@@ -68,7 +91,7 @@ class AWS(Node):
 
         return instance.public_dns_name
 
-    def configure_instance(self, name, tasks):
+    def configure_instance(self, tasks):
         # Configure the instance that was just created
         for item in tasks:
             try:
@@ -193,10 +216,10 @@ class AWS(Node):
         """
         return "echo '" + string + "' >> " + path
 
-    def _virtualenv_command(self, command):
+    def _virtualenv(self, command):
         """
         Activates virtualenv and runs command
         """
         with self.hosts.prefix(settings.ACTIVATE):
             with self.hosts.cd(settings.PROJECT_DIR, expand=True):
-                self.hosts.sudo(command)
+                self.hosts.run(self._render(command))
