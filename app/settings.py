@@ -14,9 +14,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
+PROJECT_NAME = 'transcribe-ninja'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
@@ -29,8 +27,8 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 # HOSTS
-PROJECT_DIRECTORY = '~/transcribe-ninja'
-REPOSITORY = 'git@github.com:fefa4ka/transcribe-ninja.git'
+PROJECT_DIRECTORY = '~/' + PROJECT_NAME
+REPOSITORY = 'git@github.com:fefa4ka/%s.git' % PROJECT_NAME
 HOSTS = {
     'DB': 'db.transcribe.ninja',
     'ENGINE': 'engine.transcribe.ninja',
@@ -136,10 +134,11 @@ FACEBOOK_EXTENDED_PERMISSIONS = ['email']
 VK_APP_ID = '4754043'
 VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 # VK_EXTRA_SCOPE = ['email']
+
+
 #
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -225,7 +224,6 @@ REST_FRAMEWORK = {
 # Files
 #
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "static/")
@@ -241,14 +239,23 @@ STATIC_URL = '/static/'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
+# AWS Credentials
+AWS_ACCESS_KEY_ID = 'AKIAIVT4H6LXT37KKDQQ'
+AWS_SECRET_ACCESS_KEY = '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'
+
 # S3 Config
-AWS_ACCESS_KEY_ID = 'AKIAJT4XGM5CW5RT2EHQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'transcribe-ninja'
+AWS_STORAGE_BUCKET_NAME = PROJECT_NAME
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'max-age=2592000',
 }
+
+# EC2 Config
+EC2_REGION = 'eu-central-1'
+EC2_INSTANCE_TYPE = 't2.micro'
+EC2_AMI = 'ami-accff2b1'
+EC2_KEY_PAIR_DIR = "%s/app/conf" % BASE_DIR
+EC2_KEY_PAIR = "%s/%s.pem" % (EC2_KEY_PAIR_DIR, PROJECT_NAME)
 
 # Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
@@ -268,6 +275,7 @@ TEMP_DIR = os.path.join(BASE_DIR, "temp/")
 # Подсчёт скорости разговора
 # Средняя скорость произношения. Знаков в секунду
 SPEECH_SPEED = 22
+
 # Сколько минимум записи должно быть распознано, 
 # чтобы посчтитать скорость произоншения
 SPEECH_SPEED_MIN_DURATION = 120

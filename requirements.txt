@@ -7,7 +7,7 @@ mysql-python==1.2.5
 http://voiceid.googlecode.com/svn/trunk#egg=voiceid # Скопировать voiceid и LIAM а local/share/voiceid/
 numpy==1.9.1
 pydub==0.9.5
-boto
+boto==2.38.0
 django-storages
 django-s3-folder-storage
 djangorestframework-bulk==0.1.3

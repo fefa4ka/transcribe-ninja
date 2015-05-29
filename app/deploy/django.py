@@ -6,8 +6,10 @@ from app import settings
 from deployer.node import Node
 from deployer.utils import esc1
 
+from app.deploy.aws import *
 
-class DjangoDeployment(Node):
+
+class DjangoDeployment(AWS):
     activate_cmd = '. ~/bin/activate'
 
     def run_management_command(self, command):

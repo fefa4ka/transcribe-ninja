@@ -10,15 +10,19 @@ from app import settings
 from app.deploy.service import *
 from app.deploy.django import *
 
+import boto
+import boto.ec2
+
 import os.path
 
+import time
 
-class TranscribeNinjaSystem(Node):
+class TranscribeNinjaSystem(DjangoDeployment):
 
     """
     The base definition of our web system.
 
-    roles: cache, queue, master_db, slave_db, web.
+    roles: web, engine, database
     """
 
     @map_roles(host='engine')
@@ -46,13 +50,18 @@ class TranscribeNinjaSystem(Node):
 
     @map_roles(host=('web', 'engine'))
     class Git(Node):
+        def clone(self):
+            self.hosts.run("mkdir %s" % settings.PROJECT_DIRECTORY)
+
+            with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
+                self.hosts.run("git clone %s ." % settings.REPOSITORY)
+
         def checkout(self, commit):
             self.host.run("git checkout '%s'" % esc1(commit))
 
         def pull(self):
             with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
                 self.hosts.run('git pull')
-
 
     @map_roles(host='web')
     class Frontend(DjangoDeployment):
@@ -76,6 +85,14 @@ class TranscribeNinjaSystem(Node):
             self.run_management_command('reset')
             self.run_management_command('syncdb')
 
+    @map_roles(host=('web', 'engine'))
+    class EC2(Node):
+        def install_packages(self):
+            pass
+
+        def version(self):
+            self.hosts.run('uname -a')
+
     def deploy(self):
         self.Git.pull()
 
@@ -88,3 +105,20 @@ class TranscribeNinjaSystem(Node):
         self.Supervisor.restart()
 
         self.Frontend.compile()
+
+    def create_instances(self):
+        # Генерим ключ
+        self.aws_create_key()
+
+        # Создаём машину для веба и движка
+        self.create_instance('web', [80, 22])
+        self.create_instance('engine', [22])
+
+        # self.__create_database()
+
+
+
+    # def __create_database(self):
+    #     self.__create_postgresql()
+    #     self.__create_redis()
+
