@@ -45,22 +45,23 @@ angular.module( 'transcribe-ninja.localization', [
 
     return function (seconds) {
         seconds = Math.round(seconds);
-        switch (false) {
-        case !(seconds < minute):
-            return format(seconds, "second");
-        case !(seconds < hour):
-            return format(Math.floor(seconds / minute), "minute");
-        case !(seconds < day):
-            return format(Math.floor(seconds / hour), "hour");
-        case !(seconds < week):
-            return format(Math.floor(seconds / day), "day");
-        case !(seconds < month):
-            return format(Math.floor(seconds / week), "week");
-        case !(seconds < year):
-            return format(Math.floor(seconds / month), "month");
-        default:
-            return format(Math.floor(seconds / year), "year");
-        }
+        return format(seconds, "second");
+        // switch (false) {
+        // case !(seconds < minute):
+        //     return format(seconds, "second");
+        // case !(seconds < hour):
+        //     return format(Math.floor(seconds / minute), "minute");
+        // case !(seconds < day):
+        //     return format(Math.floor(seconds / hour), "hour");
+        // case !(seconds < week):
+        //     return format(Math.floor(seconds / day), "day");
+        // case !(seconds < month):
+        //     return format(Math.floor(seconds / week), "week");
+        // case !(seconds < year):
+        //     return format(Math.floor(seconds / month), "month");
+        // default:
+        //     return format(Math.floor(seconds / year), "year");
+        // }
     };
 }])
 
