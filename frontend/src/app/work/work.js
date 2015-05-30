@@ -219,7 +219,7 @@ angular.module( 'transcribe-ninja.work', [
             input_index = $input.data('index');
         
         // Если событие произошло не в инпуте
-        if($input.is('textarea') === false || ($input.data('piece') == $scope.queue.pieces[0].id && input_index == 0)) {
+        if($input.is('textarea') === false || ($input.data('piece') == $scope.queue.pieces[0].id && input_index === 0)) {
           return;
         }
 
@@ -321,7 +321,7 @@ angular.module( 'transcribe-ninja.work', [
     $scope.queue = api.queue.get({ }, function() {
       // Считаем продолжительность общую
       duration = 0;
-      for(index in $scope.queue.pieces) {
+      for(var index in $scope.queue.pieces) {
         duration += $scope.queue.pieces[index].duration;
       }
 
@@ -375,7 +375,7 @@ angular.module( 'transcribe-ninja.work', [
     var length = 0;
 
     if($scope.queue) {
-      $('textarea').each(function(index) { length += $(this).val().length } );
+      $('textarea').each(function(index) { length += $(this).val().length; } );
 
       return length * $scope.queue.price;
     }
