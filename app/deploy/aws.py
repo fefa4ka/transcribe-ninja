@@ -29,8 +29,8 @@ class AWS(Node):
         for host in self.hosts.get_hosts():
             self.create_instance(host.slug, host.ports)
 
-        print "Waiting 60 seconds for server to boot..."
-        time.sleep(60)
+        print "Waiting 2 minutes for server to boot..."
+        time.sleep(125)
 
         for config in configs:
             self.configure_instance(config)
@@ -39,7 +39,6 @@ class AWS(Node):
         print "Runtime: %f minutes" % ((end_time - start_time) / 60)
 
         # self.__create_database()
-
 
     # Проверяем есть ли нужная группа безопасности
     def aws_check_security_group_exist(self, name):
@@ -56,7 +55,7 @@ class AWS(Node):
     def create_instance(self, name, tcp_ports):
         connection = self.aws_connect()
 
-        name = security_group = "%s-%s" % (settings.PROJECT_NAME, name)
+        name = security_group = "%s-%s-test" % (settings.PROJECT_NAME, name)
 
         # Проверяем, создана ли группа безопасности
         if not self.aws_check_security_group_exist(security_group):

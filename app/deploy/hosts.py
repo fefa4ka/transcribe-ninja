@@ -16,7 +16,7 @@ class TranscribeNinjaHost(SSHHost):
 
     @property
     def address(self):
-        instance = self.aws_get_instance("%s-%s" % (settings.PROJECT_NAME, self.slug))
+        instance = self.aws_get_instance("%s-%s-test" % (settings.PROJECT_NAME, self.slug))
 
         if instance:
             return instance.public_dns_name

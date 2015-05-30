@@ -35,7 +35,6 @@ Tasks include:
 # Spawns a new EC2 instance (as definied in djangofab_conf.py) and return's it's public dns
 # This takes around 8 minutes to complete.
 common_configure = [
-    {"action": "sudo", "params": "rm -rf ~/*"},
     # First command as regular user
     {"action": "run", "params": "whoami"},
 
@@ -58,8 +57,8 @@ common_configure = [
         "message":"Installing apt-get packages" },
 
     # List of pypi packages to install
-    {"action": "pip", "params": ["virtualenv", "supervisor"],
-        "message":"Installing pip packages"},
+    {"action": "pip", "params": ["virtualenv"],
+        "message":"Installing virtualenv"},
 
     #project directory
     {"action": "run",  "params": "mkdir -p %(PROJECT_DIR)s", "message": "Create project folder" },
@@ -93,7 +92,7 @@ common_configure = [
     # {"action": "run", "params":
     #     "echo 'expo WORKON_HOME=%(PRO_DIR)s' >> /home/%(EC2_SERVER_USERNAME)s/.profile"},
     {"action": "run", "params":
-        u"echo 'source %(ACTIVATE)s' >> /home/%(EC2_SERVER_USERNAME)s/.profile"},
+        u"echo 'source %(ENV_DIR)s/bin/activate' >> /home/%(EC2_SERVER_USERNAME)s/.profile"},
     {"action": "run", "params": "source /home/%(EC2_SERVER_USERNAME)s/.profile"},
 
     {"action": "virtualenv", "params":
@@ -104,17 +103,51 @@ web_configure = [
     # List of APT packages to install
     {"action": "apt",
         "params": ["nginx", "uwsgi", "nodejs", "npm"],
-        "message":"Installing apt-get packages"},
+        "message":"Installing nginx, uwsgi, nodejs packages"},
     {"action": "sudo", "params": "npm install -g bower"},
 
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
-    {"action": "sudo", "params":
-     "ln -s %(PROJECT_DIR)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s"},
 
+    # nginx
+    # {"action": "put", "params": {"file": "%(FAB_CONFIG_PATH)s/templates/nginx.conf",
+    #                              "destination": "/home/%(SERVER_USERNAME)s/nginx.conf"},
+    #     "message": "Configuring nginx"},
+    # {"action": "sudo",
+    #  "params": "mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old"},
+    # {"action": "sudo", "params":
+    #  "mv /home/%(SERVER_USERNAME)s/nginx.conf /etc/nginx/nginx.conf"},
+    # {"action": "sudo", "params": "chown root:root /etc/nginx/nginx.conf"},
+    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/nginx.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf"}},
+    {"action": "sudo", "params":
+     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
+    {"action": "sudo", "params": "service nginx restart",
+     "message": "Restarting nginx"},
+
+    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf"}},
     {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default"},
     {"action": "sudo", "params":
-     "ln -s %(PROJECT_DIR)s/app/conf/uwsgi.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s"},
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s.ini"},
+    {"action": "sudo", "params": "service uwsgi restart",
+        "message": "Restarting uwsgi"},
+]
 
+engine_configure = [
+    # List of pypi packages to install
+    {"action": "apt", "params": ["supervisor"],
+        "message":"Installing supervisor"},
+
+    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/supervisor.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf"}},
+    {"action": "sudo", "params": "rm -rf /etc/supervisor/conf.d/default"},
+    {"action": "sudo", "params":
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf /etc/supervisor/conf.d/%(PROJECT_NAME)s.conf"},
+    {"action": "sudo", "params": "service supervisor restart",
+        "message": "Restarting supervisor"},
+
+    # Передвинуть voiceid и liam
+    # Запстить очереди
 ]
 a=[
     # {"action": "run", "params": """echo "alias webapps='cd %(APPS_DIR)s'" >> /home/%(SERVER_USERNAME)s/.profile""",

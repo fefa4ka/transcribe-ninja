@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 
 PROJECT_DIR = '~/' + PROJECT_NAME
 ENV_DIR = '%s/env' % PROJECT_DIR
+LOGS_DIR = '~/logs'
 ACTIVATE = '. %s/bin/activate' % ENV_DIR
 
 REPOSITORY = 'git@github.com:fefa4ka/%s.git' % PROJECT_NAME
