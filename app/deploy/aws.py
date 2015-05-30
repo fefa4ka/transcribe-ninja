@@ -7,65 +7,77 @@ from deployer.node import Node
 from deployer.utils import esc1
 
 import boto
+import boto.rds2
 
 import os
 import time
 
 class AWS(Node):
 
-    def aws_connect(self):
-        # Подключаемся к AWS
-        return boto.ec2.connect_to_region(
-            settings.EC2_REGION, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
-
-    def create(self, configs):
+    def ec2_create(self, configs):
         start_time = time.time()
         print "Started..."
 
+        connection = self._aws_connect('ec2')
+
         # Генерим ключ
-        self.aws_create_key()
+        self._ec2_create_key()
 
         # Создаём машины
         for host in self.hosts.get_hosts():
-            self.create_instance(host.slug, host.ports)
+            # Получаем айпишник
+            address = connection.allocate_address()
+
+            instance = self._ec2_create_instance(host.slug, host.ports)
+
+            # Прикрепляем айпишник
+            connection.associate_address(
+                instance.instance_id,
+                address.public_ip
+            )
 
         print "Waiting 2 minutes for server to boot..."
-        # time.sleep(125)
+        time.sleep(125)
 
+        # Настраиваем
         for config in configs:
-            self.configure_instance(config)
+            self._ec2_configure_instance(config)
 
         end_time = time.time()
         print "Runtime: %f minutes" % ((end_time - start_time) / 60)
 
         # self.__create_database()
+    def _aws_connect(self, service):
+        # Подключаемся к AWS
+        if service == "ec2":
+            return boto.ec2.connect_to_region(
+                settings.EC2_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        elif service == "s3":
+            return boto.s3.connection.S3Connection(
+                settings.AWS_ACCESS_KEY_ID,
+                settings.AWS_SECRET_ACCESS_KEY)
+        elif service == "rds":
+            return boto.rds2.connect_to_region(
+                settings.EC2_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
-    # Проверяем есть ли нужная группа безопасности
-    def aws_check_security_group_exist(self, name):
-        connection = self.aws_connect()
-
-        groups = connection.get_all_security_groups()
-
-        for group in groups:
-            if group.name == name:
-                return True
-
-        return False
-
-    def create_instance(self, name, tcp_ports):
-        connection = self.aws_connect()
+    def _ec2_create_instance(self, name, tcp_ports):
+        connection = self._aws_connect('ec2')
 
         name = security_group = "%s-%s" % (settings.PROJECT_NAME, name)
 
         # Проверяем, создана ли группа безопасности
-        if not self.aws_check_security_group_exist(security_group):
+        if not self._aws_get_security_group(security_group):
             # Создаём группу безопасности
             web = connection.create_security_group(security_group, '%s services' % name)
             for port in tcp_ports:
                 web.authorize('tcp', int(port), int(port), '0.0.0.0/0')
 
         # Проверяем, создана ли машина
-        instance = self.aws_get_instance(name)
+        instance = self._ec2_get_instance(name)
 
         if not instance:
             # Создаём машину
@@ -88,9 +100,9 @@ class AWS(Node):
 
             print "Public DNS name of %s: %s" % (name, instance.public_dns_name)
 
-        return instance.public_dns_name
+        return instance
 
-    def configure_instance(self, tasks):
+    def _ec2_configure_instance(self, tasks):
         # Configure the instance that was just created
         for item in tasks:
             try:
@@ -100,8 +112,22 @@ class AWS(Node):
 
             getattr(self, "_" + item['action'])(item['params'])
 
-    def aws_get_instance(self, name):
-        connection = self.aws_connect()
+    def _ec2_get_project_instances(self):
+        connection = self._aws_connect('ec2')
+
+        reservations = connection.get_all_instances()
+        instances = []
+
+        for r in reservations:
+            # Если в названии инстанта есть название проекта
+            instance = r.instances[0]
+            if settings.PROJECT_NAME in instance.tags['Name']:
+                instances.append(instance)
+
+        return instances
+
+    def _ec2_get_instance(self, name):
+        connection = self._aws_connect('ec2')
 
         reservations = connection.get_all_instances()
 
@@ -111,8 +137,8 @@ class AWS(Node):
 
         return False
 
-    def aws_create_key(self):
-        connection = self.aws_connect()
+    def _ec2_create_key(self):
+        connection = self._aws_connect('ec2')
 
         # Проверяем наличие ключа на AWS
         if not connection.get_key_pair(settings.PROJECT_NAME):
@@ -122,11 +148,11 @@ class AWS(Node):
 
         # Если не оказалось файла, создаём новый ключ
         if not os.path.isfile(settings.EC2_KEY_PAIR):
-            self.aws_delete_key()
-            self.aws_create_key()
+            self._ec2_delete_key()
+            self._ec2_create_key()
 
-    def aws_delete_key(self):
-        connection = self.aws_connect()
+    def _ec2_delete_key(self):
+        connection = self._aws_connect('ec2')
 
         connection.delete_key_pair(settings.PROJECT_NAME)
 
@@ -135,6 +161,52 @@ class AWS(Node):
         except OSError:
             pass
 
+    def _ec2_mysql_security_group(self):
+        # Проверяем, создана ли группа безопасности
+        # Доступ должны получить все машинки из группы проекта
+        security_group_name = "%s-mysql" % settings.PROJECT_NAME
+        security_group = self._aws_get_security_group(security_group_name)
+        if not security_group:
+            ec2_connection = self._aws_connect('ec2')
+            # Создаём группу безопасности. разрешаем подключаться всем сервакам
+            security_group = ec2_connection.create_security_group(security_group_name, '%s services' % security_group_name)
+            for instance in self._ec2_get_project_instances():
+                security_group.authorize('tcp', 3306, 3306, "%s/32" % instance.ip_address)
+
+        return security_group
+
+    # Проверяем есть ли нужная группа безопасности
+    def _aws_get_security_group(self, name):
+        connection = self._aws_connect('ec2')
+
+        groups = connection.get_all_security_groups()
+
+        for group in groups:
+            if group.name == name:
+                return True
+
+        return False
+
+    def _s3_create_bucket(self, bucket_name):
+        from boto.s3.connection import Location
+        connection = self._aws_connect('s3')
+        connection.create_bucket(bucket_name, location=Location.EU)
+
+    def _rds_create_instance(self, db_instance_identifier, name, user, password):
+        connection = self._aws_connect('rds')
+
+        db_instance_identifier = "%s-%s" % (settings.PROJECT_NAME, db_instance_identifier)
+        # Название таблицы только из букв состоит
+        name = filter(str.isalpha, name)
+
+        connection.create_db_instance(
+            db_instance_identifier,
+            settings.RDS_ALLOCATED_STORAGE,
+            settings.RDS_INSTANCE_CLASS,
+            settings.RDS_ENGINE,
+            user,
+            password,
+            db_name=name)
 
     # Actions
     # def _virtualenv(params):
@@ -183,7 +255,7 @@ class AWS(Node):
                 self._render(params['destination'])
             )
 
-    def _put_template(self, params):
+    def _put_template(self, params, context=settings.__dict__):
         """
         Same as _put() but it loads a file and does variable replacement
         """
@@ -192,7 +264,7 @@ class AWS(Node):
 
         self.hosts.run(
             self._write_to(
-                self._render(template),
+                self._render(template, context=context),
                 self._render(params['destination'])
             )
         )

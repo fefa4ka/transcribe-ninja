@@ -11,7 +11,6 @@ import boto.ec2
 
 class TranscribeNinjaHost(SSHHost):
     username = settings.EC2_SERVER_USERNAME
-    password = 'cntyjuhfa,kznm'
     key_filename = settings.EC2_KEY_PAIR
 
     @property

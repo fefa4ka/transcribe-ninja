@@ -11,8 +11,8 @@ from app.deploy.service import *
 from app.deploy.django import *
 import app.deploy.tasks as tasks
 
-import boto
-import boto.ec2
+from boto.s3.connection import S3Connection
+from boto.s3.connection import Location
 
 import os.path
 
@@ -31,9 +31,20 @@ class TranscribeNinjaSystem(Node):
         name = 'supervisor'
         config = '/etc/supervisor/conf.d/transcribe.conf'
 
-    @map_roles(host='database')
-    class Database(UpstartService):
-        name = 'mysql'
+    class Database(AWS):
+        def create(self):
+            # Создаём бакет для файлов
+            # self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+
+            # Создаём РДС
+            security_group = self._ec2_mysql_security_group()
+            for db_name in settings.DATABASES.keys():
+                host = settings.DATABASES[db_name]
+                self._rds_create_instance(
+                    db_name,
+                    host['NAME'],
+                    host['USER'],
+                    host['PASSWORD'])
 
     @map_roles(host='database')
     class Queue(UpstartService):
@@ -78,20 +89,23 @@ class TranscribeNinjaSystem(Node):
             self.run_management_command('syncdb')
 
     def create(self):
-        # self.Frontend.create([
-        #     tasks.common_configure,
-        #     tasks.web_configure
-        # ])
+        self.Frontend.ec2_create([
+            tasks.common_configure,
+            tasks.web_configure
+        ])
 
-        self.Engine.create([
-            # tasks.common_configure,
+        self.Engine.ec2_create([
+            tasks.common_configure,
             tasks.engine_configure
         ])
 
+
         # Создаём S3 Bucket
+
         # Создаём BD
         # Создаём redis
         # Меняем конфиг 
+        # Собираем айпишники всех инстантов
 
         self.Frontend.compile()
 

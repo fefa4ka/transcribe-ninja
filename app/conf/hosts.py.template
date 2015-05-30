@@ -1,0 +1,9 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+HOSTS = {
+    'DB': '%(DATABASE)s',
+    'REDIS': '%(REDIS)s',
+    'ENGINE': '%(ENGINE)s',
+    'WEB': '%(WEB)s'
+}

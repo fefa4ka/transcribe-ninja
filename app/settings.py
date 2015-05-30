@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from hosts import HOSTS
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -28,7 +29,6 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 PROJECT_DIR = '~/' + PROJECT_NAME
 ENV_DIR = '%s/env' % PROJECT_DIR
 LOGS_DIR = '~/logs'
@@ -39,12 +39,6 @@ GIT_USERNAME = 'fefa4ka'
 ADMIN_EMAIL = 'fefa4ka@gmail.com'
 GIT_KEY_PATH = '/Users/fefa4ka/.ssh/deploy_rsa'
 GIT_KEY_NAME = 'github_rsa'
-
-HOSTS = {
-    'DB': 'db.transcribe.ninja',
-    'ENGINE': 'engine.transcribe.ninja',
-    'WEB': 'transcribe.ninja'
-}
 
 # Application definition
 INSTALLED_APPS = (
@@ -165,6 +159,12 @@ DATABASES = {
     }
 }
 
+# AWS RDS Config
+RDS_ALLOCATED_STORAGE = '5'
+RDS_INSTANCE_CLASS = 'db.t2.micro'
+RDS_ENGINE = 'MySQL'
+
+
 # Redis queue for async jobs
 RQ_QUEUES = {
     # Staff
@@ -257,7 +257,7 @@ AWS_ACCESS_KEY_ID = 'AKIAIVT4H6LXT37KKDQQ'
 AWS_SECRET_ACCESS_KEY = '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'
 
 # S3 Config
-AWS_STORAGE_BUCKET_NAME = PROJECT_NAME
+AWS_STORAGE_BUCKET_NAME = "%s-storage" % PROJECT_NAME
 AWS_HEADERS = {
     'Expires': 'Thu, 15 Apr 2020 20:00:00 GMT',
     'Cache-Control': 'max-age=2592000',
