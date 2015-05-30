@@ -109,11 +109,12 @@ common_configure = [
 web_configure = [
     # List of APT packages to install
     {"action": "apt",
-        "params": ["nginx", "uwsgi", "nodejs", "npm"],
+        "params": ["nginx", "uwsgi", "uwsgi-plugin-python", "nodejs", "npm"],
         "message":"Installing nginx, uwsgi, nodejs packages"},
-    {"action": "sudo", "params": "npm install -g bower"},
+    {"action": "sudo", "params": "npm install -g bower karma grunt grunt-cli"},
     # Костыль с нодой
-    {"action": "run", "params": "ln -s /usr/bin/nodejs $(ENV_DIR)s/bin/node"},
+    {"action": "run", "params": "ln -s /usr/bin/nodejs %(ENV_DIR)s/bin/node"},
+    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend && npm install"},
 
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
 
@@ -135,7 +136,7 @@ web_configure = [
 
     {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi.conf.template",
                                           "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf"}},
-    {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default"},
+    {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default.ini"},
     {"action": "sudo", "params":
         "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s.ini"},
     {"action": "sudo", "params": "service uwsgi restart",

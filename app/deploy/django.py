@@ -12,11 +12,7 @@ from app.deploy.aws import *
 class DjangoDeployment(AWS):
     def run_management_command(self, command):
         """ Run Django management command in virtualenv. """
-        # Activate the virtualenv.
-        with self.hosts.prefix(self.activate_cmd):
-            # Go to the directory where we have our 'manage.py' file.
-            with self.hosts.cd('transcribe-ninja'):
-                self.hosts.run('./manage.py %s' % esc1(command))
+        self._virtualenv('./manage.py %s' % esc1(command))
 
     def django_shell(self):
         """ Open interactive Django shell. """

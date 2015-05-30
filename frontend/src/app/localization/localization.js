@@ -13,7 +13,7 @@ angular.module( 'transcribe-ninja.localization', [
         var seconds = totalSeconds - (hours * 3600) - (minutes * 60);
 
         // round seconds
-        seconds = Math.round(seconds * 100 / 100)
+        seconds = Math.round(seconds * 100 / 100);
 
         var result = "";
         if(hours > 0) {

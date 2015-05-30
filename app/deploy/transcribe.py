@@ -63,10 +63,11 @@ class TranscribeNinjaSystem(Node):
         frontend_path = os.path.join(settings.PROJECT_DIR, 'frontend')
 
         def compile(self):
-            with self.hosts.cd(self.frontend_path, expand=True):
-                self.hosts.run('bower install')
-                self.hosts.run('grunt clean')
-                self.hosts.run('grunt --force')
+            with self.hosts.prefix(settings.ACTIVATE):
+                with self.hosts.cd(self.frontend_path, expand=True):
+                    self.hosts.run('bower install')
+                    self.hosts.run('grunt clean')
+                    self.hosts.run('grunt --force')
 
             self.run_management_command('collectstatic --noinput')
 
@@ -77,23 +78,25 @@ class TranscribeNinjaSystem(Node):
             self.run_management_command('syncdb')
 
     def create(self):
-        self.Frontend.create([
+        # self.Frontend.create([
+        #     tasks.common_configure,
+        #     tasks.web_configure
+        # ])
+
+        self.Engine.create([
             # tasks.common_configure,
-            tasks.web_configure
+            tasks.engine_configure
         ])
 
-        # self.Engine.create([
-        #     tasks.common_configure,
-        #     tasks.engine_configure
-        # ])
+        # Создаём S3 Bucket
+        # Создаём BD
+        # Создаём redis
+        # Меняем конфиг 
 
         self.Frontend.compile()
 
     def deploy(self):
         self.Git.pull()
-
-        self.Frontend.python_packages_install()
-        self.Engine.python_packages_install()
 
         self.Uwsgi.restart()
         self.Nginx.restart()

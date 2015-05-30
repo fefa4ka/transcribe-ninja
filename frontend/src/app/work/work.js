@@ -1,5 +1,7 @@
 $.fn.selectRange = function(start, end) {
-    if(!end) end = start; 
+    if(!end) {
+      end = start; 
+    }
     return this.each(function() {
         if (this.setSelectionRange) {
             this.focus();
@@ -97,20 +99,20 @@ angular.module( 'transcribe-ninja.work', [
           input_index = $input.data('index');
       
       // Если событие произошло не в инпуте иил инпут пустой
-      if($input.is('textarea') == false || typeof input_index == "undefined") {
+      if($input.is('textarea') === false || typeof input_index == "undefined") {
         return;
       }
 
       // console.log($input, input)
-      if($input[0].selectionStart == 0) {
+      if($input[0].selectionStart === 0) {
         event.preventDefault();
 
         // Ищем кусок с нужным айди
         for(var index in $scope.queue.pieces) {
           piece = $scope.queue.pieces[index];
-          piece_id = piece.id
+          piece_id = piece.id;
 
-          if(index == 0 ) {
+          if(index === 0 ) {
             previous_piece = piece;
           }
 
@@ -122,7 +124,7 @@ angular.module( 'transcribe-ninja.work', [
           
         }
 
-        if(input_index == 0 && piece != previous_piece) {
+        if(input_index === 0 && piece != previous_piece) {
           piece_id = previous_piece.id;
           input_index = previous_piece.transcriptions.length;
         }
@@ -170,7 +172,7 @@ angular.module( 'transcribe-ninja.work', [
       
       // Если событие произошло не в инпуте иил инпут пустой
       // Если мы в последнем поле, то ничего не делаем
-      if($input.is('textarea') == false || typeof $input.data('piece') == "undefined") {
+      if($input.is('textarea') === false || typeof $input.data('piece') == "undefined") {
         return;
       }
 
@@ -197,7 +199,7 @@ angular.module( 'transcribe-ninja.work', [
       // К предыдущей добавляем содержание текущией
       $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + input_index  + ']');
       
-      if($next_input.length == 0) {
+      if($next_input.length === 0) {
         $next_input = $('#new-transcription');
       }
 
@@ -217,7 +219,7 @@ angular.module( 'transcribe-ninja.work', [
             input_index = $input.data('index');
         
         // Если событие произошло не в инпуте
-        if($input.is('textarea') == false || ($input.data('piece') == $scope.queue.pieces[0].id && input_index == 0)) {
+        if($input.is('textarea') === false || ($input.data('piece') == $scope.queue.pieces[0].id && input_index == 0)) {
           return;
         }
 
@@ -241,12 +243,12 @@ angular.module( 'transcribe-ninja.work', [
         // К предыдущей добавляем содержание текущией
         $next_input = $('textarea[data-piece=' + piece.id + '][data-index=' + input_index  + ']');
         
-        if($next_input.length == 0) {
+        if($next_input.length === 0) {
           $next_input = $('textarea[data-piece=' + previous_piece.id + '][data-index=' + (previous_piece.transcriptions.length - 1)  + ']');
         }
 
 
-        if($input[0].selectionStart == 0) {
+        if($input[0].selectionStart === 0) {
           $next_input.focus();
           $next_input.selectRange($next_input.val().length);
         }
@@ -386,7 +388,7 @@ angular.module( 'transcribe-ninja.work', [
   
 
     // Если событие произошло не в инпуте иил инпут пустой
-    if($input.is('textarea') == false || $input.val() == "") {
+    if($input.is('textarea') === false || $input.val() === "") {
       return;
     }
 
@@ -426,7 +428,7 @@ angular.module( 'transcribe-ninja.work', [
       piece = $scope.queue.pieces[$scope.queue.pieces.length-1];
       index = (piece.transcriptions && piece.transcriptions.length) || 0;
 
-      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart == 0) {
+      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart === 0) {
         piece.transcriptions.push({
           piece: piece.id,
           text: text

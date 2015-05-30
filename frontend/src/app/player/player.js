@@ -43,8 +43,9 @@ angular.module( 'transcribe-ninja.player', [
         scope.$watch(attrs.audioFile, function(value) {
           console.log(value, 'watch');
 
-          if(typeof value == "undefined") 
+          if(typeof value == "undefined") {
             return;
+          }
 
           scope.wavesurfer.clearRegions();
           scope.wavesurfer.load(value.audio_file);

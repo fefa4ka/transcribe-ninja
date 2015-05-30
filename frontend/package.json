@@ -2,15 +2,15 @@
   "author": "Alexander Kondratev",
   "name": "transcribe-ninja",
   "version": "0.0.1",
-  "homepage": "https://github.com/fefa4ka/TranscribeNinja",
+  "homepage": "https://github.com/fefa4ka/transcribe-ninja",
   "licenses": {
     "type": "Private",
     "url": ""
   },
-  "bugs": "https://github.com/fefa4ka/TranscribeNinja/issues",
+  "bugs": "https://github.com/fefa4ka/transcribe-ninja/issues",
   "repository": {
     "type": "git",
-    "url": "git@github.com:fefa4ka/TranscribeNinja.git"
+    "url": "git@github.com:fefa4ka/transcribe-ninja.git"
   },
   "dependencies": {},
   "devDependencies": {

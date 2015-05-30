@@ -4,7 +4,7 @@ gid=%(EC2_SERVER_USERNAME)s
 
 chdir           = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s
 module          = app.wsgi
-home            = /home/%(EC2_SERVER_USERNAME)s
+home            = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env
 
 master          = true
 processes       = 10

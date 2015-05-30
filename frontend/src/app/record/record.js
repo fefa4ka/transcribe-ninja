@@ -122,7 +122,7 @@ angular.module( 'transcribe-ninja.record', [
         height = vph - $element.offset().top;
 
     $('.record_transcriptions').css({'height': height + 'px'});
-  }
+  };
 
   $scope.order = function (record) {
     $modalInstance = $modal.open(

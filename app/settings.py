@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_NAME = 'transcribe-ninja'
-DOMAIN = 'transcrib.ninja'
+DOMAIN = 'transcribe.ninja'
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
@@ -244,7 +244,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 if DEBUG:
     FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
     STATICFILES_DIRS = (
-        FRONTEND_ROOT,
+        # FRONTEND_ROOT,
         os.path.join(BASE_DIR, "frontend/bin/"),
     )
 
