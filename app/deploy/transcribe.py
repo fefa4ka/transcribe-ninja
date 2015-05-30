@@ -78,13 +78,14 @@ class TranscribeNinjaSystem(Node):
 
     def create(self):
         self.Frontend.create([
+            # tasks.common_configure,
             tasks.web_configure
         ])
 
-        self.Engine.create([
-            tasks.common_configure,
-            tasks.engine_configure
-        ])
+        # self.Engine.create([
+        #     tasks.common_configure,
+        #     tasks.engine_configure
+        # ])
 
         self.Frontend.compile()
 

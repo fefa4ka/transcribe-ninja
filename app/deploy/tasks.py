@@ -39,12 +39,18 @@ common_configure = [
     {"action": "run", "params": "whoami"},
 
     # sudo apt-get update
-    {"action": "sudo", "params": "sudo add-apt-repository ppa:kirillshkrogalev/ffmpeg-next",
+    {"action": "sudo", "params": "sudo add-apt-repository -y ppa:kirillshkrogalev/ffmpeg-next",
         "message": "Add ffmpeg apt repository"},
-    {"action": "sudo", "params": "add-apt-repository ppa:webupd8team/java",
+    {"action": "sudo", "params": "add-apt-repository -y ppa:webupd8team/java",
         "message": "Add java apt repository"},
-    {"action": "sudo", "params": "add-apt-repository ppa:gstreamer-developers/ppa",
+
+    # oracle LA agree
+    {"action": "sudo",  "params": "echo debconf shared/accepted-oracle-license-v1-1 select true | sudo debconf-set-selections"},
+    {"action": "sudo",  "params": "echo debconf shared/accepted-oracle-license-v1-1 seen true | sudo debconf-set-selections"},
+
+    {"action": "sudo", "params": "add-apt-repository -y ppa:gstreamer-developers/ppa",
         "message": "Add gstreamer apt repository"},
+
     {"action": "sudo", "params": "apt-get update -qq",
         "message": "Updating apt-get"},
 
@@ -52,7 +58,7 @@ common_configure = [
     {"action": "apt",
         "params": ["libpq-dev", "git",
                    "python-setuptools", "python-dev", "build-essential", "python-pip", "redis-server", "ffmpeg",
-                   "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer", "mp3split",
+                   "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer",
                    "gstreamer0.10-tools", "gstreamer-tools", "gstreamer0.10-plugins-base", "gstreamer0.10-plugins-good", "gstreamer0.10-plugins-bad"],
         "message":"Installing apt-get packages" },
 
@@ -62,6 +68,7 @@ common_configure = [
 
     #project directory
     {"action": "run",  "params": "mkdir -p %(PROJECT_DIR)s", "message": "Create project folder" },
+    {"action": "run",  "params": "mkdir -p %(LOGS_DIR)s", "message": "Create logs folder" },
     {"action": "sudo", "params": "chown -R %(EC2_SERVER_USERNAME)s: %(PROJECT_DIR)s"},
 
     # git setup
@@ -105,6 +112,8 @@ web_configure = [
         "params": ["nginx", "uwsgi", "nodejs", "npm"],
         "message":"Installing nginx, uwsgi, nodejs packages"},
     {"action": "sudo", "params": "npm install -g bower"},
+    # Костыль с нодой
+    {"action": "run", "params": "ln -s /usr/bin/nodejs $(ENV_DIR)s/bin/node"},
 
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
 

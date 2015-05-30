@@ -19,7 +19,7 @@ class AWS(Node):
             settings.EC2_REGION, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
     def create(self, configs):
-        # start_time = time.time()
+        start_time = time.time()
         print "Started..."
 
         # Генерим ключ
@@ -55,7 +55,7 @@ class AWS(Node):
     def create_instance(self, name, tcp_ports):
         connection = self.aws_connect()
 
-        name = security_group = "%s-%s" % (settings.PROJECT_NAME, name)
+        name = security_group = "%s-%s-test" % (settings.PROJECT_NAME, name)
 
         # Проверяем, создана ли группа безопасности
         if not self.aws_check_security_group_exist(security_group):
@@ -149,7 +149,7 @@ class AWS(Node):
         Runs apt-get install commands
         """
         for pkg in params:
-            self._sudo("apt-get install -qq %s" % pkg)
+            self._sudo("apt-get install -y -qq %s" % pkg)
 
     def _pip(self, params):
         """
