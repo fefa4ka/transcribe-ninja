@@ -13,8 +13,15 @@ import os
 import time
 
 class AWS(Node):
+    def get_address(self):
+        hosts =[] 
+        for host in self.hosts.get_hosts():
+            host = host()
+            hosts.append((host.slug, host.address))
 
-    def ec2_create(self, configs):
+        return hosts
+
+    def _ec2_create(self, configs):
         start_time = time.time()
         print "Started..."
 
@@ -25,23 +32,28 @@ class AWS(Node):
 
         # Создаём машины
         for host in self.hosts.get_hosts():
-            # Получаем айпишник
-            address = connection.allocate_address()
+            name = "%s-%s" % (settings.PROJECT_NAME, host.slug)
+            # Проверяем, создана ли машина
+            instance = self._ec2_get_instance(name)
 
-            instance = self._ec2_create_instance(host.slug, host.ports)
+            if not instance:
+                # Получаем айпишник
+                address = connection.allocate_address()
 
-            # Прикрепляем айпишник
-            connection.associate_address(
-                instance.instance_id,
-                address.public_ip
-            )
+                instance = self._ec2_create_instance(host.slug, host.ports)
 
-        print "Waiting 2 minutes for server to boot..."
-        time.sleep(125)
+                # Прикрепляем айпишник
+                connection.associate_address(
+                    instance.id,
+                    address.public_ip
+                )
 
-        # Настраиваем
-        for config in configs:
-            self._ec2_configure_instance(config)
+                print "Waiting 2 minutes for server to boot..."
+                time.sleep(125)
+
+                # Настраиваем
+                for config in configs:
+                    self._ec2_configure_instance(config)
 
         end_time = time.time()
         print "Runtime: %f minutes" % ((end_time - start_time) / 60)
@@ -76,29 +88,25 @@ class AWS(Node):
             for port in tcp_ports:
                 web.authorize('tcp', int(port), int(port), '0.0.0.0/0')
 
-        # Проверяем, создана ли машина
-        instance = self._ec2_get_instance(name)
-
-        if not instance:
-            # Создаём машину
-            print "Creating instance %s" % name
-            reservation = connection.run_instances(
-                settings.EC2_AMI,
-                key_name=settings.PROJECT_NAME,
-                instance_type=settings.EC2_INSTANCE_TYPE,
-                security_groups=[security_group])
+        # Создаём машину
+        print "Creating instance %s" % name
+        reservation = connection.run_instances(
+            settings.EC2_AMI,
+            key_name=settings.PROJECT_NAME,
+            instance_type=settings.EC2_INSTANCE_TYPE,
+            security_groups=[security_group])
 
 
-            # Ждём пока запустится
-            instance = reservation.instances[0]
-            connection.create_tags([instance.id], { "Name": name })
+        # Ждём пока запустится
+        instance = reservation.instances[0]
+        connection.create_tags([instance.id], { "Name": name })
 
-            while instance.state == u'pending':
-                print "Instant state: %s" % instance.state
-                time.sleep(10)
-                instance.update()
+        while instance.state == u'pending':
+            print "Instant state: %s" % instance.state
+            time.sleep(10)
+            instance.update()
 
-            print "Public DNS name of %s: %s" % (name, instance.public_dns_name)
+        print "Public DNS name of %s: %s" % (name, instance.public_dns_name)
 
         return instance
 
@@ -171,7 +179,7 @@ class AWS(Node):
             # Создаём группу безопасности. разрешаем подключаться всем сервакам
             security_group = ec2_connection.create_security_group(security_group_name, '%s services' % security_group_name)
             for instance in self._ec2_get_project_instances():
-                security_group.authorize('tcp', 3306, 3306, "%s/32" % instance.ip_address)
+                security_group.authorize('tcp', 3306, 3306, "%s/32" % instance.private_ip_address)
 
         return security_group
 
@@ -183,15 +191,16 @@ class AWS(Node):
 
         for group in groups:
             if group.name == name:
-                return True
+                return group
 
-        return False
+        return None
 
     def _s3_create_bucket(self, bucket_name):
         from boto.s3.connection import Location
         connection = self._aws_connect('s3')
         connection.create_bucket(bucket_name, location=Location.EU)
 
+    # TODO: Создавать группу параметров с utf8
     def _rds_create_instance(self, db_instance_identifier, name, user, password):
         connection = self._aws_connect('rds')
 
@@ -206,7 +215,26 @@ class AWS(Node):
             settings.RDS_ENGINE,
             user,
             password,
-            db_name=name)
+            db_name=name,
+            db_parameter_group_name='mysql-utf8',
+            vpc_security_group_ids=[self._ec2_mysql_security_group().id],
+            tags=[settings.PROJECT_NAME]
+            )
+
+    def _rds_get_instance(self, db_instance_identifier):
+        connection = self._aws_connect('rds')
+
+        db_instance_identifier = "%s-%s" % (settings.PROJECT_NAME, db_instance_identifier)
+
+        try:
+            response = connection.describe_db_instances(db_instance_identifier)
+
+            return response['DescribeDBInstancesResponse']['DescribeDBInstancesResult']['DBInstances'][0].keys()
+
+        except boto.rds2.exceptions.DBInstanceNotFound:
+            return None
+
+
 
     # Actions
     # def _virtualenv(params):
@@ -264,7 +292,7 @@ class AWS(Node):
 
         self.hosts.run(
             self._write_to(
-                self._render(template, context=context),
+                self._render(template, context),
                 self._render(params['destination'])
             )
         )

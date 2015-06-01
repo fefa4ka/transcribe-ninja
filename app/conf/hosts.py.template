@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 HOSTS = {
-    'DB': '%(DATABASE)s',
-    'REDIS': '%(REDIS)s',
-    'ENGINE': '%(ENGINE)s',
-    'WEB': '%(WEB)s'
+    "DB": "%(DATABASE)s",
+    "REDIS": "%(ENGINE)s",
+    "ENGINE": "%(ENGINE)s",
+    "WEB": "%(WEB)s"
 }

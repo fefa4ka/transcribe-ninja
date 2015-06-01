@@ -19,6 +19,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_NAME = 'transcribe-ninja'
 DOMAIN = 'transcribe.ninja'
 
+# HOSTS = {
+#     'DB': 'db.%s' % DOMAIN,
+#     'ENGINE': 'engine.%s' % DOMAIN,
+#     'WEB': DOMAIN
+# }
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
 
@@ -169,7 +175,7 @@ RDS_ENGINE = 'MySQL'
 RQ_QUEUES = {
     # Staff
     'prepare': {
-        'HOST': HOSTS['DB'],
+        'HOST': HOSTS['REDIS'],
         'PORT': 6379,
         'DB': 0,
         'PASSWORD': '',
@@ -177,7 +183,7 @@ RQ_QUEUES = {
     },
     # Analys audio
     'analys': {
-        'HOST': HOSTS['DB'],
+        'HOST': HOSTS['REDIS'],
         'PORT': 6379,
         'DB': 1,
         'PASSWORD': '',
@@ -185,7 +191,7 @@ RQ_QUEUES = {
     },
     # Split audio
     'queue': {
-        'HOST': HOSTS['DB'],
+        'HOST': HOSTS['REDIS'],
         'PORT': 6379,
         'DB': 2,
         'PASSWORD': '',

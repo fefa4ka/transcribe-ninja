@@ -15,28 +15,43 @@ class TranscribeNinjaHost(SSHHost):
 
     @property
     def address(self):
-        instance = self.aws_get_instance("%s-%s" % (settings.PROJECT_NAME, self.slug))
+        return self._aws_get_instance_address("%s-%s" % (settings.PROJECT_NAME, self.slug))
 
-        if instance:
-            return instance.public_dns_name
 
-        return False
-
-    def aws_connect(self):
+    def _aws_connect(self, service):
         # Подключаемся к AWS
-        return boto.ec2.connect_to_region(
-            settings.EC2_REGION, aws_access_key_id=settings.AWS_ACCESS_KEY_ID, aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        if service == "ec2":
+            return boto.ec2.connect_to_region(
+                settings.EC2_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
+        elif service == "rds":
+            return boto.rds2.connect_to_region(
+                settings.EC2_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY)
 
-    def aws_get_instance(self, name):
-        connection = self.aws_connect()
+    def _aws_get_instance_address(self, name):
+        # Сначала ищем среди EC2
+        connection = self._aws_connect('ec2')
 
         reservations = connection.get_all_instances()
 
         for r in reservations:
             if r.instances[0].tags['Name'] == name:
-                return r.instances[0]
+                return r.instances[0].public_dns_name
+
+        # Проверяем среди баз данных
+        try:
+            connection = self._aws_connect('rds')
+            response = connection.describe_db_instances(name)
+            print name
+            return response['DescribeDBInstancesResponse']['DescribeDBInstancesResult']['DBInstances'][0]['Endpoint']['Address']
+        except:
+            pass
 
         return False
+
 
 
 class DeployHost(TranscribeNinjaHost):
@@ -46,17 +61,12 @@ class DeployHost(TranscribeNinjaHost):
 class WebHost(TranscribeNinjaHost):
     slug = 'web'
     ports = [80, 22]
-    # address = settings.HOSTS['WEB']
-    # username = 'web'
 
 
 class DatabaseHost(TranscribeNinjaHost):
     slug = 'database'
-    # address = settings.HOSTS['DB']
 
 
 class EngineHost(TranscribeNinjaHost):
     slug = 'engine'
-    ports = [22]
-    # address = settings.HOSTS['ENGINE']
-    # username = 'engine'
+    ports = [6379, 22]

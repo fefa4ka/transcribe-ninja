@@ -117,23 +117,22 @@ web_configure = [
     {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend && npm install"},
 
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
+    {"action": "sudo", "params": "rm -rf /etc/supervisor/conf.d/default"},
+]
 
     # nginx
-    # {"action": "put", "params": {"file": "%(FAB_CONFIG_PATH)s/templates/nginx.conf",
-    #                              "destination": "/home/%(SERVER_USERNAME)s/nginx.conf"},
-    #     "message": "Configuring nginx"},
-    # {"action": "sudo",
-    #  "params": "mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old"},
-    # {"action": "sudo", "params":
-    #  "mv /home/%(SERVER_USERNAME)s/nginx.conf /etc/nginx/nginx.conf"},
-    # {"action": "sudo", "params": "chown root:root /etc/nginx/nginx.conf"},
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/nginx.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf"}},
+reload_nginx = [
+    {"action": "put", "params": {"file": "%(FAB_CONFIG_PATH)s/templates/nginx.conf",
+                                 "destination": "/home/%(SERVER_USERNAME)s/nginx.conf"},
+        "message": "Configuring nginx"},
+    {"action": "sudo",
+     "params": "mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.old"},
     {"action": "sudo", "params":
-     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
-    {"action": "sudo", "params": "service nginx restart",
-     "message": "Restarting nginx"},
+     "mv /home/%(SERVER_USERNAME)s/nginx.conf /etc/nginx/nginx.conf"},
+    {"action": "sudo", "params": "chown root:root /etc/nginx/nginx.conf"},
+]
 
+reload_uwsgi = [
     {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi.conf.template",
                                           "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf"}},
     {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default.ini"},
@@ -143,6 +142,8 @@ web_configure = [
         "message": "Restarting uwsgi"},
 ]
 
+web_configure += reload_uwsgi + reload_nginx
+
 engine_configure = [
     # List of pypi packages to install
     {"action": "apt", "params": ["supervisor"],
@@ -150,7 +151,6 @@ engine_configure = [
 
     {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/supervisor.conf.template",
                                           "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf"}},
-    {"action": "sudo", "params": "rm -rf /etc/supervisor/conf.d/default"},
     {"action": "sudo", "params":
         "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf /etc/supervisor/conf.d/%(PROJECT_NAME)s.conf"},
     {"action": "sudo", "params": "service supervisor restart",
@@ -159,6 +159,8 @@ engine_configure = [
     # Передвинуть voiceid и liam
     # Запстить очереди
 ]
+
+
 a=[
     # {"action": "run", "params": """echo "alias webapps='cd %(APPS_DIR)s'" >> /home/%(SERVER_USERNAME)s/.profile""",
     #     "message": "Creating webapps alias"},

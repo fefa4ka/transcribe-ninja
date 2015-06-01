@@ -31,20 +31,21 @@ class TranscribeNinjaSystem(Node):
         name = 'supervisor'
         config = '/etc/supervisor/conf.d/transcribe.conf'
 
+    @map_roles(host='database')
     class Database(AWS):
         def create(self):
-            # Создаём бакет для файлов
-            # self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+            host = settings.DATABASES['default']
 
-            # Создаём РДС
+            # Создаём группу безопасности
             security_group = self._ec2_mysql_security_group()
-            for db_name in settings.DATABASES.keys():
-                host = settings.DATABASES[db_name]
-                self._rds_create_instance(
-                    db_name,
-                    host['NAME'],
-                    host['USER'],
-                    host['PASSWORD'])
+            # Создаём группу параметров
+
+            # Запускаем инстанс
+            self._rds_create_instance(
+                'database',
+                host['NAME'],
+                host['USER'],
+                host['PASSWORD'])
 
     @map_roles(host='database')
     class Queue(UpstartService):
@@ -61,7 +62,11 @@ class TranscribeNinjaSystem(Node):
         config = '/etc/uwsgi/apps-enabled/transcribe-ninja.ini'
 
     @map_roles(host=('web', 'engine'))
-    class Git(Node):
+    class Application(DjangoDeployment):
+        def create_storage(self):
+            # Создаём бакет для файлов
+            self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+
         def checkout(self, commit):
             self.host.run("git checkout '%s'" % esc1(commit))
 
@@ -72,6 +77,12 @@ class TranscribeNinjaSystem(Node):
     @map_roles(host='web')
     class Frontend(DjangoDeployment):
         frontend_path = os.path.join(settings.PROJECT_DIR, 'frontend')
+
+        def create(self):
+            self.ec2_create([
+                tasks.common_configure,
+                tasks.web_configure
+            ])
 
         def compile(self):
             with self.hosts.prefix(settings.ACTIVATE):
@@ -84,33 +95,55 @@ class TranscribeNinjaSystem(Node):
 
     @map_roles(host='engine')
     class Engine(DjangoDeployment):
+        def create(self):
+            self.ec2_create([
+                tasks.common_configure,
+                tasks.engine_configure
+            ])
+
         def reset_db(self):
             self.run_management_command('reset')
             self.run_management_command('syncdb')
 
     def create(self):
-        self.Frontend.ec2_create([
-            tasks.common_configure,
-            tasks.web_configure
-        ])
+        # Если созданы — удалить
+        # Предварительно спросить
+        self.Frontend.create()
 
-        self.Engine.ec2_create([
-            tasks.common_configure,
-            tasks.engine_configure
-        ])
+        self.Engine.create()
 
+        # S3 Bucket
+        self.Application.create_storage()
 
-        # Создаём S3 Bucket
+        # Создаём базы
+        self.Database.create()
 
-        # Создаём BD
-        # Создаём redis
-        # Меняем конфиг 
-        # Собираем айпишники всех инстантов
+        # Меняем хосты в конфиге
+        self.Application.update_hosts({
+            "ENGINE": self.Engine.get_address()[0][1],
+            "WEB": self.Frontend.get_address()[0][1],
+            "DATABASE": self.Database.get_address()[0][1]
+        })
 
-        self.Frontend.compile()
+        
+        self.Engine.reset_db()
+        self.deploy()
+
+    def update_host(self):
+
+        
+
+    def print_hosts(self):
+        hosts = []
+        hosts += self.Application.get_address()
+        hosts += self.Database.get_address()
+
+        for host in hosts:
+            print "%s:\t%s" % (host[0], host[1])
+
 
     def deploy(self):
-        self.Git.pull()
+        self.Application.pull()
 
         self.Uwsgi.restart()
         self.Nginx.restart()

@@ -10,6 +10,12 @@ from app.deploy.aws import *
 
 
 class DjangoDeployment(AWS):
+    def update_hosts(self, hosts):
+        self._put_template({
+                "template": "%(BASE_DIR)s/app/conf/hosts.py.template",
+                "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/hosts.py"
+            }, hosts)
+
     def run_management_command(self, command):
         """ Run Django management command in virtualenv. """
         self._virtualenv('./manage.py %s' % esc1(command))
