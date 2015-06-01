@@ -67,8 +67,9 @@ class TranscribeNinjaSystem(Node):
             # Создаём бакет для файлов
             self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
-        def checkout(self, commit):
-            self.hosts.run("git checkout '%s'" % esc1(commit))
+        def checkout(self, commit="."):
+            with self.hosts.cd(settings.PROJECT_DIR, expand=True):
+                self.hosts.run("git checkout '%s'" % esc1(commit))
 
         def pull(self):
             with self.hosts.cd(settings.PROJECT_DIR, expand=True):
