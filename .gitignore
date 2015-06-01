@@ -9,3 +9,4 @@ frontend/bin/*
 temp/*
 *.mp3
 *.conf
+app/hosts.py

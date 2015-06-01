@@ -68,10 +68,11 @@ class TranscribeNinjaSystem(Node):
             self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
 
         def checkout(self, commit):
-            self.host.run("git checkout '%s'" % esc1(commit))
+            self.hosts.run("git checkout '%s'" % esc1(commit))
 
         def pull(self):
             with self.hosts.cd(settings.PROJECT_DIR, expand=True):
+                self.hosts.run("git checkout '.'")
                 self.hosts.run('git pull')
 
     @map_roles(host='web')
@@ -125,13 +126,9 @@ class TranscribeNinjaSystem(Node):
             "DATABASE": self.Database.get_address()[0][1]
         })
 
-        
+
         self.Engine.reset_db()
         self.deploy()
-
-    def update_host(self):
-
-        
 
     def print_hosts(self):
         hosts = []
