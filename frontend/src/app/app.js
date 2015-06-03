@@ -24,7 +24,7 @@ angular.module( 'transcribe-ninja', [
 })
 
 .config( function myAppConfig ( $stateProvider, $urlRouterProvider ) {
-  $urlRouterProvider.otherwise( '/work' );
+  $urlRouterProvider.otherwise( '/' );
 
 })
 
