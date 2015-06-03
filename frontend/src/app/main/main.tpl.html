@@ -1,1 +1,23 @@
-<main-logo> </main-logo>
+<ul class="list-unstyled list-inline span7 mainpage" ng-mousemove="logoNameState($event)">
+    <li class="upload" 
+        ng-controller="RecordUploadCtrl">
+        <span class="btn btn-primary btn-file"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
+        <p>
+            Стенографируйте запись сами <br/>
+            или закажите это у нас <br/>
+        </p>
+    </li>
+    
+    <li class="logo">
+        <main-logo> </main-logo>
+    </li>
+
+    <li class="transcribe">
+        <a href ui-sref="work">Распознать</a>
+        <p>
+            Вы можете заработать<br/>
+            стенографируя записи
+        </p>
+    </li>
+
+</section>

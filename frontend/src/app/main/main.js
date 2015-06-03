@@ -23,8 +23,52 @@ angular.module( 'transcribe-ninja.main', [
     }
   };
 })
-.controller( 'MainCtrl', function MainCtrl( $scope, $interval, $translate, $modal, $log, api ) {
+.controller( 'MainCtrl', function MainCtrl( $scope, $translate) {
   $translate.use("ru");
+  
+  $scope.logoNameState = function($event) {
+    var states = [
+          [700, 700, 400, 400, 300, 300, 300, 100, 100, 100],
+          [400, 700, 700, 400, 400, 300, 300, 300, 100, 100],
+          [400, 400, 700, 700, 400, 400, 300, 300, 300, 100],
+          [300, 400, 400, 700, 700, 400, 400, 300, 300, 100],
+          [300, 300, 400, 400, 700, 700, 400, 400, 300, 300],
+          [100, 300, 300, 400, 400, 700, 700, 400, 400, 300],
+          [100, 300, 300, 300, 400, 400, 700, 700, 400, 400],
+          [100, 100, 100, 300, 300, 400, 400, 700, 700, 400],
+          [100, 100, 100, 300, 300, 300, 400, 400, 700, 700]
+        ],
+       state_index;
+
+    function change_name(state_index){
+      for(var i=1; i <= 10; i++) {
+        var letter = $("#name_" + i);
+        letter.attr("font-weight", states[state_index][i-1]);
+      }
+    }
+       
+    function update_state(mouse_x) {
+      var $name =  $("#name"),
+          state = 0,
+          pos = ((mouse_x - $name.offset().left)/$name.width()) * 10;
+
+        if(pos < 1) {
+          state = 0;
+        }
+
+        if(pos > 9) {
+            state = 9;
+        } 
+
+        if(state != 1 && state != 9) {
+            state = Math.round(pos-1);
+        }
+
+        change_name(state);
+    }
+
+    update_state($event.clientX);
+  };
 
   $scope.upload = function() {
     console.log('upload');
