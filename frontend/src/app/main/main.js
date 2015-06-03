@@ -48,23 +48,15 @@ angular.module( 'transcribe-ninja.main', [
     }
        
     function update_state(mouse_x) {
-      var $name =  $("#name"),
+      var $name =  $("#head"),
           state = 0,
           pos = ((mouse_x - $name.offset().left)/$name.width()) * 10;
 
-        if(pos < 1) {
-          state = 0;
+        if(pos > 0 && pos < 10){
+          console.log(pos);
         }
+    
 
-        if(pos > 9) {
-            state = 9;
-        } 
-
-        if(state != 1 && state != 9) {
-            state = Math.round(pos-1);
-        }
-
-        change_name(state);
     }
 
     update_state($event.clientX);
