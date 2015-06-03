@@ -1,9 +1,41 @@
-<svg id="logo" width="550" height="300">
+    <svg id="logo" width="400" height="220">
     <defs>
-        <path id="sloganSecondPath" d="M0,44 C17,30 90,31 139,31 C189,31 263,0 263,0"></path>
+        <path 
+            id="sloganSecondPath" 
+            d="M0,44 C17,30 90,31 139,31 C189,31 263,0 263,0"
+            ></path>
         <path id="sloganFirstPath" d="M0,44 C14,25 69,19 101,27 C132,34 197,58 233,14"/>
     </defs>
-
+      <animate id="animFirstPath_1" xlink:href="#sloganFirstPath"
+        attributeName="d"
+        attributeType="XML"
+        from="M0,44 C14,20 69,19 101,27 C132,34 197,58 233,14"
+        to="M0,44 C14,10 69,19 101,27 C132,34 197,58 233,14"
+        begin="0s;animFirstPath_2.end"
+      dur="0.3s" fill="freeze" />
+      <animate id="animFirstPath_2" xlink:href="#sloganFirstPath"
+        attributeName="d"
+        attributeType="XML"
+        to="M0,44 C14,20 69,19 101,27 C132,34 197,58 233,14"
+        from="M0,44 C14,10 69,19 101,27 C132,34 197,58 233,14"
+        begin="animFirstPath_1.end"
+        dur="0.5s" fill="freeze" />
+      
+      <animate id="animSecondPath_1" xlink:href="#sloganSecondPath"
+        attributeName="d"
+        attributeType="XML"
+        from="M0,44 C17,20 90,31 139,31 C189,31 263,-40 263,-20"
+        to="M0,44 C17,30 90,31 139,31 C189,31 263,-40 263,-20"
+        begin="0s;animSecondPath_2.end"
+        dur="0.4s" fill="freeze" />
+      <animate id="animSecondPath_2" xlink:href="#sloganSecondPath"
+        attributeName="d"
+        attributeType="XML"
+        to="M0,44 C17,20 90,31 139,31 C189,31 263,-40 263,-20"
+        from="M0,44 C17,30 90,31 139,31 C189,31 263,-40 263,-20"
+        begin="animSecondPath_1.end"
+      dur="0.3s" fill="freeze" />
+    
     <text id="slogan_1" transform="translate(185,0)">
         <textPath xlink:href="#sloganFirstPath">– VOICE RECOGNITION</textPath>
     </text>
