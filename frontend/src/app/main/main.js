@@ -4,7 +4,7 @@ angular.module( 'transcribe-ninja.main', [
 ])
 
 .config(function config( $stateProvider ) {
-  $stateProvider.state( 'main-page', {
+  $stateProvider.state( 'main', {
     url: '/',
     views: {
       "main": {
