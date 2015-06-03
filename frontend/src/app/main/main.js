@@ -8,7 +8,7 @@ angular.module( 'transcribe-ninja.main', [
     url: '/',
     views: {
       "main": {
-        controller: 'RecordListCtrl',
+        controller: 'MainCtrl',
         templateUrl: 'main/main.tpl.html'
       }
     },
