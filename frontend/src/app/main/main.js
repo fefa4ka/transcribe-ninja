@@ -1,5 +1,4 @@
 angular.module( 'transcribe-ninja.main', [
-  'transcribe-ninja.order',
   'ui.router'
 ])
 
@@ -27,12 +26,9 @@ angular.module( 'transcribe-ninja.main', [
 .controller( 'MainCtrl', function MainCtrl( $scope, $interval, $translate, $modal, $log, api ) {
   $translate.use("ru");
 
-
   $scope.upload = function() {
     console.log('upload');
   };
-
-
 
 })
 
