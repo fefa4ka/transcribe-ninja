@@ -198,7 +198,7 @@ class AWS(Node):
     def _s3_create_bucket(self, bucket_name):
         from boto.s3.connection import Location
         connection = self._aws_connect('s3')
-        connection.create_bucket(bucket_name, location=Location.EU)
+        return connection.create_bucket(bucket_name, location=Location.EU)
 
     # TODO: Создавать группу параметров с utf8
     def _rds_create_instance(self, db_instance_identifier, name, user, password):

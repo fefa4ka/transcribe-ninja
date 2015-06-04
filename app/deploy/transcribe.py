@@ -65,7 +65,21 @@ class TranscribeNinjaSystem(Node):
     class Application(DjangoDeployment):
         def create_storage(self):
             # Создаём бакет для файлов
-            self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+            bucket = self._s3_create_bucket(settings.AWS_STORAGE_BUCKET_NAME)
+
+            self.config_bucket()
+
+        def config_bucket(self):
+            from boto.s3.cors import CORSConfiguration
+            connection = self._aws_connect('s3')
+
+            bucket = connection.lookup(settings.AWS_STORAGE_BUCKET_NAME)
+
+            # Чтобы могли загружать файл с других сайтов
+            cors_cfg = CORSConfiguration()
+            cors_cfg.add_rule('GET', '*')
+            bucket.set_cors(cors_cfg)
+
 
         def checkout(self, commit="."):
             with self.hosts.cd(settings.PROJECT_DIR, expand=True):

@@ -146,6 +146,9 @@ web_configure += reload_uwsgi + reload_nginx
 
 engine_configure = [
     # List of pypi packages to install
+    {"action": "run", "params": ["cp -r ~/%(PROJECT_NAME)s/env/share/voiceid ~/%(PROJECT_NAME)s/env/local/share/"],
+        "message":"Move voiceid"},
+
     {"action": "apt", "params": ["supervisor"],
         "message":"Installing supervisor"},
 
