@@ -294,6 +294,7 @@ angular.module( 'transcribe-ninja.work', [
         
         end_at = start_at + $scope.queue.duration;
 
+        console.log(start_at, end_at);
         $scope.wavesurfer.addRegion({ 
            start: start_at,
            end: end_at,
@@ -327,7 +328,7 @@ angular.module( 'transcribe-ninja.work', [
 
       $scope.queue.duration = duration;
 
-      console.log($scope);
+      
       // Подгружаем аудиофайл
       $scope.wavesurfer.clearRegions();
       $scope.wavesurfer.load($scope.queue.audio_file);
