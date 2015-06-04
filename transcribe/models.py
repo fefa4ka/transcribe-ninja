@@ -332,14 +332,15 @@ class Transcription(models.Model):
         else:
             speaker = self.piece.speaker
 
-        # Если нет имени
-        # Проверяем, входит ли в основной набор собеседников
-        if not speaker.name:
-            # Если да, и собеседников двое
-            # то имена «Женщина» или «Мужчина»
-            name = "Female" if speaker.gender == "F" else "Male"
+        # print speaker
+        # # Если нет имени
+        # # Проверяем, входит ли в основной набор собеседников
+        # if not speaker.name:
+        #     # Если да, и собеседников двое
+        #     # то имена «Женщина» или «Мужчина»
+        #     name = "Female" if speaker.gender == "F" else "Male"
 
-        return name
+        return speaker.name
 
     @property
     def previous(self):

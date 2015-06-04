@@ -65,6 +65,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
 
 class PieceSerializer(serializers.ModelSerializer):
     transcriptions = TranscriptionSerializer(many=True)
+    speaker = serializers.ReadOnlyField(source='speaker.gender')
 
     class Meta:
         model = Piece
