@@ -44,7 +44,7 @@ angular.module( 'transcribe-ninja', [
 .controller( 'AppCtrl', function AppCtrl ( $scope, $location, $translate, $modal, Data, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
-      $scope.pageTitle = toState.data.pageTitle + ' | Стенограф' ;
+      $scope.pageTitle = toState.data.pageTitle + ' | Transcribe.ninja' ;
       $scope.stateName = toState.name;      
     }
   });

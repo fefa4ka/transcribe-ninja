@@ -11,7 +11,7 @@ angular.module( 'transcribe-ninja.main', [
         templateUrl: 'main/main.tpl.html'
       }
     },
-    data:{ pageTitle: 'Transcribe.ninja – стенографирование разговоров' }
+    data:{ pageTitle: 'Стенографирование разговоров' }
   });
 })
 .directive('mainLogo', function () {
@@ -48,15 +48,26 @@ angular.module( 'transcribe-ninja.main', [
     }
        
     function update_state(mouse_x) {
-      var $name =  $("#head"),
-          state = 0,
+      var $name =  $("#name"),
+          state = 1,
           pos = ((mouse_x - $name.offset().left)/$name.width()) * 10;
 
-        if(pos > 0 && pos < 10){
-          console.log(pos);
+        if(pos < 1) {
+          state = 0;
         }
-    
 
+        if(pos > 8) {
+            state = 8;
+        } 
+
+        if(state !== 0 && state != 8) {
+            state = Math.round(pos-1);
+        }
+
+        if(state_index != state) {
+          change_name(state);
+          state_index = state;
+        }
     }
 
     update_state($event.clientX);
