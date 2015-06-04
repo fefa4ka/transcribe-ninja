@@ -54,8 +54,8 @@ angular.module( 'transcribe-ninja.player', [
 
         scope.duration = scope.wavesurfer.getDuration();
 
+        scope.playerInit();
 
-        // scope.$parent.playerInit();
 
     }
   };
