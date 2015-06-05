@@ -439,7 +439,7 @@ class Piece(models.Model):
                     diff = SequenceMatcher(None, word, variant[word_index])
                     ratio = diff.ratio()
                     # Если слово очень похоже, то добавляем как альтернативу
-                    if ratio > 0.8 and ratio != 1:
+                    if ratio > 0.65 and ratio != 1:
                         result_word.append(variant[word_index])
                 except IndexError:
                     pass
