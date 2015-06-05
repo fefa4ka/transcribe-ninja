@@ -8,6 +8,11 @@ from django.core.files import File
 import os
 import time
 import shutil
+
+import urllib2
+
+from xml.dom.minidom import parseString as XMLParse
+
 from datetime import datetime
 
 from voiceid.sr import Voiceid
@@ -18,6 +23,8 @@ import numpy as np
 from core.utils import *
 from core.models import *
 from core.extra import *
+
+from pydub import AudioSegment
 
 
 class Record(AudioFile, Trash):
@@ -202,6 +209,18 @@ class Record(AudioFile, Trash):
             os.path.dirname(audio_file_path),
             ignore_errors=True)
 
+    def recognize(self):
+        """
+            Распознаём записи
+        """
+        as_record = AudioSegment.from_mp3(
+            settings.MEDIA_ROOT +
+            self.audio_file_format("mp3")
+        )
+
+        for piece in self.pieces.all():
+            piece.recognize(as_record=as_record)
+
 
 class Speaker(models.Model):
 
@@ -296,42 +315,74 @@ class Piece(models.Model):
     def check_transcription_queue(self):
         return self.queue.filter(work_type=1)[0]
 
-    def recognize(self):
+    def recognize(self, as_record=None):
         """
             Распознаём через бота Google Speech API
         """
+        transcribe_queue = self.transcribe_queue
+
         # Ничего не делаем, если это вычитка
-        if self.transcribe_queue.completed:
+        if transcribe_queue.completed:
             return
 
-        import speech_recognition as sr
+        transcribe_queue.owner = User.objects.get(username="speech_bot")
+        transcribe_queue.locked = datetime.now()
 
-        self.transcribe_queue.owner = User.objects.get(username="speech_bot")
-        self.transcribe_queue.locked = datetime.now()
-
-        self.transcribe_queue.save()
+        transcribe_queue.save()
 
         # Генерим вав файл с одним каналом звука
         # wav = self.audio_file_format('wav', 1)
         wav = self.record.cut_to_file(
-            file_name=upload_piece_path(self, "wav"),
+            file_name=upload_piece_path(self, extension="wav"),
             start_at=self.start_at,
             end_at=self.end_at,
+            as_record=as_record,
             offset=0,
             channels=1
         )
 
+        transcribe = self._recognize_yandex(wav)
+
+        if not transcribe:
+            transcribe_queue.owner = None
+            transcribe_queue.locked = None
+            transcribe_queue.save()
+
+            return False
+
+        for index, word in enumerate(transcribe):
+            if isinstance(word, list):
+                transcribe[index] = "(%s)" % "|".join(word)
+            else:
+                transcribe[index] = word
+
+        # Добавляем транскрибцию найденную
+        # recognize speech using Google Speech Recognition
+        transcription = Transcription(
+            queue=self.transcribe_queue,
+            piece=self,
+            text=" ".join(transcribe)
+        )
+
+        transcription.save()
+
+        transcribe_queue.completed = datetime.now()
+        transcribe_queue.save()
+
+        transcribe_queue.update_priority()
+
+    def _recognize_google(self, wav_file_path):
+        import speech_recognition as sr
         # TODO: Локализация
         r = sr.Recognizer(language='ru-RU', key=settings.GOOGLE_API_KEY)
-        print settings.MEDIA_ROOT + wav
 
         # use wav file as the audio source
-        with sr.WavFile(str(settings.MEDIA_ROOT + wav)) as source:
+        with sr.WavFile(str(settings.MEDIA_ROOT + wav_file_path)) as source:
             # extract audio data from the file
             audio = r.record(source)
 
-        print r.recognize(audio)
         try:
+            transcribe_queue = self.transcribe_queue
             # Добавляем транскрибцию найденную
             # recognize speech using Google Speech Recognition
             transcription = Transcription(
@@ -342,10 +393,10 @@ class Piece(models.Model):
 
             transcription.save()
 
-            self.transcribe_queue.completed = datetime.now()
-            self.transcribe_queue.save()
+            transcribe_queue.completed = datetime.now()
+            transcribe_queue.save()
 
-            self.transcribe_queue.update_priority()
+            transcribe_queue.update_priority()
 
             # TODO: удалять файл
 
@@ -354,6 +405,52 @@ class Piece(models.Model):
         except LookupError:
             print("Could not understand audio")
 
+    def _recognize_yandex(self, wav_file_path):
+        from difflib import SequenceMatcher
+        # Отправляем яндексу
+        url = "https://asr.yandex.net/asr_xml?key=%s&uuid=%s&topic=notes&lang=ru-RU" % (settings.YANDEX_API_KEY, settings.UUID)
+        length = os.path.getsize(settings.MEDIA_ROOT + wav_file_path)
+        file_data = open(settings.MEDIA_ROOT + wav_file_path, 'rb')
+
+        request = urllib2.Request(url, data=file_data)
+        request.add_header('Content-Length', '%d' % length)
+        request.add_header('Content-Type', 'audio/x-pcm')
+
+        try:
+            result = XMLParse(urllib2.urlopen(request).read().strip())
+        except:
+            print "Can't send request to Yandex.SpeechKit: %s" % wav_file_path
+
+            return False
+
+        variants = []
+        for variant in result.getElementsByTagName('variant'):
+            variants.append(variant.childNodes[0].nodeValue)
+
+        # Берём главный результат и ищем для каждого слова альтернативу
+        transcribe = []
+        main_variant = variants.pop(0)
+        for word_index, word in enumerate(main_variant.split(" ")):
+            result_word = [word]
+            for index, variant in enumerate(variants):
+                variant = variant.split(" ")
+                try:
+                    diff = SequenceMatcher(None, word, variant[word_index])
+                    ratio = diff.ratio()
+                    # Если слово очень похоже, то добавляем как альтернативу
+                    if ratio > 0.8 and ratio != 1:
+                        result_word.append(variant[word_index])
+                except IndexError:
+                    pass
+
+                # TODO: Что делать с теми случаями, когда какое-то слово пропускается?
+
+            if len(result_word) > 1:
+                transcribe.append(result_word)
+            else:
+                transcribe.append(word)
+
+        return transcribe
 
 class Transcription(models.Model):
 

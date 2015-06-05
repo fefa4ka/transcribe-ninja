@@ -135,7 +135,7 @@ class AudioFile(models.Model):
 
         return total
 
-    def cut_to_file(self, file_name, start_at, end_at, offset=1.5, channels=2):
+    def cut_to_file(self, file_name, start_at, end_at, as_record=None, offset=1.5, channels=2):
         """
             Создаёт вырезанный кусок в mp3
 
@@ -144,10 +144,11 @@ class AudioFile(models.Model):
         """
         original_file_name, extension = os.path.splitext(file_name)
 
-        as_record = AudioSegment.from_mp3(
-            settings.MEDIA_ROOT +
-            self.audio_file_format("mp3")
-        )
+        if not as_record:
+            as_record = AudioSegment.from_mp3(
+                settings.MEDIA_ROOT +
+                self.audio_file_format("mp3")
+            )
 
         # Файл записи
         if extension == "mp3":
@@ -190,7 +191,15 @@ class AudioFile(models.Model):
 
 
         # Выдаём нужный формат
-        if extension != ".mp3":
+        if extension == "wav":
+            subprocess.call(
+                ['ffmpeg', '-i',
+                 settings.MEDIA_ROOT + audio_file_path,
+                 '-ac', str(channels),
+                 '-acodec', 'pcm_s16le',
+                 '-ar', '16000',
+                 settings.MEDIA_ROOT + final_file_path])
+        elif extension != "mp3":
             audio_file_path = self._ffmpeg_decode(
                 original_file_name=audio_file_path,
                 file_name_format=final_file_path,

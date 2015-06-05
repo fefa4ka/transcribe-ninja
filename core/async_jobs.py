@@ -30,10 +30,10 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
-
 @job('queue')
 def make_queue(order):
     order.make_queue()
+    order.record.recognize()
 
 
     # Берём все заказы, где записи не распознаны
