@@ -130,8 +130,8 @@ class Order(Trash):
 
         # Если очередь уже существует, то не даём создавать
         if self.queue.count() > 0:
-            print "Queue for Order already exist. \n Try to flush_queue before make a new."
-            raise
+            # print "Queue for Order already exist. \n Try to flush_queue before make a new."
+            raise LookupError("Queue for Order already exist. \n Try to flush_queue before make a new.")
 
         pieces = self.record.pieces.all().order_by('start_at')
 
@@ -364,11 +364,22 @@ class Queue(AudioFile):
         if self.audio_file:
             return self.audio_file_local()
 
-        return self.piece.record.cut_to_file(
+        audio_file_path = self.piece.record.cut_to_file(
             file_name=upload_queue_path(self),
             start_at=self.start_at,
             end_at=self.end_at
         )
+
+        # Сохраняем на Амазон с3
+        self.audio_file.delete()
+        self.audio_file.save(
+            audio_file_path,
+            File(
+                open(settings.MEDIA_ROOT + audio_file_path)
+            )
+        )
+
+        return audio_file_path
 
 
 class Payment(models.Model):
