@@ -281,6 +281,7 @@ class Piece(models.Model):
         """
 
         piece = Piece.objects.filter(
+            record=self.record,
             end_at__lte=self.start_at).order_by('-end_at')
 
         if not piece:
@@ -295,6 +296,7 @@ class Piece(models.Model):
         """
 
         piece = Piece.objects.filter(
+            record=self.record,
             start_at__gte=self.end_at).order_by('start_at')
 
         if not piece:

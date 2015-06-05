@@ -32,6 +32,7 @@ def record_analys(record):
 
 @job('queue')
 def make_queue(order):
+    # TODO: Пока не диаризируется, не создавать очередь
     order.make_queue()
     order.record.recognize()
 
