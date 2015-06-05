@@ -414,7 +414,8 @@ class Piece(models.Model):
 
         request = urllib2.Request(url, data=file_data)
         request.add_header('Content-Length', '%d' % length)
-        request.add_header('Content-Type', 'audio/x-pcm')
+        request.add_header('Content-Type', 'audio/x-wav')
+
 
         try:
             result = XMLParse(urllib2.urlopen(request).read().strip())
