@@ -30,11 +30,15 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
+
 @job('queue')
 def make_queue(order):
     # TODO: Пока не диаризируется, не создавать очередь
-    order.make_queue()
-    order.record.recognize()
+    if order.record.progress == 0:
+        make_queue.delay(order, ttl=60)
+    else:
+        order.make_queue()
+        order.record.recognize()
 
 
     # Берём все заказы, где записи не распознаны
