@@ -46,6 +46,10 @@ ADMIN_EMAIL = 'fefa4ka@gmail.com'
 GIT_KEY_PATH = '/Users/fefa4ka/.ssh/deploy_rsa'
 GIT_KEY_NAME = 'github_rsa'
 
+YANDEX_API_KEY = 'aa0f1865-e414-42d2-9c50-cff9a64743a0'
+UUID = '12345A781234567B1234567812345678'
+
+
 # Application definition
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -135,6 +139,7 @@ SOCIAL_AUTH_PIPELINE = (
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # Google Oauth2
+GOOGLE_API_KEY = 'AIzaSyC6CGz9s-XTNsIZd5JaowVG0oU8dJvTkTg'
 GOOGLE_OAUTH2_CLIENT_ID = '923396664540-1ok2s8c2q8v23c7jpffkjv74m2a5n431.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'vuDE6XLSEhZS_mC-ScqnXr5V'
 
