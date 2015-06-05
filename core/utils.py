@@ -23,7 +23,7 @@ def upload_record_path(instance, file_name):
                     extension))
 
 
-def upload_queue_path(instance):
+def upload_queue_path(instance, file_name=""):
     """
         Папка и имя для аудиофрагмента от записи
     """
@@ -38,7 +38,7 @@ def upload_queue_path(instance):
     return urlquote("queue/%s.mp3" % (filename))
 
 
-def upload_piece_path(instance, extension="mp3"):
+def upload_piece_path(instance, file_name="", extension="mp3"):
     """
         Папка и имя для аудиофрагмента от записи
     """
