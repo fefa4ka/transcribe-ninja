@@ -346,34 +346,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # TODO: Удалить аудиофайл
         queue.save()
 
-        # Делаем следующий кусок приоритетным, если необходимо
-        next_queue = Queue.objects.filter(
-            piece=queue.piece.next, priority=0, work_type=0).first()
-
-        if next_queue:
-            next_queue.priority = 2
-            next_queue.save()
-
-        # Проверяем готовы ли окружающие куски
-        # Если готовы, то отправляем их на проверку
-        pieces_blocks = []
-
-        if queue.piece.previous:
-            pieces_blocks.append((queue.piece.previous.id, queue.piece.id))
-        if queue.piece.next:
-            pieces_blocks.append((queue.piece.id, queue.piece.next.id))
-
-        for pieces in pieces_blocks:
-            # Ищем выполненные очереди транскрибции
-            completed_pieces = Queue.objects.filter(
-                piece__id__in=pieces, work_type=0, completed__isnull=False)
-
-            check_queue = Queue.objects.get(piece_id=pieces[0], work_type=1)
-
-            # Если очереди готовы и этот кусок уже не проверен
-            # Повышаем его в приоритете
-            if completed_pieces.count() == 2 and check_queue.priority == 0:
-                check_queue.priority = 2
-                check_queue.save()
+        # Меняем приоритет у других кусков
+        queue.update_priority()
 
         return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)

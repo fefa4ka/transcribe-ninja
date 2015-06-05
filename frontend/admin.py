@@ -124,7 +124,7 @@ class OrderAdmin(admin.ModelAdmin):
         return payment.total
 
     def completed(self, instance):
-        return instance.record.completed_percentage()
+        return instance.record.completed
 
 
 @admin.register(Payment)

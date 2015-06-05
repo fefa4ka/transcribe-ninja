@@ -36,8 +36,6 @@ angular.module( 'transcribe-ninja', [
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }])
 
-
-
 .run( function run () {
 })
 

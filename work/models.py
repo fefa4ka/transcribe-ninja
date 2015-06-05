@@ -13,6 +13,8 @@ from core.models import *
 
 import os
 
+from datetime import datetime
+
 from pydub import AudioSegment
 
 
@@ -223,9 +225,6 @@ class Queue(AudioFile):
                               related_name='queue')
     completed = models.DateTimeField(null=True)
 
-
-
-
     def __unicode__(self):
         return "%d: %d-%d sec" % (self.id, self.start_at, self.end_at)
 
@@ -272,19 +271,24 @@ class Queue(AudioFile):
 
         # Если распознана предыдущая часть, даём три последних слова
         if self.piece.previous and self.piece.previous.transcriptions.count() > 0:
-            last_transcription = self.piece.previous.transcriptions.all().last().text.split(" ")
+            last_transcription = self.piece.previous.transcriptions.all(
+            ).last().text.split(" ")
 
-            index = 0 if len(last_transcription) < 3 else len(last_transcription) - 3
+            index = 0 if len(last_transcription) < 3 else len(
+                last_transcription) - 3
 
-            previous_part = " ".join(last_transcription[index:len(last_transcription)])
+            previous_part = " ".join(
+                last_transcription[index:len(last_transcription)])
         else:
             previous_part = ""
 
         # Если распознана следующая часть, то даём три первых слова
         if self.pieces[-1].next and self.pieces[-1].next.transcriptions.count() > 0:
-            last_transcription = self.pieces[-1].next.transcriptions.all().first().text.split(" ")
+            last_transcription = self.pieces[-
+                                             1].next.transcriptions.all().first().text.split(" ")
 
-            index = len(last_transcription) if len(last_transcription) < 3 else 3
+            index = len(last_transcription) if len(
+                last_transcription) < 3 else 3
 
             next_part = " ".join(last_transcription[0:index])
         else:
@@ -315,6 +319,88 @@ class Queue(AudioFile):
             diff_price = 0
 
             return self.price.price + diff_price
+
+    def recognize(self):
+        """
+            Распознаём через бота Google Speech API
+        """
+        # Ничего не делаем, если это вычитка
+        if self.work_type != 0 or self.completed:
+            return
+
+        import speech_recognition as sr
+
+        self.owner = User.objects.get(username="speech_bot")
+        self.locked = datetime.now()
+
+        # Генерим вав файл с одним каналом звука
+        wav = self.audio_file_format('wav', 1)
+
+        # TODO: Локализация
+        r = sr.Recognizer(language='ru-RU')
+
+        # use "test.wav" as the audio source
+        with sr.WavFile(settings.MEDIA_ROOT + wav) as source:
+            # extract audio data from the file
+            audio = r.record(source)
+
+        try:
+            # Добавляем транскрибцию найденную
+            # recognize speech using Google Speech Recognition
+            transcription = Transcription(
+                queue=self,
+                piece=self.piece,
+                text=r.recognize(audio)
+            )
+
+            transcription.save()
+
+            self.completed=datetime.now()
+            self.save()
+
+            self.update_priority()
+
+            # TODO: удалять файл
+
+            print("Transcription: " + r.recognize(audio))
+        # speech is unintelligible
+        except LookupError:
+            print("Could not understand audio")
+
+    def update_priority(self):
+        """
+            Меняем приоритет следующего куска на высокий,
+            и о вычитки этого куска, если транскрибцию выполнили в соседних.
+        """
+        # Делаем следующий кусок приоритетным, если необходимо
+        next_queue = Queue.objects.filter(
+            piece=self.piece.next, priority=0, work_type=0).first()
+
+        if next_queue:
+            next_queue.priority = 2
+            next_queue.save()
+
+        # Проверяем готовы ли окружающие куски
+        # Если готовы, то отправляем их на проверку
+        pieces_blocks = []
+
+        if self.piece.previous:
+            pieces_blocks.append((self.piece.previous.id, self.piece.id))
+        if self.piece.next:
+            pieces_blocks.append((self.piece.id, self.piece.next.id))
+
+        for pieces in pieces_blocks:
+            # Ищем выполненные очереди транскрибции
+            completed_pieces = Queue.objects.filter(
+                piece__id__in=pieces, work_type=0, completed__isnull=False)
+
+            check_queue = Queue.objects.get(piece_id=pieces[0], work_type=1)
+
+            # Если очереди готовы и этот кусок уже не проверен
+            # Повышаем его в приоритете
+            if completed_pieces.count() == 2 and check_queue.priority == 0:
+                check_queue.priority = 2
+                check_queue.save()
 
     def audio_file_make(self, as_record=None, offset=1.5):
         """
@@ -432,7 +518,7 @@ def create_order_payment(sender, instance, created, **kwargs):
     instance.record.save()
 
 
-def create_queue_payment(sender, instance, created, **kwargs):
+def create_queue_payment(sender, instance, created, raw, using, update_fields, **kwargs):
     # Берём дефолтный прайс для объекта
 
     if not instance.completed:

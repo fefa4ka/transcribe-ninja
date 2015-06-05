@@ -53,7 +53,7 @@ class AudioFile(models.Model):
     class Meta:
         abstract = True
 
-    def audio_file_format(self, audio_format="mp3"):
+    def audio_file_format(self, audio_format="mp3", channels=2):
         """
             Проверяет, есть ли файл требуемого раширения
         """
@@ -70,6 +70,7 @@ class AudioFile(models.Model):
             subprocess.call(
                 ['ffmpeg', '-i',
                  settings.MEDIA_ROOT + original_file_name,
+                 '-ac', str(channels),
                  settings.MEDIA_ROOT + file_name_format])
 
         return file_name_format

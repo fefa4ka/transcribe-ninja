@@ -38,6 +38,16 @@ angular.module( 'transcribe-ninja.work', [
   });
 })
 
+.directive('autoFocus', function($timeout) {
+    return {
+        restrict: 'AC',
+        link: function(_scope, _element) {
+            $timeout(function(){
+                _element[0].focus();
+            }, 0);
+        }
+    };
+})
 
 .controller( 'WorkCtrl', function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, api) {
   function get_piece(piece_id) {
