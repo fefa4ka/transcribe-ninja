@@ -1,1 +1,19 @@
-[{"fields": {"default": true, "price": 15.0, "work_type": 0, "content_type": 14, "title": "\u0421\u0442\u0435\u043d\u043e\u0433\u0440\u0430\u0444\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435"}, "model": "work.price", "pk": 1}, {"fields": {"default": true, "price": 0.015, "work_type": 0, "content_type": 15, "title": "\u0422\u0440\u0430\u043d\u0441\u043a\u0440\u0438\u0431\u0446\u0438\u044f \u043a\u0443\u0441\u043a\u0430 \u0437\u0430\u043f\u0438\u0441\u0438"}, "model": "work.price", "pk": 2}, {"fields": {"default": true, "price": 1.0, "work_type": 1, "content_type": 15, "title": "\u0412\u044b\u0447\u0438\u0442\u043a\u0430 \u043a\u0443\u0441\u043a\u0430 \u0437\u0430\u043f\u0438\u0441\u0438"}, "model": "work.price", "pk": 3}, {"fields": {"default": true, "price": 0.03, "work_type": 2, "content_type": 15, "title": "\u0418\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0442\u0440\u0430\u043d\u0441\u043a\u0440\u0438\u0431\u0446\u0438\u0438"}, "model": "work.price", "pk": 4}]
+[{
+  "fields": {
+    "username": "speech_bot",
+    "first_name": "\u0421\u0442\u0435\u043d\u044f",
+    "last_name": "\u0413\u0440\u0430\u0444\u043e\u0432",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-06-05T15:55:25Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$12000$37cGkohtrJG4$WkwtRlwOKpbETmm4GiJkaRUc60IGJysSqRDGUQufH00=",
+    "email": "bot@transcribe.ninja",
+    "date_joined": "2015-06-05T15:55:25Z"
+  },
+  "model": "auth.user",
+  "pk": 2
+},
+{"fields": {"default": true, "price": 15.0, "work_type": 0, "content_type": 14, "title": "\u0421\u0442\u0435\u043d\u043e\u0433\u0440\u0430\u0444\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u0435"}, "model": "work.price", "pk": 1}, {"fields": {"default": true, "price": 0.015, "work_type": 0, "content_type": 15, "title": "\u0422\u0440\u0430\u043d\u0441\u043a\u0440\u0438\u0431\u0446\u0438\u044f \u043a\u0443\u0441\u043a\u0430 \u0437\u0430\u043f\u0438\u0441\u0438"}, "model": "work.price", "pk": 2}, {"fields": {"default": true, "price": 1.0, "work_type": 1, "content_type": 15, "title": "\u0412\u044b\u0447\u0438\u0442\u043a\u0430 \u043a\u0443\u0441\u043a\u0430 \u0437\u0430\u043f\u0438\u0441\u0438"}, "model": "work.price", "pk": 3}, {"fields": {"default": true, "price": 0.03, "work_type": 2, "content_type": 15, "title": "\u0418\u0441\u043f\u0440\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u0442\u0440\u0430\u043d\u0441\u043a\u0440\u0438\u0431\u0446\u0438\u0438"}, "model": "work.price", "pk": 4}]

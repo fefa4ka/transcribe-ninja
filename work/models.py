@@ -119,7 +119,7 @@ class Order(Trash):
 
             queue.save()
 
-            queue.audio_file_make(as_record=as_record)
+            queue.audio_file_make()
 
         # Загружаем mp3 файл записи
         mp3_file_path = settings.MEDIA_ROOT + \
