@@ -189,7 +189,7 @@ class Record(AudioFile, Trash):
 
             # Сохраняем все куски, где этот собеседник участвовал
             for segment in cluster.get_segments():
-                print segment.start_at()
+                print segment.get_start()
                 piece = Piece(record=self,
                               start_at=segment.get_start() / 100.0,
                               end_at=segment.get_end() / 100.0,
