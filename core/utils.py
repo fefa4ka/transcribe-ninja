@@ -23,7 +23,7 @@ def upload_record_path(instance, file_name):
                     extension))
 
 
-def upload_queue_path(instance, file_name=""):
+def upload_queue_path(instance):
     """
         Папка и имя для аудиофрагмента от записи
     """
@@ -36,3 +36,18 @@ def upload_queue_path(instance, file_name=""):
     ).hexdigest()
 
     return urlquote("queue/%s.mp3" % (filename))
+
+
+def upload_piece_path(instance, extension="mp3"):
+    """
+        Папка и имя для аудиофрагмента от записи
+    """
+
+    filename = md5("%d%s%f%f" % (
+        instance.record.id,
+        instance.record.title.encode('utf8'),
+        instance.start_at,
+        instance.end_at)
+    ).hexdigest()
+
+    return urlquote("piece/%s.%s" % (filename, extension))

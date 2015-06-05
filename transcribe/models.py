@@ -8,6 +8,7 @@ from django.core.files import File
 import os
 import time
 import shutil
+from datetime import datetime
 
 from voiceid.sr import Voiceid
 from voiceid.db import GMMVoiceDB
@@ -188,10 +189,11 @@ class Record(AudioFile, Trash):
 
             # Сохраняем все куски, где этот собеседник участвовал
             for segment in cluster.get_segments():
+                print segment.start_at()
                 piece = Piece(record=self,
-                              start_at=segment.get_start() / 100,
-                              end_at=segment.get_end() / 100,
-                              duration=segment.get_duration() / 100,
+                              start_at=segment.get_start() / 100.0,
+                              end_at=segment.get_end() / 100.0,
+                              duration=segment.get_duration() / 100.0,
                               speaker=speaker)
                 piece.save()
 
@@ -285,6 +287,72 @@ class Piece(models.Model):
     def letters_per_sec(self):
         return self.duration / \
             np.sum([len(t.text) for t in self.transcriptions.all()])
+
+    @property
+    def transcribe_queue(self):
+        return self.queue.filter(work_type=0)[0]
+
+    @property
+    def check_transcription_queue(self):
+        return self.queue.filter(work_type=1)[0]
+
+    def recognize(self):
+        """
+            Распознаём через бота Google Speech API
+        """
+        # Ничего не делаем, если это вычитка
+        if self.transcribe_queue.completed:
+            return
+
+        import speech_recognition as sr
+
+        self.transcribe_queue.owner = User.objects.get(username="speech_bot")
+        self.transcribe_queue.locked = datetime.now()
+
+        self.transcribe_queue.save()
+
+        # Генерим вав файл с одним каналом звука
+        # wav = self.audio_file_format('wav', 1)
+        wav = self.record.cut_to_file(
+            file_name=upload_piece_path(self, "wav"),
+            start_at=self.start_at,
+            end_at=self.end_at,
+            offset=0,
+            channels=1
+        )
+
+        # TODO: Локализация
+        r = sr.Recognizer(language='ru-RU', key=settings.GOOGLE_API_KEY)
+        print settings.MEDIA_ROOT + wav
+
+        # use wav file as the audio source
+        with sr.WavFile(str(settings.MEDIA_ROOT + wav)) as source:
+            # extract audio data from the file
+            audio = r.record(source)
+
+        print r.recognize(audio)
+        try:
+            # Добавляем транскрибцию найденную
+            # recognize speech using Google Speech Recognition
+            transcription = Transcription(
+                queue=self.transcribe_queue,
+                piece=self,
+                text=r.recognize(audio)
+            )
+
+            transcription.save()
+
+            self.transcribe_queue.completed = datetime.now()
+            self.transcribe_queue.save()
+
+            self.transcribe_queue.update_priority()
+
+            # TODO: удалять файл
+
+            print("Transcription: " + r.recognize(audio))
+        # speech is unintelligible
+        except LookupError:
+            print("Could not understand audio")
 
 
 class Transcription(models.Model):

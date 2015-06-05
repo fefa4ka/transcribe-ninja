@@ -6,14 +6,13 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 import django.db.models.signals as signals
+from django.conf import settings
 
 from transcribe.models import *
 
 from core.models import *
 
 import os
-
-from datetime import datetime
 
 from pydub import AudioSegment
 
@@ -320,53 +319,6 @@ class Queue(AudioFile):
 
             return self.price.price + diff_price
 
-    def recognize(self):
-        """
-            Распознаём через бота Google Speech API
-        """
-        # Ничего не делаем, если это вычитка
-        if self.work_type != 0 or self.completed:
-            return
-
-        import speech_recognition as sr
-
-        self.owner = User.objects.get(username="speech_bot")
-        self.locked = datetime.now()
-
-        # Генерим вав файл с одним каналом звука
-        wav = self.audio_file_format('wav', 1)
-
-        # TODO: Локализация
-        r = sr.Recognizer(language='ru-RU')
-
-        # use "test.wav" as the audio source
-        with sr.WavFile(settings.MEDIA_ROOT + wav) as source:
-            # extract audio data from the file
-            audio = r.record(source)
-
-        try:
-            # Добавляем транскрибцию найденную
-            # recognize speech using Google Speech Recognition
-            transcription = Transcription(
-                queue=self,
-                piece=self.piece,
-                text=r.recognize(audio)
-            )
-
-            transcription.save()
-
-            self.completed=datetime.now()
-            self.save()
-
-            self.update_priority()
-
-            # TODO: удалять файл
-
-            print("Transcription: " + r.recognize(audio))
-        # speech is unintelligible
-        except LookupError:
-            print("Could not understand audio")
-
     def update_priority(self):
         """
             Меняем приоритет следующего куска на высокий,
@@ -402,63 +354,21 @@ class Queue(AudioFile):
                 check_queue.priority = 2
                 check_queue.save()
 
-    def audio_file_make(self, as_record=None, offset=1.5):
+    def audio_file_make(self, offset=1.5):
         """
             Создаёт вырезанный кусок в mp3
 
-            rec - можно передать AudioSegment записи, чтобы ускорить процесс
             offset  - сколько записи по краям оставлять
         """
         # Если запись уже создана, возвращаем название файла
         if self.audio_file:
             return self.audio_file_local()
 
-        # Если as_record не передали
-        if not as_record:
-            as_record = AudioSegment.from_mp3(
-                settings.MEDIA_ROOT +
-                self.piece.record.audio_file_format("mp3")
-            )
-
-        # Папка записи
-        audio_file_path = os.path.join(
-            str(self.piece.record.id),
-            upload_queue_path(self)
+        return self.piece.record.cut_to_file(
+            file_name=upload_queue_path(self),
+            start_at=self.start_at,
+            end_at=self.end_at
         )
-
-        audio_dir_path = os.path.dirname(settings.MEDIA_ROOT + audio_file_path)
-
-        if not os.path.isfile(settings.MEDIA_ROOT + audio_dir_path):
-            # Создаём папку, если её не было
-            if not os.path.exists(audio_dir_path):
-                os.makedirs(audio_dir_path)
-
-            # В первой записи делаем отступ максмум до 0
-            if self.start_at > offset:
-                start_at = (self.start_at - offset) * 1000
-            else:
-                start_at = 0
-
-            # В последней не больше, чем длинна записи
-            if self.end_at + offset > self.piece.record.duration:
-                end_at = self.piece.record.duration
-            else:
-                end_at = (self.end_at + offset) * 1000
-
-            # Вырезаем кусок и сохраняем
-            piece = as_record[start_at:end_at]
-            piece.export(settings.MEDIA_ROOT + audio_file_path)
-
-            # Сохраняем на Амазон с3
-            self.audio_file.delete()
-            self.audio_file.save(
-                audio_file_path,
-                File(
-                    open(settings.MEDIA_ROOT + audio_file_path)
-                )
-            )
-
-            return audio_file_path
 
 
 class Payment(models.Model):

@@ -16,6 +16,8 @@ import subprocess
 
 from decimal import Decimal
 
+from pydub import AudioSegment
+
 
 class Account(models.Model):
     """
@@ -64,16 +66,8 @@ class AudioFile(models.Model):
         # Имя файла в новрм формате
         file_name_format = file_name + ".%s" % audio_format
 
-        # Если такой файл есть, то возвращаем путь к файлу
-        if not os.path.isfile(settings.MEDIA_ROOT + file_name_format):
-            # Если в таком формате нет, то конвертируем
-            subprocess.call(
-                ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 '-ac', str(channels),
-                 settings.MEDIA_ROOT + file_name_format])
+        return self._ffmpeg_decode(original_file_name, file_name_format, channels)
 
-        return file_name_format
 
     def audio_file_local(self):
         """
@@ -141,6 +135,86 @@ class AudioFile(models.Model):
 
         return total
 
+    def cut_to_file(self, file_name, start_at, end_at, offset=1.5, channels=2):
+        """
+            Создаёт вырезанный кусок в mp3
+
+            rec - можно передать AudioSegment записи, чтобы ускорить процесс
+            offset  - сколько записи по краям оставлять
+        """
+        original_file_name, extension = os.path.splitext(file_name)
+
+        as_record = AudioSegment.from_mp3(
+            settings.MEDIA_ROOT +
+            self.audio_file_format("mp3")
+        )
+
+        # Файл записи
+        if extension == "mp3":
+            audio_file_path = final_file_path = os.path.join(
+                str(self.id),
+                file_name
+            )
+        else:
+            audio_file_path = os.path.join(
+                str(self.id),
+                original_file_name + ".mp3"
+            )
+            final_file_path = os.path.join(
+                str(self.id),
+                file_name
+            )
+
+        audio_dir_path = os.path.dirname(settings.MEDIA_ROOT + audio_file_path)
+
+        if not os.path.isfile(settings.MEDIA_ROOT + audio_dir_path):
+            # Создаём папку, если её не было
+            if not os.path.exists(audio_dir_path):
+                os.makedirs(audio_dir_path)
+
+            # В первой записи делаем отступ максмум до 0
+            if start_at > offset:
+                start_at = (start_at - offset) * 1000
+            else:
+                start_at = 0
+
+            # В последней не больше, чем длинна записи
+            if end_at + offset > self.duration:
+                end_at = self.duration
+            else:
+                end_at = (end_at + offset) * 1000
+
+            # Вырезаем кусок и сохраняем
+            piece = as_record[start_at:end_at]
+            piece.export(settings.MEDIA_ROOT + audio_file_path)
+
+
+        # Выдаём нужный формат
+        if extension != ".mp3":
+            audio_file_path = self._ffmpeg_decode(
+                original_file_name=audio_file_path,
+                file_name_format=final_file_path,
+                channels=channels
+            )
+            # TODO: удалить ненужный файл mp3
+        return audio_file_path
+
+    def _ffmpeg_decode(self, original_file_name, file_name_format, channels=2):
+        # Если такой файл есть, то возвращаем путь к файлу
+        if not os.path.isfile(settings.MEDIA_ROOT + file_name_format):
+            # Если папок нет - создаём
+            dir_path = os.path.dirname(settings.MEDIA_ROOT + file_name_format)
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
+
+            # Если в таком формате нет, то конвертируем
+            subprocess.call(
+                ['ffmpeg', '-i',
+                 settings.MEDIA_ROOT + original_file_name,
+                 '-ac', str(channels),
+                 settings.MEDIA_ROOT + file_name_format])
+
+        return file_name_format
 
 def create_account(sender, instance, **kwargs):
     """
