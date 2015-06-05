@@ -119,7 +119,7 @@ class Order(Trash):
 
             queue.save()
 
-            queue.audio_file_make()
+            queue.audio_file_make(as_record)
 
         # Загружаем mp3 файл записи
         mp3_file_path = settings.MEDIA_ROOT + \
@@ -354,7 +354,7 @@ class Queue(AudioFile):
                 check_queue.priority = 2
                 check_queue.save()
 
-    def audio_file_make(self, offset=1.5):
+    def audio_file_make(self, as_record=None, offset=1.5):
         """
             Создаёт вырезанный кусок в mp3
 
@@ -365,6 +365,7 @@ class Queue(AudioFile):
             return self.audio_file_local()
 
         audio_file_path = self.piece.record.cut_to_file(
+            as_record=as_record,
             file_name=upload_queue_path(self),
             start_at=self.start_at,
             end_at=self.end_at
