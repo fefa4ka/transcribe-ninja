@@ -46,10 +46,12 @@ class Price(models.Model):
     WORK_TYPE_TRANSCRIBE = 0
     WORK_TYPE_CHECK = 1
     WORK_TYPE_EDIT = 2
+    WORK_TYPE_TRANSCRIBE_SPEECHKIT = 3
     WORK_TYPE_CHOICES = (
         (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
         (WORK_TYPE_CHECK, 'Read and check transcription'),
-        (WORK_TYPE_EDIT, 'Transcription edit')
+        (WORK_TYPE_EDIT, 'Transcription edit'),
+        (WORK_TYPE_TRANSCRIBE_SPEECHKIT, 'Transcribe by SpeechKit')
     )
     work_type = models.IntegerField(
         choices=WORK_TYPE_CHOICES,
