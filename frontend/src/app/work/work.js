@@ -49,7 +49,7 @@ angular.module( 'transcribe-ninja.work', [
     };
 })
 
-.controller( 'WorkCtrl', function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, api) {
+.controller( 'WorkCtrl', function RecordCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api) {
   function get_piece(piece_id) {
 
   }
@@ -337,10 +337,15 @@ angular.module( 'transcribe-ninja.work', [
 
       $scope.queue.duration = duration;
 
-      
-      // Подгружаем аудиофайл
+      // Выравниваем текстареа. Костыль BUG
+      window.dispatchEvent(new Event('resize'));
+
+      // Подгружаем аудиофайл 
       $scope.wavesurfer.clearRegions();
       $scope.wavesurfer.load($scope.queue.audio_file);
+
+
+
     });
   };
 

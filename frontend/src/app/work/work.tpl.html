@@ -32,17 +32,17 @@
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
             <li ng-repeat="transcription in piece.transcriptions">
-                <textarea class="msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                <textarea msd-elastic data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
             </li>
         </ul>
 
         <ul class="queue-transcriptions" ng-show="queue.work_type == 0">
             <li>
-                <textarea id="new-transcription" class="msd-elastic" data-ng-model="newTranscription" autofocus></textarea>
+                <textarea id="new-transcription" msd-elastic data-ng-model="newTranscription" autofocus></textarea>
             </li>
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.offset_parts.1">
+        <ul class="queue-transcriptions" ng-show="queue.offset_parts[1]">
             <li>
                 <p>{{ queue.offset_parts[1] }}</p>
             </li>

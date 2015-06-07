@@ -5,9 +5,6 @@ angular.module( 'transcribe-ninja.player', [
 .directive('tnPlayer', function () { 
   return {
     restrict: 'E',
-    scope: {
-      audioFile: '@'
-    },
     templateUrl: 'player/player.tpl.html',
     link: function (scope, element, attrs) {
         var player = element.children()[0];
