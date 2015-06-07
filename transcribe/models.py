@@ -354,7 +354,9 @@ class Piece(models.Model):
 
         for index, word in enumerate(transcribe):
             if isinstance(word, list):
-                transcribe[index] = "(%s)" % "|".join(word)
+                # TODO: Для интерфейса, где можно будет выбирать предположения
+                # transcribe[index] = "(%s)" % "|".join(word)
+                transcribe[index] = word[0]
             else:
                 transcribe[index] = word
 
