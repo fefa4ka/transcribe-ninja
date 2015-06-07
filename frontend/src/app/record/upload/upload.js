@@ -16,11 +16,18 @@ angular.module( 'transcribe-ninja.record.upload', [
     data:{ pageTitle: 'Загрузка записи' }
   });
 })
+
 .filter('trusted', ['$sce', function ($sce) {
     return function(url) {
         return $sce.trustAsResourceUrl(url);
     };
 }])
+
+.filter('trimextension', function ($sce) {
+    return function(title) {
+        return title.replace(/\.[^/.]+$/, "");
+    };
+})
 
 .directive('tnGetDuration', function (Data) {
   return {
@@ -83,6 +90,12 @@ angular.module( 'transcribe-ninja.record.upload', [
     });
   };
 
+  uploader.playerInit = function () {
+    console.log('player init', $scope);
+    $scope.wavesurfer.on('ready', function() {
+      console.log('wavesurfer load', $scope.wavesurfer);
+    });
+  };
 
   uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
       console.info('onWhenAddingFileFailed', item, filter, options);

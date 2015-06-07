@@ -1,7 +1,7 @@
 
 <div ng-show="queue.duration > 0">
 <div class="instruction" ng-show="queue.work_type == 0">
-    Напечатайте, что говорит {{ queue.pieces.0.speaker == "F" ? "женщина" : "мужчина" }} в <span class="green">выделенном куске</span>
+    Напечатайте, что говорит {{ queue.pieces[0].speaker == "F" ? "женщина" : "мужчина" }} в <span class="green">выделенном куске</span>
     <p>
         За стенографирование {{ queue.duration | humanSeconds }} заработаете около <strong>{{ queue.total_price | number : 2 }} ₷</strong>
     </p>
@@ -24,9 +24,9 @@
             <li><span class="hotkeys-key">alt + &rarr;</span> – перемотать вперёд</li>
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.offset_parts.0">
+        <ul class="queue-transcriptions" ng-show="queue.offset_parts[0]">
             <li>
-                <p>{{ queue.offset_parts.0 }}</p>
+                <p>{{ queue.offset_parts[0] }}</p>
             </li>
         </ul>
 
@@ -44,7 +44,7 @@
 
         <ul class="queue-transcriptions" ng-show="queue.offset_parts.1">
             <li>
-                <p>{{ queue.offset_parts.1 }}</p>
+                <p>{{ queue.offset_parts[1] }}</p>
             </li>
         </ul>
         

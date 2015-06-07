@@ -7,11 +7,11 @@
             <li ng-repeat="item in uploader.queue">
                 <div class="form-group">
                     <label>Название записи:</label>
-                    <input ng-model="item.formData[0].title" required name="username"
+                    <input ng-model="item.formData[0].title | trimextension" required name="username"
                            type="text" placeholder="Название записи" class="form-control">
                 </div>
                 
-                <tn-player src="{{ item.formData[0].file | trusted }}" ></tn-player>
+                <tn-player audio-file="'{{ item.formData[0].file | trusted }}'" ></tn-player>
                 <audio ng-src="{{ item.formData[0].file | trusted }}" tn-get-duration></audio>
                 
                 <div class="form-group">
