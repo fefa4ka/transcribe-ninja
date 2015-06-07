@@ -83,7 +83,7 @@ class RecordSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title", "audio_file",
-            "duration",
+            "duration", "speakers",
             "completed", "progress")
 
 
