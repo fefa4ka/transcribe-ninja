@@ -23,12 +23,6 @@ angular.module( 'transcribe-ninja.record.upload', [
     };
 }])
 
-.filter('trimextension', function ($sce) {
-    return function(title) {
-        return title.replace(/\.[^/.]+$/, "");
-    };
-})
-
 .directive('tnGetDuration', function (Data) {
   return {
     link: function (scope, element, attrs) {
@@ -105,7 +99,7 @@ angular.module( 'transcribe-ninja.record.upload', [
       console.info('onAfterAddingFile', fileItem);
 
       fileItem.formData.push({
-          title: fileItem.file.name,
+          title: fileItem.file.name.replace(/\.[^/.]+$/, ""),
           speakers: fileItem.file.speakers,
           file: URL.createObjectURL(fileItem._file),
           duration: 0
