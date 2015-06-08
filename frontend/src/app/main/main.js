@@ -73,9 +73,6 @@ angular.module( 'transcribe-ninja.main', [
     update_state($event.clientX);
   };
 
-  $scope.upload = function() {
-    console.log('upload');
-  };
 
 })
 

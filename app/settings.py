@@ -19,6 +19,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_NAME = 'transcribe-ninja'
 DOMAIN = 'transcribe.ninja'
 
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = 'info@transcribe.ninja'
+EMAIL_HOST_PASSWORD = 'cntyjuhfa,kznm'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# 
 # HOSTS = {
 #     'DB': 'db.%s' % DOMAIN,
 #     'ENGINE': 'engine.%s' % DOMAIN,
@@ -67,7 +74,9 @@ INSTALLED_APPS = (
 
     # API
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
+    'djoser',
 
     # Web
     'frontend',
@@ -102,6 +111,15 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 #
 # Auth
 #
+DJOSER = {
+    'DOMAIN': DOMAIN,
+    'SITE_NAME': 'Transcribe.ninja',
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'LOGIN_AFTER_ACTIVATION': True,
+    'SEND_ACTIVATION_EMAIL': True,
+}
+
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 AUTHENTICATION_BACKENDS = (
@@ -233,6 +251,7 @@ DEFAULT_CHARSET = 'utf8'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
     # Use Django's standard `django.contrib.auth` permissions,

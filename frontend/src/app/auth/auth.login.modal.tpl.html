@@ -15,17 +15,23 @@
                        type="text" placeholder="Адрес электронной почты" class="form-control">
             </div>
             <div class="form-group">
+                    <div class="btn-group">
+                        <label class="btn btn-default" ng-model="new_user" btn-radio="'1'">Я новый пользователь</label>
+                        <label class="btn btn-default active" ng-model="new_user" btn-radio="'0'">Я уже зарегистрирован</label>
+                    </div>
+                </div>
+            <div class="form-group">
                 <label>Пароль:</label>
                 <input ng-model="password" required name="password" type="password"
                        placeholder="Пароль" class="form-control">
             </div>
-            <div class="password-recovery">
+            <div class="password-recovery" ng-show="new_user == 0">
                 <a href="#">Восстановить пароль</a>
             </div>
             
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="dismiss()">Отмена</button>
-        <input type="submit" class="btn btn-primary" ng-click="login()" value="Войти">
+        <button class="btn btn-default" ng-click="cancel()">Отмена</button>
+        <input type="submit" class="btn btn-primary" ng-click="authLogin('lalala')" value="Войти">
     </div>
 </form>

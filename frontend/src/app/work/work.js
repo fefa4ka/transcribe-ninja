@@ -34,7 +34,10 @@ angular.module( 'transcribe-ninja.work', [
         templateUrl: 'work/work.tpl.html'
       }
     },
-    data:{ pageTitle: 'Ваши записи' }
+    data: { 
+      pageTitle: 'Ваши записи',
+      requireLogin: true
+    }
   });
 })
 

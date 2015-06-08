@@ -67,7 +67,7 @@
                 <!-- If AnonymousUser -->
                 <li ng-hide="Data.user.id">
                     <button class="btn btn-default btn-xs" 
-                            ui-sref="auth-login">Войти</button>
+                            ng-click="authModal()">Войти</button>
                 </li>
                 
                 <!-- If Authorized -->

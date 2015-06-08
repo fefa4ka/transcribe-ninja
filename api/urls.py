@@ -21,7 +21,8 @@ router.register(r'transcriptions', views.TranscriptionViewSet)
 urlpatterns = (
     url(r'api/', include(router.urls)),
 
-    url(r'^api/auth/',
+    url(r'^api/auth/', include('djoser.urls')),
+    url(r'^api/auth/basic',
         views.AuthView.as_view(),
         name='authenticate'),
     url(r'api/social/', include('social_auth.urls')),

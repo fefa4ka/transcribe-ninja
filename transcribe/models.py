@@ -37,6 +37,7 @@ class Record(AudioFile, Trash):
     audio_file  - аудиофайл записи
     duration    - продолжительность в секундах
     speakers    - количество собеседников
+    language    - локаль записи
 
     progress    - на какой стадии находится: никакая, в работе, готов
 
@@ -52,6 +53,7 @@ class Record(AudioFile, Trash):
 
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
+    language = models.CharField(max_length=20, default="ru-RU")
 
     # Состояние записи. Без действия, в работе и завершённая.
     PROGRESS_NONE = 0

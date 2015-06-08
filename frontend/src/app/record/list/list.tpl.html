@@ -30,7 +30,7 @@
                     </div>
                 </div>
 
-                <a href="/#/record/{{ record.id }}">{{ record.title }}</a> 
+                <a href="/#/record/{{ record.id }}" class="title">{{ record.title }}</a> 
                 <a class="btn btn-danger btn-xs pull-right" href 
                     ng-click="record = remove(record)"
                     ng-show="record.progress === 0 && show"><i class="fa fa-trash-o fa-lg"></i></a>

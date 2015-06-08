@@ -13,7 +13,10 @@ angular.module( 'transcribe-ninja.record', [
         templateUrl: 'record/record.tpl.html'
       }
     },
-    data:{ pageTitle: 'Ваши записи' }
+    data: { 
+      pageTitle: 'Ваши записи',
+      requireLogin: true
+    }
   });
 })
 

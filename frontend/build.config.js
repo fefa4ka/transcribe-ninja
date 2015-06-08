@@ -29,7 +29,7 @@ module.exports = {
     atpl: [ 'src/app/**/*.tpl.html' ],
     ctpl: [ 'src/common/**/*.tpl.html' ],
 
-    html: [ 'src/index.html', 'src/3a3a9635d1a7.html' ],
+    html: [ 'src/index.html' ],
     less: 'src/less/main.less'
   },
 

@@ -52,6 +52,20 @@ angular.module( 'transcribe-ninja', [
   $scope.Data = Data;
   $scope.Data.user = api.account.get();
 
+  $scope.authModal = function (authCallback) {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'auth/auth.login.modal.tpl.html',
+      controller: 'AuthModalCtrl',
+      windowClass: 'auth-modal',
+      resolve: {
+        authCallback: function () {
+          return authCallback;
+        }
+      }
+    });
+  };
+
 
   $scope.logout = function(){
     api.auth.logout(function(){

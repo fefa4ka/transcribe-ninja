@@ -1,0 +1,9 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}You're receiving this email because you want to transcribe audio on {{ site_name }}.{% endblocktrans %}
+
+{% trans "Please go to the following page to activate account:" %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}/{{ url }}
+{% endblock %}
+
+{% endautoescape %}

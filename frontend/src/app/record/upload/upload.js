@@ -13,7 +13,10 @@ angular.module( 'transcribe-ninja.record.upload', [
         templateUrl: 'record/upload/upload.tpl.html'
       }
     },
-    data:{ pageTitle: 'Загрузка записи' }
+    data: { 
+      pageTitle: 'Загрузка записи',
+      requireLogin: false
+     }
   });
 })
 
@@ -34,7 +37,7 @@ angular.module( 'transcribe-ninja.record.upload', [
   };
 })
 
-.controller( 'RecordUploadCtrl', function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, api ) {
+.controller( 'RecordUploadCtrl', function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, Data, api ) {
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -55,19 +58,48 @@ angular.module( 'transcribe-ninja.record.upload', [
     url: '/api/records/',
     alias: 'audio_file',
     headers : {
-        'X-CSRFToken': getCookie('csrftoken') // X-CSRF-TOKEN is used for Ruby on Rails Tokens
+        'X-CSRFToken': getCookie('csrftoken') // X-CSRF-TOKEN is used for Django Tokens
     }
   }),
+    authModal = $scope.authModal;
 
   $modalInstance = {};
 
+  $scope.Data = Data;
 
+  console.log('suka blya');
   $scope.open = function(){
     $modalInstance = $modal.open({
       templateUrl: 'record/upload/upload.list.tpl.html',
       windowClass: 'upload-modal',
-      controller: function($scope, $modalInstance, $log, uploader){
+      controller: function($scope, $modalInstance, $log, Data, uploader){
         $scope.uploader = uploader;
+        $scope.Data = Data;
+
+        $scope.startUpload = function () {
+          console.log('lalla');
+          if (typeof $scope.Data.user.id == "undefined") {
+            var callback = function () {
+              // Обновляем CSRF Token после авторизации
+              var token = getCookie('csrftoken'),
+                  items = uploader.getNotUploadedItems();
+
+              uploader.headers['X-CSRFToken'] = token;
+
+              for(var index in items) {
+                items[index].headers['X-CSRFToken'] = token;
+              }
+              console.log( uploader.getNotUploadedItems(), uploader.headers['X-CSRFToken']);
+
+              uploader.uploadAll();
+            };
+
+            console.log('startUpload');
+            authModal(callback);
+          } else {
+            uploader.uploadAll();
+          }
+        };
 
         $scope.cancel = function () {
           $modalInstance.dismiss('cancel');
@@ -100,7 +132,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
       fileItem.formData.push({
           title: fileItem.file.name.replace(/\.[^/.]+$/, ""),
-          speakers: fileItem.file.speakers,
+          speakers: 2,
           file: URL.createObjectURL(fileItem._file),
           duration: 0
       });
@@ -109,31 +141,9 @@ angular.module( 'transcribe-ninja.record.upload', [
   uploader.onAfterAddingAll = function(addedFileItems) {
       $scope.open();
 
-      console.info('onAfterAddingAll', addedFileItems);
+      // console.info('onAfterAddingAll', addedFileItems);
   };
   
-  uploader.onBeforeUploadItem = function(item) {
-      console.info('onBeforeUploadItem', item);
-  };
-  uploader.onProgressItem = function(fileItem, progress) {
-      console.info('onProgressItem', fileItem, progress);
-  };
-  uploader.onProgressAll = function(progress) {
-      console.info('onProgressAll', progress);
-  };
-  uploader.onSuccessItem = function(fileItem, response, status, headers) {
-      console.info('onSuccessItem', fileItem, response, status, headers);
-  };
-  uploader.onErrorItem = function(fileItem, response, status, headers) {
-      console.info('onErrorItem', fileItem, response, status, headers);
-  };
-  uploader.onCancelItem = function(fileItem, response, status, headers) {
-      console.info('onCancelItem', fileItem, response, status, headers);
-  };
-  uploader.onCompleteItem = function(fileItem, response, status, headers) {
-      console.info('onCompleteItem', fileItem, response, status, headers);
-  };
-
   uploader.onCompleteAll = function() {
       uploader.queue = [];
       $modalInstance.dismiss('cancel');
