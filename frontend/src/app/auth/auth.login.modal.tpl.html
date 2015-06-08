@@ -7,7 +7,7 @@
                 <a href="/api/social/login/vk-oauth/"><div class="social" aria-hidden="true" data-icon="&#xe003;"></div></a>
                 <a href="/api/social/login/facebook/"><div class="social" aria-hidden="true" data-icon="&#xe021;"></div></a>
                 <a href="/api/social/login/google-oauth2/"><div class="social" aria-hidden="true" data-icon="&#xe01b;"></div></a>
-                <h4>или используя логин и пароль</h4>
+                <h4>или используя электронную почту</h4>
             </div>
             <div class="form-group">
                 <label>Электропочта:</label>
@@ -17,15 +17,15 @@
             <div class="form-group">
                     <div class="btn-group">
                         <label class="btn btn-default" ng-model="new_user" btn-radio="'1'">Я новый пользователь</label>
-                        <label class="btn btn-default active" ng-model="new_user" btn-radio="'0'">Я уже зарегистрирован</label>
+                        <label class="btn btn-default active" ng-model="new_user" btn-radio="'2'">Я уже зарегистрирован</label>
                     </div>
                 </div>
-            <div class="form-group">
+            <div class="form-group" ng-show="new_user > 0">
                 <label>Пароль:</label>
                 <input ng-model="password" required name="password" type="password"
                        placeholder="Пароль" class="form-control">
             </div>
-            <div class="password-recovery" ng-show="new_user == 0">
+            <div class="password-recovery" ng-show="new_user == 2">
                 <a href="#">Восстановить пароль</a>
             </div>
             

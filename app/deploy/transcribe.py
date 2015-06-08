@@ -115,6 +115,9 @@ class TranscribeNinjaSystem(Node):
                 tasks.engine_configure
             ])
 
+        def migrate(self):
+            self.run_management_command('migrate')
+
         def reset_db(self):
             self.run_management_command('reset')
             self.run_management_command('syncdb')

@@ -274,7 +274,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 if DEBUG:
     FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
     STATICFILES_DIRS = (
-        # FRONTEND_ROOT,
+        FRONTEND_ROOT,
         os.path.join(BASE_DIR, "frontend/bin/"),
     )
 

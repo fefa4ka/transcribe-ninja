@@ -15,6 +15,10 @@ angular.module( 'transcribe-ninja.api', [
 
   return {
     auth: $resource("/api/auth/basic/", {}, {
+      register: {
+        url: "/api/auth/register\\/",
+        method: 'POST'
+      },
       login: { 
         method: 'POST', 
         transformRequest: add_auth_header
