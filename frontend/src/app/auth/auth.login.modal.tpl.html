@@ -1,16 +1,15 @@
 <form id="id_auth_form" ng-submit="login()">
     <div class="modal-header">
-        <h3 class="modal-title">Вход через социальную сеть</h3>
+        <h3 class="modal-title text-line">Вход через социальную сеть</h3>
     </div>
     <div class="modal-body">
             <div class="centered-text">
                 <a href="/api/social/login/vk-oauth/"><div class="social" aria-hidden="true" data-icon="&#xe003;"></div></a>
                 <a href="/api/social/login/facebook/"><div class="social" aria-hidden="true" data-icon="&#xe021;"></div></a>
                 <a href="/api/social/login/google-oauth2/"><div class="social" aria-hidden="true" data-icon="&#xe01b;"></div></a>
-                <h4>или используя электронную почту</h4>
+                <h4 class="text-line">или используя электронную почту</h4>
             </div>
             <div class="form-group">
-                <label>Электропочта:</label>
                 <input ng-model="username" required name="username"
                        type="text" placeholder="Адрес электронной почты" class="form-control">
             </div>
@@ -21,11 +20,10 @@
                     </div>
                 </div>
             <div class="form-group" ng-show="new_user > 0">
-                <label>Пароль:</label>
                 <input ng-model="password" required name="password" type="password"
                        placeholder="Пароль" class="form-control">
             </div>
-            <div class="password-recovery" ng-show="new_user == 2">
+            <div class="password-recovery text-line" ng-show="new_user == 2">
                 <a href="#">Восстановить пароль</a>
             </div>
             
