@@ -372,7 +372,6 @@ class Piece(models.Model):
 
         transcription.save()
 
-        transcribe_queue.work_type = 3
         transcribe_queue.completed = datetime.now()
         transcribe_queue.save()
 
