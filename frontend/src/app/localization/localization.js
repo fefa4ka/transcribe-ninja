@@ -45,7 +45,7 @@ angular.module( 'transcribe-ninja.localization', [
 
     return function (seconds) {
         seconds = Math.round(seconds);
-        return format(seconds, "second");
+        
         switch (false) {
         case (seconds < minute) === false:
             return format(seconds, "second");
