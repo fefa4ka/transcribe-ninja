@@ -29,12 +29,13 @@
                         <span class="sr-only"></span>
                     </div>
                 </div>
-
-                <a href="/#/record/{{ record.id }}" class="title">{{ record.title }}</a> 
-                <a class="btn btn-danger btn-xs pull-right" href 
-                    ng-click="record = remove(record)"
-                    ng-show="record.progress === 0 && show"><i class="fa fa-trash-o fa-lg"></i></a>
-
+                
+                <div class="details">
+                    <a href="/#/record/{{ record.id }}" class="title">{{ record.title }}</a> 
+                    <a class="btn btn-danger btn-xs pull-right" href 
+                        ng-click="record = remove(record)"
+                            ng-show="record.progress === 0 && show"><i class="fa fa-trash-o fa-lg"></i></a>
+                </div>
                 
                 
                 <div class="record_list__item-duration" ng-show="record.duration > 0">{{ record.duration | humanSeconds }}</div>
