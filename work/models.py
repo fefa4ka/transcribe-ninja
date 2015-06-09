@@ -344,9 +344,9 @@ class Queue(AudioFile):
             pieces_blocks.append((self.piece.id, self.piece.next.id))
 
         for pieces in pieces_blocks:
-            # Ищем выполненные очереди транскрибции
+            # Ищем выполненные очереди транскрибции WORK_TYPE = TRANSCRIBTION, BOT_TRANSCRIPTION
             completed_pieces = Queue.objects.filter(
-                piece__id__in=pieces, work_type=0, completed__isnull=False)
+                piece__id__in=pieces, work_type__in=[0,3], completed__isnull=False)
 
             check_queue = Queue.objects.get(piece_id=pieces[0], work_type=1)
 
