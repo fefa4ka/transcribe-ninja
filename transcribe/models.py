@@ -436,9 +436,7 @@ class Piece(models.Model):
             variants.append(variant.childNodes[0].nodeValue)
 
         # Берём главный результат и ищем для каждого слова альтернативу
-        if len(variants) == 1:
-            return variants[0]
-        elif len(variants) > 1:
+        if len(variants) >= 1:
             transcribe = []
             main_variant = variants.pop(0)
             for word_index, word in enumerate(main_variant.split(" ")):
