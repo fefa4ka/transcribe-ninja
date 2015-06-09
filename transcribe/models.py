@@ -372,14 +372,7 @@ class Piece(models.Model):
 
         transcription.save()
 
-        # Меняем цену и тип работы
-        transcribe_price = Price.objects.filter(
-                content_type_id=transcribe_object_id,
-                work_type=3, # Price.WORK_TYPE_TRANSCRIBE_SPEECHKIT,
-                default=1)[0]
-        # transcribe_queue.work_type = Price.WORK_TYPE_TRANSCRIBE_SPEECHKIT,
         transcribe_queue.work_type = 3
-        transcribe_queue.price = transcribe_price
         transcribe_queue.completed = datetime.now()
         transcribe_queue.save()
 
