@@ -52,8 +52,8 @@
         <button class="btn btn-default btn-xs" 
                 ng-click="loadQueue()">Пропустить задачу</button>
 
-        <div class="pull-right" ng-show="queu.work_type == 0">
-            <p>
+        <div class="pull-right">
+            <p ng-show="queu.work_type == 0">
                 Заработали  <strong>{{ earnMoneyValue() | number : 2 }} ₷</strong>
             </p>
             <button class="btn btn-primary" 
