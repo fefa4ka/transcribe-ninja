@@ -436,29 +436,32 @@ class Piece(models.Model):
             variants.append(variant.childNodes[0].nodeValue)
 
         # Берём главный результат и ищем для каждого слова альтернативу
-        transcribe = []
-        main_variant = variants.pop(0)
-        for word_index, word in enumerate(main_variant.split(" ")):
-            result_word = [word]
-            for index, variant in enumerate(variants):
-                variant = variant.split(" ")
-                try:
-                    diff = SequenceMatcher(None, word, variant[word_index])
-                    ratio = diff.ratio()
-                    # Если слово очень похоже, то добавляем как альтернативу
-                    if ratio > 0.65 and ratio != 1:
-                        result_word.append(variant[word_index])
-                except IndexError:
-                    pass
+        if len(variants) == 1:
+            return variants[0]
+        elif len(variants) > 1:
+            transcribe = []
+            main_variant = variants.pop(0)
+            for word_index, word in enumerate(main_variant.split(" ")):
+                result_word = [word]
+                for index, variant in enumerate(variants):
+                    variant = variant.split(" ")
+                    try:
+                        diff = SequenceMatcher(None, word, variant[word_index])
+                        ratio = diff.ratio()
+                        # Если слово очень похоже, то добавляем как альтернативу
+                        if ratio > 0.65 and ratio != 1:
+                            result_word.append(variant[word_index])
+                    except IndexError:
+                        pass
 
-                # TODO: Что делать с теми случаями, когда какое-то слово пропускается?
+                    # TODO: Что делать с теми случаями, когда какое-то слово пропускается?
 
-            if len(result_word) > 1:
-                transcribe.append(result_word)
-            else:
-                transcribe.append(word)
+                if len(result_word) > 1:
+                    transcribe.append(result_word)
+                else:
+                    transcribe.append(word)
 
-        return transcribe
+            return transcribe
 
 class Transcription(models.Model):
 
