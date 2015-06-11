@@ -346,7 +346,8 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # TODO: Удалить аудиофайл
         queue.save()
 
-        # Меняем приоритет у других кусков
-        queue.update_priority()
+        # Отправляем на асинхронный пересчёт зависимых кусков
+        # Меняем приоритет у других кусков и перерасчёт бабла
+        core.async_jobs.update_near.delay(queue)
 
         return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)

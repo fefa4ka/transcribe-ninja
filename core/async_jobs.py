@@ -30,6 +30,10 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
+@job('queue')
+def update_payments(queue):
+    queue.update_priority()
+    queue.update_payments()
 
 @job('queue')
 def make_queue(order):

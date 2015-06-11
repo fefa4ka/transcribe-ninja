@@ -57,7 +57,9 @@ class Price(models.Model):
         choices=WORK_TYPE_CHOICES,
         default=WORK_TYPE_TRANSCRIBE
     )
+
     price = models.FloatField()
+    price_min = models.FloatField()
 
     default = models.BooleanField(default=False)
 
@@ -299,9 +301,18 @@ class Queue(AudioFile):
 
     @property
     def total_price(self):
+        duration = 0
+
+        for piece in self.pieces:
+            duration += piece.duration
+
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
             total_price = self.dirty_price - self.mistakes_price
+
+            # Если всё впорядке и это исправление, даём цену за прослушивание
+            if total_price >= 0 and self.work_type == self.CHECK:
+                total_price += self.price.price_min * duration
 
             if total_price > 0:
                 return total_price
@@ -311,10 +322,7 @@ class Queue(AudioFile):
 
         # Считаем длинну всей транскрипции, чтобы предсказать стоимость
         length = 0
-        duration = 0
-
         for piece in self.pieces:
-            duration += piece.duration
             for transcription in piece.transcriptions.all():
                 length += len(transcription.text) + 1
 
@@ -324,28 +332,25 @@ class Queue(AudioFile):
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:
             return length * self.price.price
-        # Если проверка. То отдельно за проверку и за каждое исправление
+        # Если проверка. То отдельно за прослушку и за каждое исправление
         else:
-            # TODO: Считаем разницу
-            diff_price = 0
-
-            return self.price.price + diff_price
+            return self.price.price_min * duration
 
     @property
     def original_transcription(self):
-        return [t.text for t in self.get_trancriptions(version=-1)]
+        return [t.text for t in self._get_trancriptions(version=-1)]
 
     @property
     def transcription(self):
-        return [t.text for t in self.get_trancriptions()]
+        return [t.text for t in self._get_trancriptions()]
 
     @property
     def checked_transcription(self):
-        return [t.text for t in self.get_trancriptions(version=1)]
+        return [t.text for t in self._get_trancriptions(version=1)]
 
     @property
     def dirty_price(self):
-        letters_count = self.diff_result(
+        letters_count = self._diff_result(
             '\n'.join(self.original_transcription),
             '\n'.join(self.transcription))
 
@@ -356,13 +361,13 @@ class Queue(AudioFile):
         if len(self.checked_transcription) == 0:
             return 0
 
-        letters_count = self.diff_result(
+        letters_count = self._diff_result(
             '\n'.join(self.transcription),
             '\n'.join(self.checked_transcription))
 
         return self.price.price * letters_count
 
-    def get_trancriptions(self, version=0):
+    def _get_trancriptions(self, version=0):
         # version - версия транскрибции. что было -1, что есть 0, что стало 1
 
         # Нужны транскрибции этой очереди, предыдущая, следующая для этих кусков
@@ -390,7 +395,7 @@ class Queue(AudioFile):
 
         return transcriptions
 
-    def diff_result(self, original_transcription, transcription):
+    def _diff_result(self, original_transcription, transcription):
         from diff_match_patch import diff_match_patch
 
         d = diff_match_patch()
@@ -406,7 +411,24 @@ class Queue(AudioFile):
         # Если есть следующая транскрибция, считаем разницу и вычитаем из предыдущей
         return letters_count
 
+    def update_payments(self):
+        # Для всех задач учавствовавших в транскрибации куска делаем перерасчёт
+        queues_id = self.piece.all_transcriptions.values('queue_id').distinct()
+        queues = Queue.objects.filter(id__in=queues_id).order_by('completed')
 
+        for queue in queues:
+            # payment = Payment.objects.for_model(Queue).filter(object_pk==queue.id)
+            type_id = ContentType.objects.get_for_model(type(queue)).id
+            payment = Payment.objects.get(content_type_id=type_id, object_id=queue.id)
+
+            if payment:
+                # Обновляем показатели бабла
+                diff = payment.total - queue.total_price
+                payment.total = queue.total_price
+                queue.owner.account.balance += diff
+
+                payment.save()
+                queue.owner.account.save()
 
     def update_priority(self):
         """
@@ -533,6 +555,9 @@ def create_queue_payment(sender, instance, created, raw, using, update_fields, *
     # Берём дефолтный прайс для объекта
 
     if not instance.completed:
+        return
+
+    if Payment.objects.get(content_object=instance):
         return
 
     # TODO: Если платёж по этому объекту уже есть, то ничего не делать
