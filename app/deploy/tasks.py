@@ -114,11 +114,16 @@ web_configure = [
     {"action": "sudo", "params": "npm install -g bower karma grunt grunt-cli"},
     # Костыль с нодой
     {"action": "run", "params": "ln -s /usr/bin/nodejs %(ENV_DIR)s/bin/node"},
-    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend && npm install"},
-
+    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend/transcribe.ninja && npm install"},
+    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend/stenograph.us && npm install"},
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
     {"action": "sudo", "params": "rm -rf /etc/supervisor/conf.d/default"},
     {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default.ini"},
+]
+
+npm_install = [
+    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend/transcribe.ninja && npm install"},
+    {"action": "sudo", "params": "cd %(PROJECT_DIR)s/frontend/stenograph.us && npm install"},
 ]
 
     # nginx
@@ -150,7 +155,7 @@ reload_uwsgi = [
         "message": "Restarting uwsgi"},
 ]
 
-web_configure +=  reload_uwsgi + reload_nginx + create_uwsgi_links + create_ningx_links
+web_configure +=  reload_uwsgi + reload_nginx + create_uwsgi_links + create_nginx_links
 
 engine_configure = [
     # List of pypi packages to install
