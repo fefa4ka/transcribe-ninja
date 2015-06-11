@@ -7,10 +7,7 @@ from settings import *
 
 DOMAIN = 'stenograph.us'
 
-EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = "info@%s" % DOMAIN
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
+EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = "info@stenographus.ru"
 
 WSGI_APPLICATION = "app.wsgi_%s.application" % DOMAIN.replace(".", "_")
 

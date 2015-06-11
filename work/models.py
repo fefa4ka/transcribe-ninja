@@ -320,6 +320,11 @@ class Queue(AudioFile):
             diff_price = 0
 
             return self.price.price + diff_price
+    @property
+    def diff_result(self):
+        # Берём предыдущую транскрибцию по времени и сравниваем
+        # Если есть следующая транскрибция, считаем разницу и вычитаем из предыдущей
+        return 0
 
     def update_priority(self):
         """
