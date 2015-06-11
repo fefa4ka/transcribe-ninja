@@ -51,7 +51,7 @@ angular.module( 'transcribe-ninja.work', [
     };
 }])
 
-.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", function RecordCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api) {
+.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $timeout) {
   function get_piece(piece_id) {
 
   }
@@ -350,7 +350,8 @@ angular.module( 'transcribe-ninja.work', [
         $scope.wavesurfer.clearRegions();
         $scope.wavesurfer.load($scope.queue.audio_file);
 
-        $scope.$evalAsync($scope.textareaAdjust);
+        // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
+        $timeout($scope.textareaAdjust, 500);
         // Выравниваем текстареа. Костыль BUG
         // window.dispatchEvent(new Event('resize'));
         // $rootScope.$broadcast('elastic:adjust');
