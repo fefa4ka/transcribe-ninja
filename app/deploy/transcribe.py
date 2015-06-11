@@ -100,16 +100,17 @@ class TranscribeNinjaSystem(Node):
 
         def restart(self):
             self._ec2_configure_instance(tasks.reload_nginx)
+            self._ec2_configure_instance(tasks.reload_uwsgi + tasks.create_uwsgi_links)
+
             self.compile()
 
         def compile(self):
             with self.hosts.prefix(settings.ACTIVATE):
                 with self.hosts.cd(self.frontend_path, expand=True):
-                    self.hosts.run('bower install')
-                    self.hosts.run('grunt clean')
-                    self.hosts.run('grunt --force')
+                    self.hosts.run('bash build.sh')
 
-            self.run_management_command('collectstatic --noinput')
+            self.run_management_command('collectstatic --noinput --settings=app.settings_transcribe_ninja')
+            self.run_management_command('collectstatic --noinput --settings=app.settings_stenograph_us')
 
     @map_roles(host='engine')
     class Engine(DjangoDeployment):

@@ -1,7 +1,10 @@
-upstream django {
-    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi.sock;
+upstream django_transcribe_ninja {
+    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_transcribe_ninja.sock;
 }
 
+upstream django_stenograph_us {
+    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_stenograph_us.sock;
+}
 
 server {
     listen      80;
@@ -20,7 +23,7 @@ server {
     }
 
     location ~ ^/(admin|api)/ {
-        uwsgi_pass  django;
+        uwsgi_pass  django_transcribe_ninja;
         include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
     }
 
@@ -31,7 +34,7 @@ server {
 
 server {
     listen      80;
-    server_name     www.stenograph.us stenograph.us;
+    server_name     www.stenographus.ru stenographus.ru;
     charset     utf-8;
 
     client_max_body_size 75M;  
@@ -46,7 +49,7 @@ server {
     }
 
     location ~ ^/(admin|api)/ {
-        uwsgi_pass  django;
+        uwsgi_pass  django_stenograph_us;
         include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
     }
 

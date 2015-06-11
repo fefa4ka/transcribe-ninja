@@ -1,0 +1,13 @@
+[uwsgi]
+uid=%(EC2_SERVER_USERNAME)s
+gid=%(EC2_SERVER_USERNAME)s
+
+chdir           = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s
+module          = app.wsgi_stenograph_us
+home            = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env
+
+master          = true
+processes       = 10
+socket          = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_stenograph_us.sock
+chmod-socket    = 666 
+vacuum          = true

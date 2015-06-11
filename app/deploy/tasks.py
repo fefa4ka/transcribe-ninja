@@ -118,6 +118,7 @@ web_configure = [
 
     {"action": "sudo", "params": "rm -rf /etc/nginx/sites-enabled/default"},
     {"action": "sudo", "params": "rm -rf /etc/supervisor/conf.d/default"},
+    {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default.ini"},
 ]
 
     # nginx
@@ -132,17 +133,23 @@ reload_nginx = [
     {"action": "sudo", "params": "chown root:root /etc/nginx/nginx.conf"},
 ]
 
-reload_uwsgi = [
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf"}},
-    {"action": "sudo", "params": "rm -rf /etc/uwsgi/apps-enabled/default.ini"},
+create_uwsgi_links = [
     {"action": "sudo", "params":
-        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s.ini"},
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_stenograph_us.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_stenograph_us.ini"},
+    {"action": "sudo", "params":
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_transcribe_ninja.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_transcribe_ninja.ini"},
+]
+
+reload_uwsgi = [
+    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi_stenograph_us.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_stenograph_us.conf"}},
+    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi_transcribe_ninja.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_transcribe_ninja.conf"}},
     {"action": "sudo", "params": "service uwsgi restart",
         "message": "Restarting uwsgi"},
 ]
 
-web_configure += reload_uwsgi + reload_nginx
+web_configure += create_uwsgi_links + reload_uwsgi + reload_nginx
 
 engine_configure = [
     # List of pypi packages to install

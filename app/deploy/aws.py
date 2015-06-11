@@ -14,7 +14,7 @@ import time
 
 class AWS(Node):
     def get_address(self):
-        hosts =[] 
+        hosts = [] 
         for host in self.hosts.get_hosts():
             host = host()
             hosts.append((host.slug, host.address))
