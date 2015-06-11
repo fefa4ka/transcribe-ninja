@@ -1,2 +1,2 @@
-cd stenograph.us && bower install && grunt clean && grunt compile
-cd ../transcribe.ninja && bower install && grunt clean && grunt compile
+cd stenograph.us && npm install && bower install && grunt clean && grunt compile
+cd ../transcribe.ninja && npm install && bower install && grunt clean && grunt compile

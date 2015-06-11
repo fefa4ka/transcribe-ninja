@@ -99,8 +99,7 @@ class TranscribeNinjaSystem(Node):
             ])
 
         def restart(self):
-            self._ec2_configure_instance(tasks.reload_nginx)
-            self._ec2_configure_instance(tasks.reload_uwsgi + tasks.create_uwsgi_links)
+            self._ec2_configure_instance(tasks.reload_nginx + tasks.reload_uwsgi)
 
             self.compile()
 

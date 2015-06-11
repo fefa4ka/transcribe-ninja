@@ -125,10 +125,13 @@ web_configure = [
 reload_nginx = [
     {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/nginx.conf.template",
                                           "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf"}},
-    {"action": "sudo", "params":
-     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
     {"action": "sudo", "params": "service nginx restart",
      "message": "Restarting nginx"},
+]
+
+create_nginx_links = [
+    {"action": "sudo", "params":
+     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
 ]
 
 create_uwsgi_links = [
@@ -147,7 +150,7 @@ reload_uwsgi = [
         "message": "Restarting uwsgi"},
 ]
 
-web_configure += create_uwsgi_links + reload_uwsgi + reload_nginx
+web_configure +=  reload_uwsgi + reload_nginx + create_uwsgi_links + create_ningx_links
 
 engine_configure = [
     # List of pypi packages to install
