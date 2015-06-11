@@ -323,30 +323,37 @@ angular.module( 'transcribe-ninja.work', [
     $scope.wavesurfer.destroy();
   });
 
-
+  $scope.textareaAdjust = function () {
+    // Выравниваем текстареа. Костыль BUG
+    window.dispatchEvent(new Event('resize'));
+    $rootScope.$broadcast('elastic:adjust');
+  };
 
   // Загрузка задачи
   $scope.loadQueue = function () {  
     $scope.queue = {};
 
     // Загружаем 
-    $scope.queue = api.queue.get({ }, function() {
-      // Считаем продолжительность общую
-      duration = 0;
-      for(var index in $scope.queue.pieces) {
-        duration += $scope.queue.pieces[index].duration;
-      }
+    api.queue.get().
+      $promise.
+      then(function(data) {
+        $scope.queue = data;
+        // Считаем продолжительность общую
+        duration = 0;
+        for(var index in $scope.queue.pieces) {
+          duration += $scope.queue.pieces[index].duration;
+        }
 
-      $scope.queue.duration = duration;
+        $scope.queue.duration = duration;
 
-      // Подгружаем аудиофайл 
-      $scope.wavesurfer.clearRegions();
-      $scope.wavesurfer.load($scope.queue.audio_file);
+        // Подгружаем аудиофайл 
+        $scope.wavesurfer.clearRegions();
+        $scope.wavesurfer.load($scope.queue.audio_file);
 
-      // Выравниваем текстареа. Костыль BUG
-      window.dispatchEvent(new Event('resize'));
-
-
+        $scope.$evalAsync($scope.textareaAdjust);
+        // Выравниваем текстареа. Костыль BUG
+        // window.dispatchEvent(new Event('resize'));
+        // $rootScope.$broadcast('elastic:adjust');
     });
   };
 
