@@ -3,11 +3,11 @@ uid=%(EC2_SERVER_USERNAME)s
 gid=%(EC2_SERVER_USERNAME)s
 
 chdir           = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s
-module          = app.wsgi
+module          = app.wsgi_transcribe_ninja
 home            = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env
 
 master          = true
 processes       = 10
-socket          = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi.sock
+socket          = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_transcribe_ninja.sock
 chmod-socket    = 666 
 vacuum          = true
