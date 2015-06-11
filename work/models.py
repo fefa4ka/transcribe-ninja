@@ -231,7 +231,7 @@ class Queue(AudioFile):
 
     @property
     def pieces(self):
-        if self.work_type == self.CHECK:
+        if self.work_type == self.CHECK and self.piece.next != None:
             return [self.piece, self.piece.next]
         else:
             return [self.piece]
@@ -299,7 +299,17 @@ class Queue(AudioFile):
 
     @property
     def total_price(self):
-        # Считаем длинну всей транскрипции
+        # Если очередь выполнена, считаем итоговоую цену
+        if self.completed:
+            total_price = self.dirty_price - self.mistakes_price
+
+            if total_price > 0:
+                return total_price
+            else:
+                # Если много ошибался, испортил или не проверил
+                return 0
+
+        # Считаем длинну всей транскрипции, чтобы предсказать стоимость
         length = 0
         duration = 0
 
@@ -320,11 +330,80 @@ class Queue(AudioFile):
             diff_price = 0
 
             return self.price.price + diff_price
+
     @property
-    def diff_result(self):
+    def original_transcription(self):
+        return [t.text for t in self.get_trancriptions(version=-1)]
+
+    @property
+    def transcription(self):
+        return [t.text for t in self.get_trancriptions()]
+
+    @property
+    def checked_transcription(self):
+        return [t.text for t in self.get_trancriptions(version=1)]
+
+    @property
+    def dirty_price(self):
+        letters_count = self.diff_result(
+            '\n'.join(self.original_transcription),
+            '\n'.join(self.transcription))
+
+        return self.price.price * letters_count
+
+    @property
+    def mistakes_price(self):
+        letters_count = self.diff_result(
+            '\n'.join(self.transcription),
+            '\n'.join(self.checked_transcription))
+
+        return self.price.price * letters_count
+
+    def get_trancriptions(self, version=0):
+        # version - версия транскрибции. что было -1, что есть 0, что стало 1
+
+        # Нужны транскрибции этой очереди, предыдущая, следующая для этих кусков
+        if not self.completed:
+            return []
+
+        transcriptions = []
+
+        for piece in self.pieces:
+            # Получаем очереди, которые участвовали в транскрибировании куска
+            queues_id = self.piece.all_transcriptions.values('queue_id').distinct()
+            queues = Queue.objects.filter(id__in=queues_id).order_by('completed')
+
+            for index, q in enumerate(queues):
+                if q == self:
+                    self_position = index
+
+            queue_position = self_position + version
+
+            # Проверяем, есть ли транскрибция такая
+            if len(queues) > queue_position and (self_position + queue_position) >= 0:
+                # Выдаём транскрибцию
+                transcriptions += piece.all_transcriptions.filter(
+                    queue=queues[queue_position]).order_by('index')
+
+        return transcriptions
+
+    def diff_result(self, original_transcription, transcription):
+        from diff_match_patch import diff_match_patch
+
+        d = diff_match_patch()
+
+        # Сколько заработали на нём
+        diff = d.diff_main(original_transcription, transcription)
+        letters_count = 0
+        for work in diff:
+            if work[0] in [1, -1]:
+                letters_count += len(work[1])
+
         # Берём предыдущую транскрибцию по времени и сравниваем
         # Если есть следующая транскрибция, считаем разницу и вычитаем из предыдущей
-        return 0
+        return letters_count
+
+
 
     def update_priority(self):
         """

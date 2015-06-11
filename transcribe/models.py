@@ -263,11 +263,11 @@ class Piece(models.Model):
     duration = models.FloatField()
     speaker = models.ForeignKey(Speaker, blank=True, null=True)
 
-    # По умолчанию показывать только последнии трансприпции
-    # Отдавать транскрипции, время выполнении очереди у которой последний.
     @property
     def transcriptions(self):
-        last_completed= self.all_transcriptions.order_by('-queue__completed').first()
+        # По умолчанию показывать только последнии трансприпции
+        # Отдавать транскрипции, время выполнении очереди у которой последний.
+        last_completed = self.all_transcriptions.order_by('-queue__completed').first()
         if last_completed:
             return self.all_transcriptions.filter(queue=last_completed.queue).order_by('index')
         else:

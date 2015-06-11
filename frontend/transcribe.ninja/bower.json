@@ -15,7 +15,8 @@
     "wavesurfer.js": "1.0.27",
     "peaks.js": "*",
     "angular-elastic": "2.4.2",
-    "jquery-highlighttextarea": "*"
+    "jquery-highlighttextarea": "*",
+    "angular-diff-match-patch": "*"
   },
   "dependencies": {}
 }

@@ -13,3 +13,4 @@ django-s3-folder-storage
 djangorestframework-bulk==0.1.3
 django-social-auth
 djoser
+diff-match-patch
