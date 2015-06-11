@@ -1,0 +1,40 @@
+<div class="record_detail__path">
+    <a href ui-sref="record-list">Ваши записи</a> → {{ record.title }}
+</div>
+
+<div id="player">
+
+</div>
+
+<button class="btn btn-default btn-circle record_detail__play" ng-click="wavesurfer.playPause()"><i class="fa fa-play"></i></button>
+<ul class="record_detail-list list-inline">
+    <li ng-show="record.duration > 0">
+        {{ record.duration | humanSeconds }}
+    </li>
+    <li>
+        <span class="label label-success" 
+                ng-show="record.progress === 1">Распознаётся</span>
+        <span class="label label-default" 
+                ng-show="record.duration === 0">Подготовка</span>
+    </li>
+    <li
+        ng-show="record.duration > 0 && record.progress === 0">
+        <button class="btn btn-default btn-xs" 
+            
+            ng-click="order(record)">Распознать за {{ (record.duration / 60) * 15 | number: 0 }} ₷</button>    
+    </li>
+</ul>
+
+    <ul class="record_transcriptions">
+        <li ng-repeat="transcription in record.transcriptions">
+            <div class="info">
+                <div class="speaker"> {{ transcription.name | translate }}</div>
+                <div class="time">{{ transcription.start_at | secondsHms }}</div>
+            </div>
+            <div class="text">
+                {{ transcription.text }}
+            </div>
+        </li>
+    </ul>
+
+</div>

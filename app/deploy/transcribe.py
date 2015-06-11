@@ -98,6 +98,10 @@ class TranscribeNinjaSystem(Node):
                 tasks.web_configure
             ])
 
+        def restart(self):
+            self._ec2_configure_instance(tasks.reload_nginx)
+            self.compile()
+
         def compile(self):
             with self.hosts.prefix(settings.ACTIVATE):
                 with self.hosts.cd(self.frontend_path, expand=True):
@@ -160,12 +164,11 @@ class TranscribeNinjaSystem(Node):
     def deploy(self):
         self.Application.pull()
 
-        self.Application.python_packages_install()
+        # self.Application.python_packages_install()
 
         self.Uwsgi.restart()
         self.Nginx.restart()
 
         self.Supervisor.restart()
 
-        self.Frontend.compile()
-
+        self.Frontend.restart()

@@ -1,4 +1,4 @@
-<form id="id_auth_form" ng-submit="authLogin()" ui-keypress="{13:'authLogin()'}">
+<form id="id_auth_form" ng-submit="login()">
     <div class="modal-header">
         <h3 class="modal-title text-line">Вход через социальную сеть</h3>
     </div>
@@ -23,16 +23,13 @@
                 <input ng-model="password" required name="password" type="password"
                        placeholder="Пароль" class="form-control">
             </div>
-            <div  class="form-group" ng-show="new_user == 1">
-                <input ng-model="repeat_password" name="repeat_password" type="password"
-                       placeholder="Повторите пароль" class="form-control"> 
-            </div>
             <div class="password-recovery text-line" ng-show="new_user == 2">
                 <a href="#">Восстановить пароль</a>
             </div>
             
     </div>
     <div class="modal-footer">
-        <input type="submit" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'">
+        <button class="btn btn-default" ng-click="cancel()">Отмена</button>
+        <input type="submit" class="btn btn-primary" ng-click="authLogin('lalala')" value="Войти">
     </div>
 </form>

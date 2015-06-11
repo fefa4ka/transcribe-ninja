@@ -5,7 +5,7 @@ upstream django {
 
 server {
     listen      80;
-    server_name     www.%(DOMAIN)s %(DOMAIN)s;
+    server_name     www.transcribe.ninja transcribe.ninja;
     charset     utf-8;
 
     client_max_body_size 75M;  
@@ -16,7 +16,7 @@ server {
     }
 
     location /assets {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/bin/assets;
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/transcribe.ninja/bin/assets;
     }
 
     location ~ ^/(admin|api)/ {
@@ -25,7 +25,34 @@ server {
     }
 
     location / {
-        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/bin/;  
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/transcribe.ninja/bin/;  
     }
 }
+
+server {
+    listen      80;
+    server_name     www.stenograph.us stenograph.us;
+    charset     utf-8;
+
+    client_max_body_size 75M;  
+    
+    location /static {
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static;
+
+    }
+
+    location /assets {
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/stenograph.us/bin/assets;
+    }
+
+    location ~ ^/(admin|api)/ {
+        uwsgi_pass  django;
+        include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
+    }
+
+    location / {
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/stenograph.us/bin/;  
+    }
+}
+
 

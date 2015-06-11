@@ -1,0 +1,39 @@
+<ul class="list-unstyled list-inline span7 mainpage" ng-mousemove="logoNameState($event)">
+    <li class="logo">
+        <main-logo> </main-logo>
+        <button class="btn btn-default btn-xs" 
+                ng-click="authModal()"
+                ng-hide="Data.user.id">Войти</button>
+
+        <div ng-show="Data.user.id">
+            <div class="btn-group" dropdown>
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ Data.user.username }} <span class="caret"></span></button>
+                <ul class="dropdown-menu" role="menu">
+                    <li>
+                        <a href="#">История вашей работы</a>
+                    </li>
+                    <li>
+                        <a href="#">Учётная запись</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#" ng-click="logout()">Выход</a>
+                    </li>
+                </ul>
+            </div>
+            <p class ="balance">{{ Data.user.balance | number : 2 }} ₷</p>
+        </div>
+    </li>
+
+    <li class="transcribe">
+        <a href ui-sref="work">Зарабатывайте</a>
+        <p>
+            <nobr>Печатайте под диктовку,</nobr>
+            <nobr>оплата за каждую букву</nobr>
+        </p>
+        <p ng-hide="true">
+            <strong>Около 1000 ₷ в день</strong>
+        </p>
+    </li>
+
+</section>

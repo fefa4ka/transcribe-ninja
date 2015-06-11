@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html ng-app="transcribe-ninja" ng-controller="AppCtrl" lang="ru">
+  <head>
+    <meta charset="utf-8"> 
+    <title ng-bind="pageTitle"></title>
+
+    <!-- social media tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@fefa4ka">
+    <meta name="twitter:title" content="Stenograph.us">
+    <meta name="twitter:description" content="Make text from voice.">
+    <meta name="twitter:creator" content="@fefa4ka">
+    <meta name="twitter:image:src" content="">
+    <meta property="og:title" content="Stenograph.us" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://stenograph.us" />
+    <meta property="og:image" content="" />
+    <meta property="og:description" content="Make text from voice.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- font awesome from BootstrapCDN -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="/static/<%= file %>" /><% }); %>
+
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="/static/<%= file %>"></script><% }); %>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
+    
+    <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
+
+ 
+  </head>
+  <body>
+    <div class="container">
+        <header ng-hide="stateName === 'main'">
+            <a ui-sref="main"><img class="logo" src="/static/assets/logo.svg"/></a> 
+            
+
+            <ul class="nav nav-pills controls">
+                <!-- If AnonymousUser -->
+                <li ng-hide="currentUser.id">
+                    <button class="btn btn-default btn-xs" 
+                            ng-click="authModal()">Войти</button>
+                </li>
+                
+
+                <!-- If Authorized -->
+                <li ui-sref-active="active" 
+                    ng-show="currentUser.id && currentUser.records.length > 0">
+                    <a href ui-sref="record-list">Ваши записи<span class="badge">{{ currentUser.records.length }}</span></a>
+                </li>
+
+
+                <li ng-show="currentUser.id">
+                    <div class="btn-group" dropdown>
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#">Оплата</a>
+                            </li>
+                            <li>
+                                <a href="#">Учётная запись</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="#" ng-click="logout()">Выход</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class ="balance">{{ currentUser.balance | number : 2 }} ₷</p>
+                </li>
+            </ul>
+        </header>
+    </div>
+    
+    <div class="container" ui-view="main"></div>
+    
+    <div ui-view="modal"></div>
+
+    <section class="container footer row-fluid navbar-fixed-bottom">
+        <div class="row-fluid">
+            <div ng-class="stateName == 'main' ? 'col-md-5 col-md-offset-1 first-to-right' : 'col-md-6 first-to-left'">
+                <ul class="list-inline">
+                    <li>
+                        <a ui-sref="record-list">Ваши записи</a>
+                    </li>
+                    <li>
+                        <a href="#">Сроки и оплата</a>
+                    </li>
+                    <li>API</li>
+                </ul>
+            </div>
+            <div class="col-md-5 second">
+                <ul class="list-inline">
+                    <li>
+                        <a href="#">Обратная связь</a>
+                    </li>
+                    <li>© Стенограф.ус</li>
+                </ul>
+            </div>
+    </section>
+    <!-- Yandex.Metrika counter -->
+    
+    <!-- /Yandex.Metrika counter -->
+  </body>
+</html>

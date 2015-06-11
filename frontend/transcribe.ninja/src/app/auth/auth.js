@@ -2,11 +2,11 @@ angular.module( 'transcribe-ninja.auth', [
   'ui.router'
 ])
 
-.config(function config( $stateProvider ) {
+.config(["$stateProvider", function config( $stateProvider ) {
 
-})
+}])
 
-.controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
+.controller( 'AuthModalCtrl', ["$scope", "$modalInstance", "authCallback", "$rootScope", "api", function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
     $scope.authCallback = authCallback;
 
     $scope.cancel = function () {
@@ -58,7 +58,7 @@ angular.module( 'transcribe-ninja.auth', [
         }
     };
 
-})
+}])
 
 ;
 

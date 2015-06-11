@@ -28,17 +28,3 @@ class UpstartService(Node):
 
     def status(self):
         self.hosts.sudo('service %s status' % esc1(self.name))
-
-    def link_conf(self):
-        with self.hosts.cd(settings.PROJECT_DIRECTORY, expand=True):
-            project_directory = self.hosts.run('pwd')[0]
-            print project_directory
-            config_original = os.path.join(
-                project_directory.rstrip(),
-                "app/conf/%s.conf" % self.name)
-
-            self.hosts.sudo("rm -rf %s" % esc1(self.config))
-            self.hosts.sudo("ln -s %s %s" % (
-                esc1(config_original),
-                esc1(self.config))
-            )

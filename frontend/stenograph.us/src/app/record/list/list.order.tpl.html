@@ -1,0 +1,41 @@
+<form id="id_auth_form" ng-submit="login()">
+    <div class="modal-header">
+        <h3 class="modal-title">Счёт</h3>
+    </div>
+    <div class="modal-body">
+            <p>
+            Запись «{{ record.title }}»
+            </p>
+            <ul>
+                <li>
+                    <label>
+                        Стенографирование {{ record.duration | humanSeconds }}
+                    </label>
+                    <label class="pull-right">
+                        {{ record.duration / 60 * 19 }} ₷
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        Разметка по времени
+                    </label>
+                    <label class="pull-right">
+                        Бесплатно
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        Разметка по собеседникам
+                    </label>
+                    <label class="pull-right">
+                        Бесплатно
+                    </label>
+                </li>
+            </ul>
+            </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="cancel()">Отмена</button>
+        <input type="submit" class="btn btn-primary" ng-click="login()" value="Оплатить">
+    </div>
+</form>

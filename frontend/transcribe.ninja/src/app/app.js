@@ -1,0 +1,76 @@
+angular.module( 'transcribe-ninja', [
+  'templates-app',
+  'templates-common',
+
+  'transcribe-ninja.localization',
+  'transcribe-ninja.api',
+  'transcribe-ninja.auth',
+  'transcribe-ninja.main',
+  'transcribe-ninja.work',
+
+  'ui.router',
+  'ui.bootstrap',
+  'pascalprecht.translate',
+
+  'ngResource'
+])
+
+.factory('Data', function() {
+  return {
+    user: ""
+  };
+})
+
+.config( ["$stateProvider", "$urlRouterProvider", function myAppConfig ( $stateProvider, $urlRouterProvider ) {
+  $urlRouterProvider.otherwise( '/' );
+
+}])
+
+.config(['$httpProvider', function($httpProvider){
+  // django and angular both support csrf tokens. This tells
+  // angular which cookie to add to what header.
+  $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+  $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+}])
+
+.run( function run () {
+})
+
+.controller( 'AppCtrl', ["$scope", "$location", "$translate", "$modal", "Data", "api", function AppCtrl ( $scope, $location, $translate, $modal, Data, api ) {
+  $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
+    if ( angular.isDefined( toState.data.pageTitle ) ) {
+      $scope.pageTitle = toState.data.pageTitle + ' | Transcribe.ninja' ;
+      $scope.stateName = toState.name;      
+    }
+  });
+
+  $translate.use("ru");
+
+  $scope.Data = Data;
+  $scope.Data.user = api.account.get();
+
+  $scope.authModal = function (authCallback) {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'auth/auth.login.modal.tpl.html',
+      controller: 'AuthModalCtrl',
+      windowClass: 'auth-modal',
+      resolve: {
+        authCallback: function () {
+          return authCallback;
+        }
+      }
+    });
+  };
+
+
+  $scope.logout = function(){
+    api.auth.logout(function(){
+      $scope.Data.user = undefined;
+    });
+  };
+  
+}])
+
+;
+

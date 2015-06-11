@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html ng-app="transcribe-ninja" ng-controller="AppCtrl" lang="ru">
+  <head>
+    <meta charset="utf-8"> 
+    <title ng-bind="pageTitle"></title>
+
+    <!-- social media tags -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@fefa4ka">
+    <meta name="twitter:title" content="Transcribe.ninja">
+    <meta name="twitter:description" content="Make text from voice.">
+    <meta name="twitter:creator" content="@fefa4ka">
+    <meta name="twitter:image:src" content="">
+    <meta property="og:title" content="Transcribe.ninja" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="http://transcribe.ninja" />
+    <meta property="og:image" content="" />
+    <meta property="og:description" content="Make text from voice.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- font awesome from BootstrapCDN -->
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="/static/<%= file %>" /><% }); %>
+
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="/static/<%= file %>"></script><% }); %>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.12.0.js"></script>
+    
+    <link rel="icon" type="image/svg+xml" href="/static/assets/favicon.svg">
+
+ 
+  </head>
+  <body>
+    <div class="container">
+        <header ng-hide="stateName === 'main'">
+            <h1 class="logo">
+                <a href="#">
+                  <svg width="241" height="219" version="1.1"
+                     baseProfile="full"
+                     xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g transform="translate(0.000000, 0.000000)">
+                            <path d="M120,218 C187,218 241,189 241,123 C241,56 169,62 130,0 C93,66 1,56 1,123 C1,189 53,218 120,218 Z" id="silhouette" fill="#000000"></path>
+                            <path d="M31,146 C36,146 54,144 75,146 C89,146 90,150 116,150 C141,150 147,147 166,146 C187,145 207,146 212,146 C222,146 234,146 234,129 C234,98 221,83 201,83 C180,82 152,95 119,95 C92,95 68,94 48,93 C22,91 5,93 5,129 C5,148 23,146 31,146 Z" id="eyes" fill="#FFFFFF"></path>
+                        </g>
+                        <text class="name" x="15" y="132">
+                            <tspan font-weight="700">T</tspan>
+                            <tspan font-weight="700">r</tspan>
+                            <tspan font-weight="400">a</tspan>
+                            <tspan font-weight="400">n</tspan>
+                            <tspan font-weight="400">s</tspan>
+                            <tspan font-weight="300">c</tspan>
+                            <tspan font-weight="300">r</tspan>
+                            <tspan font-weight="100">i</tspan>
+                            <tspan font-weight="100">b</tspan>
+                            <tspan font-weight="100">e</tspan>
+                        </text>   
+                       <text class="ninja" x="90" y="190" z-index="10">ninja</text> 
+                    </svg>
+                </a>    
+            </h1>
+
+            <ul class="nav nav-pills controls">
+                <!-- If AnonymousUser -->
+                <li ng-hide="Data.user.id">
+                    <button class="btn btn-default btn-xs" 
+                            ng-click="authModal()">Войти</button>
+                </li>
+                
+
+                <li ui-sref-active="active">
+                    <a href ui-sref="work">Поработать</a>
+                </li>
+
+                <li ng-show="Data.user.id">
+                    <div class="btn-group" dropdown>
+                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ Data.user.username }} <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#">История вашей работы</a>
+                            </li>
+                            <li>
+                                <a href="#">Учётная запись</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="#" ng-click="logout()">Выход</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <p class ="balance">{{ Data.user.balance | number : 2 }} ₷</p>
+                </li>
+            </ul>
+        </header>
+    </div>
+    <div class="container" ui-view="main"></div>
+    <div ui-view="modal"></div>
+    
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">(function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter27735045 = new Ya.Metrika({id:27735045, webvisor:true, clickmap:true, trackLinks:true, accurateTrackBounce:true, trackHash:true}); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks");</script><noscript><div><img src="//mc.yandex.ru/watch/27735045" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+  </body>
+</html>

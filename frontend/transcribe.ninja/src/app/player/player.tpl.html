@@ -1,0 +1,10 @@
+<div class="player">
+    <div class="progress progress-striped active" ng-hide="loading_percent == 100" width="{{ loading_percent }}%">
+        <div class="progress-bar progress-bar-info"></div>
+    </div>
+
+    <button class="btn btn-default btn-circle play" 
+            ng-click="wavesurfer.playPause()">
+        <i class="fa fa-play"></i></button>
+</div>
+

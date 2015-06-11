@@ -1,0 +1,53 @@
+<section class="mainpage">
+    <section class="col-md-offset-1 col-md-5 upload" 
+    ng-controller="RecordUploadCtrl">
+        <img src="/static/assets/logo.svg" class="logo">
+        <h1>– Расшифровка звука в текст</h1>
+        <ul class="nav nav-pills">
+            <li class="upload-button">
+                <span class="btn btn-primary btn-file"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
+            </li>
+            <li>
+                <a ui-sref="record-list">Ваши записи<span class="badge" ng-show="currentUser.id && currentUser.records.length > 0">{{ currentUser.records.length }}</span></a>
+            </li>
+        </ul>
+
+        <p>
+            <strong class="price" tooltip-placement="bottom"  tooltip="В цену включена разметка по времени и экспорт во все форматы">19 ₷</strong> за минуту стенографирования
+        </p>
+        <p ng-hide="currentUser.id && currentUser.records.length > 0">
+            <strong>10 минут бесплатно</strong>
+        </p>
+        <p>
+            <strong>Конфиденциально</strong>
+        </p>
+        <p>
+            <a href="#">Пример стенограммы</a>
+        </p>
+    </section>
+
+    <section class="col-md-6 description">
+        <div class="row-fluid">
+            <div class="col-md-6">
+                <h6>Распознание речи</h6>
+                <p>Переведём разговор <nobr>из аудио или видео записи</nobr> в текст</p>
+            </div>
+            <div class="col-md-6">
+                <h6>Интервью и диалоги</h6>
+                <p>Разметим собеседников и время бесплатно</p>
+            </div>
+        </div>
+        <div class="clearfix visible-xs-block"></div>
+        <div class="row-fluid">
+            <div class="col-md-6" ng-hide="currentUser.id && currentUser.records.length > 0">
+                <h6>Стенографируем бесплатно</h6>
+                <p>10 минут вашей записи для демонстрации</p>
+            </div>
+            <div class="col-md-6">
+                <h6>Конфидециально</h6>
+                <p>Мы делим запись на маленькие части и никто не будет знать содержание</p>
+            </div>
+        </div>
+    </section>
+</section>
+

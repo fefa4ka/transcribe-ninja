@@ -40,10 +40,6 @@ class TranscriptionQueueSerializer(serializers.ModelSerializer):
             "index", "text")
 
     def validate(self, data):
-        """
-        Check that the start is before the stop.
-        """
-        print data["queue"].locked
         if not data["queue"].locked:
             raise serializers.ValidationError("You are not in queue")
 
