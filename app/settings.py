@@ -17,23 +17,12 @@ from hosts import HOSTS
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 PROJECT_NAME = 'transcribe-ninja'
-DOMAIN = 'transcribe.ninja'
 
 EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = 'info@transcribe.ninja'
 EMAIL_HOST_PASSWORD = 'cntyjuhfa,kznm'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# 
-# HOSTS = {
-#     'DB': 'db.%s' % DOMAIN,
-#     'ENGINE': 'engine.%s' % DOMAIN,
-#     'WEB': DOMAIN
-# }
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,9 +84,6 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'app.urls'
 
-WSGI_APPLICATION = 'app.wsgi.application'
-
-
 #
 #
 #
@@ -106,19 +92,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
 )
-
-
-#
-# Auth
-#
-DJOSER = {
-    'DOMAIN': DOMAIN,
-    'SITE_NAME': 'Transcribe.ninja',
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'LOGIN_AFTER_ACTIVATION': True,
-    'SEND_ACTIVATION_EMAIL': True,
-}
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -155,22 +128,6 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
-
-# Google Oauth2
-GOOGLE_API_KEY = 'AIzaSyC6CGz9s-XTNsIZd5JaowVG0oU8dJvTkTg'
-GOOGLE_OAUTH2_CLIENT_ID = '923396664540-1ok2s8c2q8v23c7jpffkjv74m2a5n431.apps.googleusercontent.com'
-GOOGLE_OAUTH2_CLIENT_SECRET = 'vuDE6XLSEhZS_mC-ScqnXr5V'
-
-# Facebook API
-FACEBOOK_APP_ID              = '981908478505313'
-FACEBOOK_API_SECRET          = '381bb9a5253a2addf5afd818a7a17209'
-FACEBOOK_EXTENDED_PERMISSIONS = ['email']
-
-# VK Api
-VK_APP_ID = '4754043'
-VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
-# VK_EXTRA_SCOPE = ['email']
-
 
 #
 # Database
@@ -263,23 +220,6 @@ REST_FRAMEWORK = {
 }
 
 
-#
-# Files
-#
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.7/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "static/")
-
-if DEBUG:
-    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/build/")
-    STATICFILES_DIRS = (
-        # FRONTEND_ROOT,
-        os.path.join(BASE_DIR, "frontend/bin/"),
-    )
-
-STATIC_URL = '/static/'
-
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
 # AWS Credentials
@@ -311,7 +251,6 @@ PIECE_ROOT = os.path.join(MEDIA_ROOT, "piece/")
 TEMP_DIR = os.path.join(BASE_DIR, "temp/")
 
 
-
 #
 # Record
 #
@@ -320,7 +259,7 @@ TEMP_DIR = os.path.join(BASE_DIR, "temp/")
 # Средняя скорость произношения. Знаков в секунду
 SPEECH_SPEED = 22
 
-# Сколько минимум записи должно быть распознано, 
+# Сколько минимум записи должно быть распознано,
 # чтобы посчтитать скорость произоншения
 SPEECH_SPEED_MIN_DURATION = 120
 
