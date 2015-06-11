@@ -1,13 +1,13 @@
-<ul class="list-unstyled list-inline span7 mainpage" ng-mousemove="logoNameState($event)">
-    <li class="logo">
-        <main-logo> </main-logo>
+<section class="mainpage" ng-mousemove="logoNameState($event)">
+    <section class="col-md-offset-1 col-md-4 logo">
+        <img src="/static/assets/logo_slogan.svg">
         <button class="btn btn-default btn-xs" 
                 ng-click="authModal()"
-                ng-hide="Data.user.id">Войти</button>
+                ng-hide="currentUser.id">Войти</button>
 
-        <div ng-show="Data.user.id">
+        <div ng-show="currentUser.id">
             <div class="btn-group" dropdown>
-                <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ Data.user.username }} <span class="caret"></span></button>
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                 <ul class="dropdown-menu" role="menu">
                     <li>
                         <a href="#">История вашей работы</a>
@@ -21,11 +21,10 @@
                     </li>
                 </ul>
             </div>
-            <p class ="balance">{{ Data.user.balance | number : 2 }} ₷</p>
+            <p class ="balance">{{ currentUser.balance | number : 2 }} ₷</p>
         </div>
-    </li>
-
-    <li class="transcribe">
+    </section>
+    <section class="col-md-6 transcribe">
         <a href ui-sref="work">Зарабатывайте</a>
         <p>
             <nobr>Печатайте под диктовку,</nobr>
@@ -34,6 +33,5 @@
         <p ng-hide="true">
             <strong>Около 1000 ₷ в день</strong>
         </p>
-    </li>
-
+    </section>
 </section>

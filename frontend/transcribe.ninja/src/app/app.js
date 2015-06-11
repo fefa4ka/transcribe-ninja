@@ -15,12 +15,6 @@ angular.module( 'transcribe-ninja', [
   'ngResource'
 ])
 
-.factory('Data', function() {
-  return {
-    user: ""
-  };
-})
-
 .config( ["$stateProvider", "$urlRouterProvider", function myAppConfig ( $stateProvider, $urlRouterProvider ) {
   $urlRouterProvider.otherwise( '/' );
 
@@ -36,7 +30,7 @@ angular.module( 'transcribe-ninja', [
 .run( function run () {
 })
 
-.controller( 'AppCtrl', ["$scope", "$location", "$translate", "$modal", "Data", "api", function AppCtrl ( $scope, $location, $translate, $modal, Data, api ) {
+.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Transcribe.ninja' ;
@@ -44,10 +38,41 @@ angular.module( 'transcribe-ninja', [
     }
   });
 
+  $scope.$on('$stateChangeStart', function (event, toState, toParams) {
+    var requireLogin = toState.data.requireLogin;
+
+    if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
+      event.preventDefault();
+
+      // Мог ещё не подгрузится логин
+      api.account.get().
+        $promise.
+        then(function (data) {
+          if(angular.isUndefined(data.id)) {
+            $scope.authModal(function () {
+              return $state.go(toState.name, toParams);
+            });
+          } else {
+            $rootScope.currentUser = data;
+            $state.go(toState.name, toParams);
+          }
+        });
+      
+    }
+  });
+
   $translate.use("ru");
 
-  $scope.Data = Data;
-  $scope.Data.user = api.account.get();
+   api.account.get().
+    $promise.
+    then(function (data) {
+      if(angular.isUndefined(data.id)) {
+        $rootScope.currentUser = undefined;
+      } else {
+        $rootScope.currentUser = data;
+      }
+    });
+
 
   $scope.authModal = function (authCallback) {
     $modalInstance = $modal.open(
@@ -66,7 +91,9 @@ angular.module( 'transcribe-ninja', [
 
   $scope.logout = function(){
     api.auth.logout(function(){
-      $scope.Data.user = undefined;
+      $rootScope.currentUser = undefined;
+
+      $location.path( "/" );
     });
   };
   

@@ -74,7 +74,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
         $scope.startUpload = function () {
           // Если не залогинен логинимся
-          if (angular.isUndefined($rootScope.currentUser.id)) {
+          if (angular.isUndefined($rootScope.currentUser)) {
             var callback = function () {
               // Обновляем CSRF Token после авторизации
               var token = getCookie('csrftoken'),

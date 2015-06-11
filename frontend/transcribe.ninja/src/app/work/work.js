@@ -339,13 +339,12 @@ angular.module( 'transcribe-ninja.work', [
 
       $scope.queue.duration = duration;
 
-      // Выравниваем текстареа. Костыль BUG
-      window.dispatchEvent(new Event('resize'));
-
       // Подгружаем аудиофайл 
       $scope.wavesurfer.clearRegions();
       $scope.wavesurfer.load($scope.queue.audio_file);
 
+      // Выравниваем текстареа. Костыль BUG
+      window.dispatchEvent(new Event('resize'));
 
 
     });
