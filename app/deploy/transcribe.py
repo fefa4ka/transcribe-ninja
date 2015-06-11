@@ -167,9 +167,6 @@ class TranscribeNinjaSystem(Node):
 
         # self.Application.python_packages_install()
 
-        self.Uwsgi.restart()
-        self.Nginx.restart()
-
         self.Supervisor.restart()
 
         self.Frontend.restart()
