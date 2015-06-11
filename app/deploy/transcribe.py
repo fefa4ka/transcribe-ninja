@@ -163,7 +163,7 @@ class TranscribeNinjaSystem(Node):
     def deploy(self):
         self.Application.pull()
 
-        # self.Application.python_packages_install()
+        self.Application.python_packages_install()
 
         self.Supervisor.restart()
 

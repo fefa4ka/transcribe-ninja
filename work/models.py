@@ -353,6 +353,9 @@ class Queue(AudioFile):
 
     @property
     def mistakes_price(self):
+        if len(self.checked_transcription) == 0:
+            return 0
+
         letters_count = self.diff_result(
             '\n'.join(self.transcription),
             '\n'.join(self.checked_transcription))
