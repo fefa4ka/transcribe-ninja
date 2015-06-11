@@ -14,7 +14,7 @@ server {
     client_max_body_size 75M;  
     
     location /static {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static;
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/transcribe.ninja;
 
     }
 
@@ -40,7 +40,7 @@ server {
     client_max_body_size 75M;  
     
     location /static {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static;
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/stenograph.us;
 
     }
 
