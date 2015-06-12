@@ -33,7 +33,7 @@ angular.module( 'transcribe-ninja', [
 .run( function run () {
 })
 
-.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, api ) {
+.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "$intreval", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, $intreval, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Стенограф.ус' ;
@@ -44,12 +44,14 @@ angular.module( 'transcribe-ninja', [
   $scope.$on('$stateChangeStart', function (event, toState, toParams) {
     var requireLogin = toState.data.requireLogin;
 
-    api.account.get().
-      $promise.
-        then(function (data) {
-          $rootScope.currentUser = data;
-        });
-        
+    $intreval(function () {
+      api.account.get().
+        $promise.
+          then(function (data) {
+            $rootScope.currentUser = data;
+          });
+    }, 10000);
+
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
 

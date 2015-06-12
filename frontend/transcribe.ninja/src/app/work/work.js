@@ -51,10 +51,19 @@ angular.module( 'transcribe-ninja.work', [
     };
 }])
 
-.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $timeout) {
+.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$intreval", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $intreval, $timeout) {
   function get_piece(piece_id) {
 
   }
+
+  // Обноваляем баланс часто
+  $intreval(function () {
+      api.account.get().
+        $promise.
+          then(function (data) {
+            $rootScope.currentUser = data;
+          });
+    }, 5000);
 
   $translate.use("ru");
 

@@ -37,7 +37,7 @@ angular.module( 'transcribe-ninja.record.upload', [
   };
 })
 
-.controller( 'RecordUploadCtrl', ["$scope", "$translate", "$modal", "FileUploader", "$log", "api", function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $log, api ) {
+.controller( 'RecordUploadCtrl', ["$scope", "$translate", "$modal", "FileUploader", "$state", "api", function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $state, api ) {
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
