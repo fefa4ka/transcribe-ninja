@@ -10,7 +10,7 @@
 <div class="instruction" ng-show="queue.work_type == 1">
     Послушайте <span class="green">выделенный кусок</span> записи и исправте ошибки
     <p>
-        За проверку {{ queue.duration | humanSeconds }} заработаете <strong>{{ queue.total_price | number : 2 }} ₷</strong>, плюс <strong>10 копеек</strong> за каждое исправление.
+        За проверку {{ queue.duration | humanSeconds }} заработаете <strong>{{ queue.total_price | number : 2 }} ₷</strong>, плюс <strong>{{ queue.price * 100 | number : 0 }} копейки</strong> за каждое исправление.
     </p>
 </div>
 
@@ -32,13 +32,13 @@
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
             <li ng-repeat="transcription in piece.transcriptions">
-                <textarea class="msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                <textarea class="transcriptions msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
             </li>
         </ul>
 
         <ul class="queue-transcriptions" ng-show="queue.work_type == 0">
             <li>
-                <textarea id="new-transcription" class="msd-elastic" data-ng-model="newTranscription" autofocus></textarea>
+                <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription" autofocus></textarea>
             </li>
         </ul>
 
@@ -53,8 +53,8 @@
                 ng-click="loadQueue()">Пропустить задачу</button>
 
         <div class="pull-right">
-            <p ng-show="queu.work_type == 0">
-                Заработали  <strong>{{ earnMoneyValue() | number : 2 }} ₷</strong>
+            <p >
+                Заработаете  <strong>{{ earnMoneyValue() | number : 2 }} ₷</strong>
             </p>
             <button class="btn btn-primary" 
                     ng-click="saveTranscription()">Отправить на проверку</button>

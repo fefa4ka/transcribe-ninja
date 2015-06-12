@@ -84,7 +84,9 @@ module.exports = {
       'vendor/peaks.js/peaks.min.js',
       'vendor/peaks.js/peaks.min.map',
       'vendor/angular-elastic/elastic.js',
-      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js'
+      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js',
+      'vendor/google-diff-match-patch/diff_match_patch_uncompressed.js',
+      'vendor/angular-diff-match-patch/angular-diff-match-patch.js'
       // 'vendor/jquery/dist/jquery.js',
       // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
 

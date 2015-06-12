@@ -332,6 +332,7 @@ angular.module( 'transcribe-ninja.work', [
   // Загрузка задачи
   $scope.loadQueue = function () {  
     $scope.queue = {};
+    $scope.originalTranscriptions = [];
 
     // Загружаем 
     api.queue.get().
@@ -349,6 +350,14 @@ angular.module( 'transcribe-ninja.work', [
         // Подгружаем аудиофайл 
         $scope.wavesurfer.clearRegions();
         $scope.wavesurfer.load($scope.queue.audio_file);
+
+        // Оригинальная транскрипция
+        for(var p_index in $scope.queue.pieces) {
+          var piece = $scope.queue.pieces[p_index];
+          for(var t_index in piece.transcriptions) {
+            $scope.originalTranscriptions.push(piece.transcriptions[t_index].text);
+          }
+        }
 
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
         $timeout($scope.textareaAdjust, 500);
@@ -396,12 +405,39 @@ angular.module( 'transcribe-ninja.work', [
 
   // Подсчёт заработанного бабла
   $scope.earnMoneyValue = function () {
-    var length = 0;
+    var length = 0,
+        check_length = 0,
+        original_transcriptions = [],
+        transcriptions = [];
 
     if($scope.queue) {
-      $('textarea').each(function(index) { length += $(this).val().length; } );
+      $('textarea.transcriptions').each(function(index) { 
+        if($(this).val().length > 0) {
+          transcriptions.push($(this).val());
 
-      return length * $scope.queue.price;
+          length += $(this).val().length; 
+        }
+      });
+
+      if($scope.queue.work_type === 0) {
+        return length * $scope.queue.price;
+      } else {
+        // Смотрим измненеия
+        var dmp = new diff_match_patch();
+
+        var diffs = dmp.diff_main($scope.originalTranscriptions.join("\n"), transcriptions.join("\n"));
+        for(var index in diffs) {
+          var diff = diffs[index];
+          // Если была работа 1 — добавление -1 - удаление
+
+          if([1,-1].indexOf(diff[0]) > -1) {
+            // console.log(diff[1]);
+            check_length += diff[1].length;
+          }
+        }
+
+        return $scope.queue.total_price + check_length * $scope.queue.price;
+      }
     }
   };
 
