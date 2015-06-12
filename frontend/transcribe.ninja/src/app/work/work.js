@@ -125,7 +125,7 @@ angular.module( 'transcribe-ninja.work', [
       }
 
       // console.log($input, input)
-      if($input[0].selectionStart === 0) {
+      if($input[0].selectionStart === 0 && $input[0].selectionEnd === 0) {
         event.preventDefault();
 
         // Ищем кусок с нужным айди

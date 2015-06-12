@@ -28,7 +28,9 @@ angular.module( 'transcribe-ninja.record.list', [
         then(function (data) {
           $scope.records = data;
         });
-  }, 30000);
+  }, 5000);
+
+  $scope.records = api.record.list();
 
   $scope.upload = function() {
     $('input[type=file]').click();

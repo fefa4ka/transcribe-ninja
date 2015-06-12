@@ -117,7 +117,7 @@ angular.module( 'transcribe-ninja.record', [
         then(function (data) {
           $scope.record = data;
         });
-  }, 30000);
+  }, 10000);
 
   $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
     $scope.wavesurfer.load($scope.record.audio_file);
