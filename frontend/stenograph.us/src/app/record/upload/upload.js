@@ -140,12 +140,15 @@ angular.module( 'transcribe-ninja.record.upload', [
   };
   
   uploader.onSuccessItem = function(item, response, status, headers) {
-    console.log(response);
+    uploader.clearQueue();
+    $modalInstance.dismiss('cancel');
+
+    $state.go('record', { recordId: response.id });
   };
 
   uploader.onCompleteAll = function() {
-      uploader.clearQueue();
       $modalInstance.dismiss('cancel');
+      uploader.clearQueue();
   };
 
 }])
