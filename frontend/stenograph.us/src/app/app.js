@@ -44,6 +44,12 @@ angular.module( 'transcribe-ninja', [
   $scope.$on('$stateChangeStart', function (event, toState, toParams) {
     var requireLogin = toState.data.requireLogin;
 
+    api.account.get().
+      $promise.
+        then(function (data) {
+          $rootScope.currentUser = data;
+        });
+        
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
 
