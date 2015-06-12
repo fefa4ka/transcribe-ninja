@@ -33,7 +33,7 @@ angular.module( 'transcribe-ninja', [
 .run( function run () {
 })
 
-.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "$intreval", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, $intreval, api ) {
+.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "$interval", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, $interval, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Стенограф.ус' ;
@@ -44,7 +44,7 @@ angular.module( 'transcribe-ninja', [
   $scope.$on('$stateChangeStart', function (event, toState, toParams) {
     var requireLogin = toState.data.requireLogin;
 
-    $intreval(function () {
+    $interval(function () {
       api.account.get().
         $promise.
           then(function (data) {
