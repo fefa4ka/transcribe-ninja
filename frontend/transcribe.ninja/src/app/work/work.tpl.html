@@ -24,11 +24,8 @@
             <li><span class="hotkeys-key">alt + &rarr;</span> – перемотать вперёд</li>
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.offset_parts[0]">
-            <li>
-                <p>{{ queue.offset_parts[0] }}</p>
-            </li>
-        </ul>
+        <p ng-show="queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
+         
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
             <li ng-repeat="transcription in piece.transcriptions">
@@ -41,12 +38,9 @@
                 <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription" autofocus></textarea>
             </li>
         </ul>
-
-        <ul class="queue-transcriptions" ng-show="queue.offset_parts[1]">
-            <li>
-                <p>{{ queue.offset_parts[1] }}</p>
-            </li>
-        </ul>
+        
+        <p ng-show="queue.offset_parts[1]">{{ queue.offset_parts[1] }}...</p>
+        
         
 
         <button class="btn btn-default btn-xs" 
