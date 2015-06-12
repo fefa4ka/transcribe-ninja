@@ -51,7 +51,7 @@ angular.module( 'transcribe-ninja.work', [
     };
 }])
 
-.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$intreval", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $intreval, $timeout) {
+.controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$intreval", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $interval, $timeout) {
   function get_piece(piece_id) {
 
   }
