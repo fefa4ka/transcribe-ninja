@@ -31,7 +31,7 @@ def record_analys(record):
     record.diarization()
 
 @job('queue')
-def update_payments(queue):
+def update_near(queue):
     queue.update_priority()
     queue.update_payments()
 
