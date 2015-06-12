@@ -558,10 +558,12 @@ def create_queue_payment(sender, instance, created, raw, using, update_fields, *
         return
 
     # Если есть платёж, новый не создаём
-    type_id = ContentType.objects.get_for_model(type(queue)).id
-    payment = Payment.objects.get(content_type_id=type_id, object_id=queue.id)
-    if payment:
+    try:
+        type_id = ContentType.objects.get_for_model(type(instance)).id
+        payment = Payment.objects.get(content_type_id=type_id, object_id=instance.id)
         return
+    except Payment.DoesNotExist:
+        pass
 
     # TODO: Если платёж по этому объекту уже есть, то ничего не делать
 
