@@ -19,10 +19,16 @@ angular.module( 'transcribe-ninja.record.list', [
   });
 }])
 
-.controller( 'RecordListCtrl', ["$scope", "$translate", "$modal", "$log", "api", function RecordCtrl( $scope, $translate, $modal, $log, api ) {
+.controller( 'RecordListCtrl', ["$scope", "$translate", "$modal", "$log", "$interval", "api", function RecordCtrl( $scope, $translate, $modal, $log, $interval, api ) {
   $translate.use("ru");
-  $scope.records = api.record.list();
-  $log.log($scope.records);
+
+  $interval(function () {
+     api.record.list().
+      $promise.
+        then(function (data) {
+          $scope.records = data;
+        });
+  }, 30000);
 
   $scope.upload = function() {
     $('input[type=file]').click();

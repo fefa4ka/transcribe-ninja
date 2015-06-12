@@ -20,7 +20,7 @@ angular.module( 'transcribe-ninja.record', [
   });
 }])
 
-.controller( 'RecordCtrl', ["$scope", "$translate", "$modal", "$stateParams", "hotkeys", "api", function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, api) {
+.controller( 'RecordCtrl', ["$scope", "$translate", "$modal", "$stateParams", "hotkeys", "$interval", "api", function RecordCtrl($scope, $translate, $modal, $stateParams, hotkeys, $interval, api) {
   $translate.use("ru");
 
   hotkeys.bindTo($scope).add({
@@ -111,8 +111,13 @@ angular.module( 'transcribe-ninja.record', [
     $scope.wavesurfer.destroy();
   });
 
-
-  
+  $interval(function () {
+     api.record.get({ recordId: $stateParams.recordId }).
+      $promise.
+        then(function (data) {
+          $scope.record = data;
+        });
+  }, 30000);
 
   $scope.record = api.record.get({ recordId: $stateParams.recordId }, function() {
     $scope.wavesurfer.load($scope.record.audio_file);

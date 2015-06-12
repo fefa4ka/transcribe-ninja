@@ -50,7 +50,7 @@ angular.module( 'transcribe-ninja', [
           then(function (data) {
             $rootScope.currentUser = data;
           });
-    }, 10000);
+    }, 60000);
 
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
