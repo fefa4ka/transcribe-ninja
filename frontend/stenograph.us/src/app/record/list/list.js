@@ -28,7 +28,7 @@ angular.module( 'transcribe-ninja.record.list', [
         then(function (data) {
           $scope.records = data;
         });
-  }, 5000);
+  }, 30000);
 
   $scope.records = api.record.list();
 

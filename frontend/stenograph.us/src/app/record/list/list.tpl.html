@@ -41,7 +41,11 @@
                 <div class="record_list__item-duration" ng-show="record.duration > 0">{{ record.duration | humanSeconds }}</div>
                 <div class="record_list__item-status">
                     <span class="label label-success" 
-                            ng-show="record.progress === 1">Распознаётся</span>
+                            ng-show="record.progress === 3 && record.completed > 80">Проверяется</span>
+                    <span class="label label-success" 
+                            ng-show="record.progress === 2">Распознаётся</span>
+                    <span class="label label-success" 
+                            ng-show="record.progress === 1">Подготовка</span>
                     <span class="label label-default" 
                             ng-show="record.duration === 0">Подготовка</span>
                 </div>

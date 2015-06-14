@@ -44,14 +44,6 @@ angular.module( 'transcribe-ninja', [
   $scope.$on('$stateChangeStart', function (event, toState, toParams) {
     var requireLogin = toState.data.requireLogin;
 
-    $interval(function () {
-      api.account.get().
-        $promise.
-          then(function (data) {
-            $rootScope.currentUser = data;
-          });
-    }, 60000);
-
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
 
@@ -73,6 +65,14 @@ angular.module( 'transcribe-ninja', [
   });
 
   $translate.use("ru");
+
+  $interval(function () {
+    api.account.get().
+      $promise.
+        then(function (data) {
+          $rootScope.currentUser = data;
+        });
+  }, 60000);
 
   api.account.get().
     $promise.

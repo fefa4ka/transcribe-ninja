@@ -38,12 +38,11 @@ def update_near(queue):
 @job('queue')
 def make_queue(order):
     # TODO: Пока не диаризируется, не создавать очередь
-    if order.record.progress == 0:
-        make_queue.delay(order, ttl=60)
-    else:
+    if order.record.progress == 2:
         order.make_queue()
         order.record.recognize()
-
+    else:
+        make_queue.delay(order, ttl=10)
 
     # Берём все заказы, где записи не распознаны
 
