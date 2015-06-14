@@ -150,7 +150,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Queue)
 class QueueAdmin(admin.ModelAdmin):
-    list_display = ('record', 'work_length', 'mistakes_length', 'start_at', 'end_at', 'duration', 'work_type', 'priority', 'skipped', 'locked', 'completed', 'owner')
+    list_display = ('record', 'total_price', 'work_length', 'mistakes_length', 'start_at', 'end_at', 'duration', 'work_type', 'priority', 'skipped', 'locked', 'completed', 'owner')
     list_filter = ('priority', 'work_type', 'locked', 'completed')
 
     fieldsets = (

@@ -304,10 +304,7 @@ class Queue(AudioFile):
 
     @property
     def total_price(self):
-        duration = 0
-
-        for piece in self.pieces:
-            duration += piece.duration
+        duration = self.order.record.duration
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
@@ -322,22 +319,15 @@ class Queue(AudioFile):
             else:
                 # Если много ошибался, испортил или не проверил
                 return 0
-
-        # Считаем длинну всей транскрипции, чтобы предсказать стоимость
-        length = 0
-        for piece in self.pieces:
-            for transcription in piece.transcriptions.all():
-                length += len(transcription.text) + 1
-
-        if length == 0:
-            length = self.order.record.speed * duration
+        else:
+            return 0
+        # Если проверка. То отдельно за прослушку и за каждое исправление
+        if self.work_type == self.CHECK:
+            return self.price.price_min * duration
 
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:
-            return length * self.price.price
-        # Если проверка. То отдельно за прослушку и за каждое исправление
-        else:
-            return self.price.price_min * duration
+            return self.order.record.speed * self.price.price
 
     @property
     def original_transcription(self):
@@ -429,8 +419,6 @@ class Queue(AudioFile):
             payment = Payment.objects.get(content_type_id=type_id, object_id=queue.id)
 
             if payment:
-
-
                 # Обновляем показатели бабла
                 diff = payment.total - queue.total_price
                 payment.total = queue.total_price
