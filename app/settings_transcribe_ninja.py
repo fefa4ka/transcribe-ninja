@@ -9,9 +9,6 @@ DOMAIN = 'transcribe.ninja'
 
 EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = 'info@transcribe.ninja'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
-
 WSGI_APPLICATION = 'app.wsgi_%s.application' % DOMAIN.replace(".", "_")
 
 #

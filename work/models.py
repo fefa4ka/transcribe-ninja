@@ -219,6 +219,9 @@ class Queue(AudioFile):
 
     priority = models.IntegerField(default=0, max_length=1)
 
+    work_length = models.IntegerField(default=0)
+    mistakes_length = models.IntegerField(default=0)
+
     locked = models.DateTimeField(null=True)
     skipped = models.IntegerField(default=0)
 
@@ -308,7 +311,7 @@ class Queue(AudioFile):
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
-            total_price = self.dirty_price - self.mistakes_price
+            total_price = (self.work_length - self.mistakes_length) * self.price.price
 
             # Если всё впорядке и это исправление, даём цену за прослушивание
             if total_price >= 0 and self.work_type == self.CHECK:
@@ -349,15 +352,15 @@ class Queue(AudioFile):
         return [t.text for t in self._get_trancriptions(version=1)]
 
     @property
-    def dirty_price(self):
+    def _work_length(self):
         letters_count = self._diff_result(
             '\n'.join(self.original_transcription),
             '\n'.join(self.transcription))
 
-        return self.price.price * letters_count
+        return letters_count
 
     @property
-    def mistakes_price(self):
+    def _mistakes_length(self):
         if len(self.checked_transcription) == 0:
             return 0
 
@@ -365,7 +368,7 @@ class Queue(AudioFile):
             '\n'.join(self.transcription),
             '\n'.join(self.checked_transcription))
 
-        return self.price.price * letters_count
+        return letters_count
 
     def _get_trancriptions(self, version=0):
         # version - версия транскрибции. что было -1, что есть 0, что стало 1
@@ -417,14 +420,21 @@ class Queue(AudioFile):
         queues = Queue.objects.filter(id__in=queues_id).order_by('completed')
 
         for queue in queues:
+            queue.work_length = queue._work_length
+            queue.mistakes_length = queue._mistakes_length
+            queue.save()
+
             # payment = Payment.objects.for_model(Queue).filter(object_pk==queue.id)
             type_id = ContentType.objects.get_for_model(type(queue)).id
             payment = Payment.objects.get(content_type_id=type_id, object_id=queue.id)
 
             if payment:
+
+
                 # Обновляем показатели бабла
                 diff = payment.total - queue.total_price
                 payment.total = queue.total_price
+
                 queue.owner.account.balance += diff
 
                 payment.save()

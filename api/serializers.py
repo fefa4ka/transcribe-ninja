@@ -52,12 +52,14 @@ class TranscriptionQueueSerializer(serializers.ModelSerializer):
         return data
 
 class TranscriptionSerializer(serializers.ModelSerializer):
+    total_price = serializers.ReadOnlyField(source='queue.total_price')
     class Meta:
         model = Transcription
         fields = (
             "start_at", "end_at",
             "piece", "index",
-            "text", "name")
+            "text", "name",
+            "total_price")
 
 class PieceSerializer(serializers.ModelSerializer):
     transcriptions = TranscriptionSerializer(many=True)

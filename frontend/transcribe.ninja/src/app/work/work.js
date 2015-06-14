@@ -117,14 +117,18 @@ angular.module( 'transcribe-ninja.work', [
     callback: function(event, hotkey) {
       var $input = $(event.target),
           text = $input.val(),
-          input_index = $input.data('index');
+          input_index = $input.data('index'),
+          piece,
+          piece_id,
+          previous_piece;
       
+      // Больной разум всё это придумал, нужно документировать. 
+      // Какая-то магия, почему это работает?
       // Если событие произошло не в инпуте иил инпут пустой
       if($input.is('textarea') === false || typeof input_index == "undefined") {
         return;
       }
 
-      // console.log($input, input)
       if($input[0].selectionStart === 0 && $input[0].selectionEnd === 0) {
         event.preventDefault();
 
@@ -132,11 +136,11 @@ angular.module( 'transcribe-ninja.work', [
         for(var index in $scope.queue.pieces) {
           piece = $scope.queue.pieces[index];
           piece_id = piece.id;
-
-          if(index === 0 ) {
+          
+          if(index == 0 ) {
             previous_piece = piece;
           }
-
+          console.log(index, piece, previous_piece, piece_id);
           if (piece.id == $input.data('piece')) {
             break;
           }
@@ -147,33 +151,49 @@ angular.module( 'transcribe-ninja.work', [
 
         if(input_index === 0 && piece != previous_piece) {
           piece_id = previous_piece.id;
-          input_index = previous_piece.transcriptions.length;
+          previous_input_index = previous_piece.transcriptions.length - 1;
+        } else {
+
+          previous_input_index = input_index - 1;
         }
-        
+
         // TODO: убрать джиквери
         // Сделать копирование меньшей части в большую 
 
 
         // К предыдущей добавляем содержание текущией
-        $previous_input = $('textarea[data-piece=' + piece_id + '][data-index=' + (input_index - 1)  + ']');
-        previous_length = $previous_input.val().length;
-        current_length = $input.val().length;
+        $previous_input = $('textarea[data-piece=' + piece_id + '][data-index=' + (previous_input_index)  + ']');
+        var previous_length = $previous_input.val().length;
+        var current_length = $input.val().length;
         
         if(current_length > previous_length) {
           $input.val( $previous_input.val() + $input.val() );
 
           $input.selectRange(previous_length);
+          console.log('pieces', piece, previous_piece);
+          // Если это на стыке кусков, удаляем крайний
+          if(piece == previous_piece || input_index > 0) {
+            console.log('c > p same piece', previous_piece.transcriptions);
 
-          previous_piece.transcriptions.pop();
+            piece.transcriptions.splice(input_index - 1, 1);
+            console.log('c > p update', piece.transcriptions, $scope.queue.pieces);
+          } else {
+            console.log('c > p not same', previous_piece.transcriptions);
+            previous_piece.transcriptions.pop();
+          }
           // Удаляем другой
         } else {
+
           $previous_input.val( $previous_input.val() + $input.val() );
 
           $previous_input.focus();
           // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
-          $previous_input.selectRange(length);
+          $previous_input.selectRange(previous_length);
 
+          // Если это на стыке кусков, удаляем крайний
+          console.log('c < p', piece.transcriptions, input_index);
           piece.transcriptions.splice(input_index, 1);
+          console.log('c < p update', piece.transcriptions, $scope.queue.pieces);
         }
 
       }
