@@ -50,6 +50,22 @@ class Trash(models.Model):
     class Meta:
         abstract = True
 
+    def __str__(self):
+        trashed = (self.trashed_at and 'trashed' or 'not trashed')
+        return '%d (%s)' % (self.id, trashed)
+
+    def delete(self, trash=True):
+        if not self.trashed_at and trash:
+            self.trashed_at = datetime.now()
+            self.save()
+        else:
+            super(SomeModel, self).delete()
+
+    def restore(self, commit=True):
+        self.trashed_at = None
+        if commit:
+            self.save()
+
 
 class AudioFile(models.Model):
     class Meta:
