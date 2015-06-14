@@ -321,6 +321,7 @@ class Queue(AudioFile):
                 return 0
         else:
             return 0
+
         # Если проверка. То отдельно за прослушку и за каждое исправление
         if self.work_type == self.CHECK:
             return self.price.price_min * duration
@@ -331,21 +332,21 @@ class Queue(AudioFile):
 
     @property
     def original_transcription(self):
-        return [t.text for t in self._get_trancriptions(version=-1)]
+        return "\n".join([t.text for t in self._get_trancriptions(version=-1)])
 
     @property
     def transcription(self):
-        return [t.text for t in self._get_trancriptions()]
+        return "\n".join([t.text for t in self._get_trancriptions()])
 
     @property
     def checked_transcription(self):
-        return [t.text for t in self._get_trancriptions(version=1)]
+        return "\n".join([t.text for t in self._get_trancriptions(version=1)])
 
     @property
     def _work_length(self):
         letters_count = self._diff_result(
-            '\n'.join(self.original_transcription),
-            '\n'.join(self.transcription))
+            self.original_transcription,
+            self.transcription)
 
         return letters_count
 
@@ -355,8 +356,8 @@ class Queue(AudioFile):
             return 0
 
         letters_count = self._diff_result(
-            '\n'.join(self.transcription),
-            '\n'.join(self.checked_transcription))
+            self.transcription,
+            self.checked_transcription)
 
         return letters_count
 
@@ -371,9 +372,10 @@ class Queue(AudioFile):
 
         for piece in self.pieces:
             # Получаем очереди, которые участвовали в транскрибировании куска
-            queues_id = self.piece.all_transcriptions.values('queue_id').distinct()
-            queues = Queue.objects.filter(id__in=queues_id).order_by('completed')
+            queue_ids = piece.all_transcriptions.values('queue_id').distinct()
+            queues = Queue.objects.filter(id__in=queue_ids).order_by('completed')
 
+            # print piece.all_transcriptions
             for index, q in enumerate(queues):
                 if q == self:
                     self_position = index

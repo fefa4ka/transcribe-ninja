@@ -150,19 +150,25 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Queue)
 class QueueAdmin(admin.ModelAdmin):
-    list_display = ('record', 'total_price', 'work_length', 'mistakes_length', 'start_at', 'end_at', 'duration', 'work_type', 'priority', 'skipped', 'locked', 'completed', 'owner')
+    list_display = ('record', 'work_type', 'duration', 'total_price', 'priority', 'skipped', 'locked', 'completed', 'owner')
     list_filter = ('priority', 'work_type', 'locked', 'completed')
+
+    readonly_fields = ('total_price', 'work_length', 'mistakes_length', 'original_transcription', 'transcription', 'checked_transcription')
 
     fieldsets = (
         (None, {
             'fields': ('order', 'piece', 'audio_file')
         }),
+        ('Result', {
+            'fields': ('original_transcription', 'transcription', 'checked_transcription')
+        }),
         ('Work and payment information', {
-            'fields': ('price', 'work_type', 'priority')
+            'fields': ('total_price', 'price', 'work_type', 'work_length', 'mistakes_length', 'priority')
         }),
         ('Worker', {
+            'classes': ('collapse',),
             'fields': ('owner', 'locked', 'completed')
-        }),
+        })
     )
 
     inlines = [TranscriptionInline]
