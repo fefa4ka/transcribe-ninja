@@ -460,16 +460,14 @@ angular.module( 'transcribe-ninja.work', [
 
         return check_length;
       }
-  }
+    }
+  };
   // Подсчёт заработанного бабла
-  $scope.earnMoneyValue = function () {
-    
-      if($scope.queue.work_type === 0) {
-        return $scope.workLength() * $scope.queue.price;
-      } else {
-       
-        return $scope.queue.total_price + $scope.workLength() * $scope.queue.price;
-      }
+  $scope.earnMoneyValue = function () {  
+    if($scope.queue.work_type === 0) {
+      return $scope.workLength() * $scope.queue.price;
+    } else {
+      return $scope.queue.total_price + $scope.workLength() * $scope.queue.price;
     }
   };
 
