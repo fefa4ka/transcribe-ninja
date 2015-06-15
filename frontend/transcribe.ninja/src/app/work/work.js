@@ -167,7 +167,9 @@ angular.module( 'transcribe-ninja.work', [
         var current_length = $input.val().length;
         
         if(current_length > previous_length) {
-          $input.val( $previous_input.val() + $input.val() );
+          // $input.val( $previous_input.val() + $input.val() );
+          // $input.trigger('input');
+          previous_piece[previous_input_index].text = $previous_input.val() + $input.val();
 
           $input.selectRange(previous_length);
           console.log('pieces', piece, previous_piece);
@@ -184,7 +186,9 @@ angular.module( 'transcribe-ninja.work', [
           // Удаляем другой
         } else {
 
-          $previous_input.val( $previous_input.val() + $input.val() );
+          // $previous_input.val( $previous_input.val() + $input.val() );
+          // $previous_input.trigger('input');
+          previous_piece[previous_input_index].text = $previous_input.val() + $input.val();
 
           $previous_input.focus();
           // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
@@ -403,6 +407,7 @@ angular.module( 'transcribe-ninja.work', [
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
 
+
     // Готовим данные
     for(var p_index in $scope.queue.pieces) {
       var piece = $scope.queue.pieces[p_index];
@@ -418,7 +423,8 @@ angular.module( 'transcribe-ninja.work', [
         });
       }
     }
-
+    console.log($scope.queue);
+    console.log(transcriptions);
     // Отравляем данные на сервер
     api.transcription.create(transcriptions, function () {
       // Загружаем новую задачу
@@ -464,10 +470,12 @@ angular.module( 'transcribe-ninja.work', [
   };
   // Подсчёт заработанного бабла
   $scope.earnMoneyValue = function () {  
-    if($scope.queue.work_type === 0) {
-      return $scope.workLength() * $scope.queue.price;
-    } else {
-      return $scope.queue.total_price + $scope.workLength() * $scope.queue.price;
+    if($scope.queue) {
+      if($scope.queue.work_type === 0) {
+        return $scope.workLength() * $scope.queue.price;
+      } else {
+        return $scope.queue.total_price + $scope.workLength() * $scope.queue.price;
+      }
     }
   };
 
@@ -497,7 +505,10 @@ angular.module( 'transcribe-ninja.work', [
       index = $input.data('index') + 1;
 
       // Часть, которая остаётся
-      $input.val(text.slice(0, $input[0].selectionStart));
+      piece.transcriptions[$input.data('index')].text = text.slice(0, $input[0].selectionStart);
+      // $input.val(text.slice(0, $input[0].selectionStart));
+      // $input.trigger('input');
+
 
       // Добавляем в нужное место
       piece.transcriptions.splice(index, 0, {
@@ -537,11 +548,11 @@ angular.module( 'transcribe-ninja.work', [
 
       // Чистим форму
       $input.val("");
-    }
 
+      
+    }
   };
 
-  $scope.loadQueue();
 
 }])
 
