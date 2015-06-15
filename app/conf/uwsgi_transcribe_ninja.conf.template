@@ -5,6 +5,7 @@ gid=%(EC2_SERVER_USERNAME)s
 chdir           = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s
 module          = app.wsgi_transcribe_ninja
 home            = /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env
+eval            = import newrelic.agent, wsgi_transcribe_ninja; application = newrelic.agent.wsgi_application()(wsgi_transcribe_ninja.application)
 
 master          = true
 processes       = 10

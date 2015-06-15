@@ -330,7 +330,7 @@ class Piece(models.Model):
         transcribe_queue = self.transcribe_queue
 
         # Ничего не делаем, если это вычитка
-        if transcribe_queue.completed:
+        if transcribe_queue.locked or transcribe_queue.completed:
             return
 
         transcribe_queue.owner = User.objects.get(username="speech_bot")
