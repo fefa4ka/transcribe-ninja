@@ -1,9 +1,7 @@
 angular.module( 'transcribe-ninja.api', [
   'ngResource'
 ])
-.config(function($resourceProvider) {
-  $resourceProvider.defaults.stripTrailingSlashes = false;
-})
+
 // API 
 .factory('api', ["$http", "$resource", function($http, $resource){
   function add_auth_header(data, headersGetter){
@@ -18,7 +16,7 @@ angular.module( 'transcribe-ninja.api', [
   return {
     auth: $resource("/api/auth/basic/", {}, {
       register: {
-        url: "/api/auth/register\\/",
+        url: "/api/auth/register/",
         method: 'POST'
       },
       login: { 
@@ -49,7 +47,7 @@ angular.module( 'transcribe-ninja.api', [
       }
     }),
 
-    order: $resource('/api/orders\\/', {}, {
+    order: $resource('/api/orders/', {}, {
       list: {
         method: 'GET',
         isArray: true
