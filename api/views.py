@@ -343,6 +343,8 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
         # Помечаем очередь как прочитанную
         queue.completed = datetime.now()
+        queue.update_work_metrics()
+
         # TODO: Удалить аудиофайл
         queue.save()
 

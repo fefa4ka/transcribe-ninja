@@ -304,7 +304,7 @@ class Queue(AudioFile):
 
     @property
     def total_price(self):
-        duration = self.order.record.duration
+        duration = self.end_at - self.start_at
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
@@ -319,8 +319,6 @@ class Queue(AudioFile):
             else:
                 # Если много ошибался, испортил или не проверил
                 return 0
-        else:
-            return 0
 
         # Если проверка. То отдельно за прослушку и за каждое исправление
         if self.work_type == self.CHECK:
@@ -406,14 +404,17 @@ class Queue(AudioFile):
         # Если есть следующая транскрибция, считаем разницу и вычитаем из предыдущей
         return letters_count
 
+    def update_work_metrics(self):
+        self.work_length = self._work_length
+        self.mistakes_length = self._mistakes_length
+
     def update_payments(self):
         # Для всех задач учавствовавших в транскрибации куска делаем перерасчёт
         queues_id = self.piece.all_transcriptions.values('queue_id').distinct()
         queues = Queue.objects.filter(id__in=queues_id).order_by('completed')
 
         for queue in queues:
-            queue.work_length = queue._work_length
-            queue.mistakes_length = queue._mistakes_length
+            queue.update_work_metrics()
             queue.save()
 
             # payment = Payment.objects.for_model(Queue).filter(object_pk==queue.id)
@@ -553,7 +554,6 @@ def create_order_payment(sender, instance, created, **kwargs):
 
 def create_queue_payment(sender, instance, created, raw, using, update_fields, **kwargs):
     # Берём дефолтный прайс для объекта
-
     if not instance.completed:
         return
 
