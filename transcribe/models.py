@@ -57,11 +57,15 @@ class Record(AudioFile, Trash):
 
     # Состояние записи. Без действия, в работе и завершённая.
     PROGRESS_NONE = 0
-    PROGRESS_INWORK = 1
-    PROGRESS_COMPLETED = 2
+    PROGRESS_PREPARED = 1
+    PROGRESS_INWORK = 2
+    PROGRESS_CHECKED = 3
+    PROGRESS_COMPLETED = 4
     PROGRESS_CHOICES = (
         (PROGRESS_NONE, 'Uploaded'),
-        (PROGRESS_INWORK, 'In progress'),
+        (PROGRESS_PREPARED, 'Preparing'),
+        (PROGRESS_INWORK, 'Recognizing'),
+        (PROGRESS_CHECKED, 'Checking'),
         (PROGRESS_COMPLETED, 'Completed')
     )
     progress = models.IntegerField(
