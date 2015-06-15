@@ -10,4 +10,3 @@ temp/*
 *.mp3
 *.conf
 *.pem
-app/hosts.py
