@@ -1,15 +1,16 @@
 
 <div ng-show="queue.duration > 0">
+
 <div class="instruction" ng-show="queue.work_type == 0">
     Напечатайте, что говорит {{ queue.pieces[0].speaker == "F" ? "женщина" : "мужчина" }} в <span class="green">выделенном куске</span>
-    <p>
+    <p ng-hide="true">
         За стенографирование {{ queue.duration | humanSeconds }} заработаете около <strong>{{ queue.total_price | number : 2 }} ₷</strong>
     </p>
 </div>
 
 <div class="instruction" ng-show="queue.work_type == 1">
     Послушайте <span class="green">выделенный кусок</span> записи и исправте ошибки
-    <p>
+    <p ng-hide="true">
         За проверку {{ queue.duration | humanSeconds }} заработаете <strong>{{ queue.total_price | number : 2 }} ₷</strong>, плюс <strong>{{ queue.price * 100 | number : 0 }} копейки</strong> за каждое исправление.
     </p>
 </div>
@@ -47,8 +48,11 @@
                 ng-click="loadQueue()">Пропустить задачу</button>
 
         <div class="pull-right">
-            <p >
+            <p ng-hide="true">
                 Заработаете  <strong>{{ earnMoneyValue() | number : 2 }} ₷</strong>
+            </p>
+            <p>
+                Набрали  <strong>{{ workLength() | number : 0 }} знаков</strong>
             </p>
             <button class="btn btn-primary" 
                     ng-click="saveTranscription()">Отправить на проверку</button>

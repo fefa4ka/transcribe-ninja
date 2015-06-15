@@ -7,6 +7,7 @@ from django.conf import settings
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 from core.extra import *
 from core.utils import *
@@ -38,6 +39,15 @@ class Account(models.Model):
 
     rating = models.FloatField(default=0)
     balance = models.FloatField(default=0)
+    site = models.CharField(max_length=50, default=settings.DOMAIN)
+
+    @property
+    def work_length(self):
+        work = self.user.queue.all().aggregate(work=Sum('work_length'))
+        mistakes = self.user.queue.all().aggregate(mistakes=Sum('mistakes_length'))
+
+        return work['work'] - mistakes['mistakes']
+
 
 
 class Trash(models.Model):

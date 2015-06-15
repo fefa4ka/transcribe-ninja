@@ -18,13 +18,14 @@ class UserSerializer(serializers.ModelSerializer):
     #     view_name="record-detail"
     # )
     balance = serializers.ReadOnlyField(source='account.balance')
+    work_length = serializers.ReadOnlyField(source='account.work_length')
 
     class Meta:
         model = User
         fields = (
             "id",
             "username", "email",
-            "balance",
+            "balance", "work_length",
             "records")
 
 

@@ -426,8 +426,7 @@ angular.module( 'transcribe-ninja.work', [
     });
   };
 
-  // Подсчёт заработанного бабла
-  $scope.earnMoneyValue = function () {
+  $scope.workLength = function () {
     var length = 0,
         check_length = 0,
         original_transcriptions = [],
@@ -443,7 +442,8 @@ angular.module( 'transcribe-ninja.work', [
       });
 
       if($scope.queue.work_type === 0) {
-        return length * $scope.queue.price;
+        return length;
+
       } else {
         // Смотрим измненеия
         var dmp = new diff_match_patch();
@@ -452,14 +452,23 @@ angular.module( 'transcribe-ninja.work', [
         for(var index in diffs) {
           var diff = diffs[index];
           // Если была работа 1 — добавление -1 - удаление
-
           if([1,-1].indexOf(diff[0]) > -1) {
             // console.log(diff[1]);
             check_length += diff[1].length;
           }
         }
 
-        return $scope.queue.total_price + check_length * $scope.queue.price;
+        return check_length;
+      }
+  }
+  // Подсчёт заработанного бабла
+  $scope.earnMoneyValue = function () {
+    
+      if($scope.queue.work_type === 0) {
+        return $scope.workLength() * $scope.queue.price;
+      } else {
+       
+        return $scope.queue.total_price + $scope.workLength() * $scope.queue.price;
       }
     }
   };
