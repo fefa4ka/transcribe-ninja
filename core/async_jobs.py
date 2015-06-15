@@ -31,9 +31,10 @@ def record_analys(record):
     record.diarization()
 
     if record.progress == Record.PROGRESS_ORDERED:
-        # Проверяем после, чтобы не перезаписать
+        # Если до этого заказали, то создаём очередь
         record.progress = Record.PROGRESS_DIARIZED
         record.save()
+
         order = record.order.all()[0]
         make_queue.delay(order)
 

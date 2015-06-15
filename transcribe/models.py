@@ -57,8 +57,8 @@ class Record(AudioFile, Trash):
 
     # Состояние записи. Без действия, в работе и завершённая.
     PROGRESS_NONE = 0
-    PROGRESS_ORDERED = 1
-    PROGRESS_DIARIZED = 2
+    PROGRESS_DIARIZED = 1
+    PROGRESS_ORDERED = 2
     PROGRESS_INWORK = 3
     PROGRESS_COMPLETED = 4
     PROGRESS_CHOICES = (

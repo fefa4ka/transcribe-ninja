@@ -43,16 +43,14 @@
                     <span class="label label-success" 
                             ng-show="record.progress === 3 && record.completed > 80">Проверяется</span>
                     <span class="label label-success" 
-                            ng-show="record.progress === 2">Распознаётся</span>
-                    <span class="label label-success" 
-                            ng-show="record.progress === 1">Подготовка</span>
+                            ng-show="record.progress === 3 && record.completed < 80">Распознаётся</span>
                     <span class="label label-default" 
-                            ng-show="record.duration === 0">Подготовка</span>
+                            ng-show="record.duration === 0 || record.progress < 3">Подготовка</span>
                 </div>
                 <div class="record_list__item-controls" 
                     >   
                     <button class="btn btn-default btn-xs" 
-                            ng-show="record.duration > 0 && record.progress === 0 && show"
+                            ng-show="record.duration > 0 && record.progress < 2 && show"
                             ng-click="order(record)">Распознать за {{ (record.duration / 60) * 19 | number: 0 }} ₷</button>
                 </div>
 
