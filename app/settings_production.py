@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
 
-PROJECT_NAME = 'transcribe-ninja'
+PROJECT_NAME = 'stenograph.us'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_HOST_PASSWORD = 'cntyjuhfa,kznm'

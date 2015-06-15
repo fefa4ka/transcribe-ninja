@@ -22,11 +22,6 @@ class TranscribeNinjaSystem(Node):
     roles: web, engine, database
     """
 
-    @map_roles(host='engine')
-    class Supervisor(UpstartService):
-        name = 'supervisor'
-        config = '/etc/supervisor/conf.d/transcribe.conf'
-
     @map_roles(host='database')
     class Database(AWS):
         def create(self):
@@ -47,16 +42,7 @@ class TranscribeNinjaSystem(Node):
     class Queue(UpstartService):
         name = 'redis-server'
 
-    @map_roles(host='web')
-    class Nginx(UpstartService):
-        name = 'nginx'
-        config = '/etc/nginx/sites-enabled/transcribe-ninja.conf'
-
-    @map_roles(host='web')
-    class Uwsgi(UpstartService):
-        name = 'uwsgi'
-        config = '/etc/uwsgi/apps-enabled/transcribe-ninja.ini'
-
+  
     @map_roles(host=('web', 'engine'))
     class Application(DjangoDeployment):
         def create_storage(self):
@@ -141,6 +127,7 @@ class TranscribeNinjaSystem(Node):
         self.update_hosts()
 
         self.Engine.reset_db()
+
         self.deploy()
 
     def update_hosts(self):
@@ -164,6 +151,6 @@ class TranscribeNinjaSystem(Node):
 
         self.Application.python_packages_install()
 
-        self.Supervisor.restart()
-
         self.Frontend.restart()
+
+        self.Backend.restart()
