@@ -51,7 +51,10 @@ def make_queue(order):
         order.make_queue()
         order.record.recognize()
 
-    order.record.progress = 3
+        order.record.progress = 3
+    else:
+        order.record.progress = 1
+
     order.record.save()
 
 # @job('transcribe')
