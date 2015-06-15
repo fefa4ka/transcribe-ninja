@@ -27,4 +27,4 @@ class DjangoDeployment(AWS):
     def python_packages_install(self):
         """ Run Django management command in virtualenv. """
         # Activate the virtualenv.
-        self._virtualenv('pip install -r %(PROJECT_DIR)s/requirements/common.txt --upgrade' % settings.__dict__)
+        self._virtualenv('pip install --upgrade pip && pip install -r %(PROJECT_DIR)s/requirements/common.txt --upgrade' % settings.__dict__)

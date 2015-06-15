@@ -17,5 +17,4 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings_transcribe_ninja")
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
-import newrelic.agent
-newrelic.agent.initialize('/path/to/newrelic.ini')
+application = newrelic.agent.wsgi_application()(application)
