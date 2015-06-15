@@ -30,12 +30,16 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
-    if record.progress == 1:
+    if record.progress == Record.PROGRESS_ORDERED:
+        # Проверяем после, чтобы не перезаписать
+        record.progress = Record.PROGRESS_DIARIZED
+        record.save()
         order = record.order.all()[0]
         make_queue.delay(order)
 
-    record.progress = 2
-    record.save()
+    else:
+        record.progress = Record.PROGRESS_DIARIZED
+        record.save()
 
 
 @job('queue')
@@ -47,13 +51,13 @@ def update_near(queue):
 @job('queue')
 def make_queue(order):
     # TODO: Пока не диаризируется, не создавать очередь
-    if order.record.progress == 2:
+    if order.record.progress == Record.PROGRESS_DIARIZED:
         order.make_queue()
         order.record.recognize()
 
-        order.record.progress = 3
+        order.record.progress = Record.PROGRESS_INWORK
     else:
-        order.record.progress = 1
+        order.record.progress = Record.PROGRESS_ORDERED
 
     order.record.save()
 
