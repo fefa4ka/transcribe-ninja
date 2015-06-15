@@ -53,10 +53,11 @@ def update_near(queue):
 def make_queue(order):
     # TODO: Пока не диаризируется, не создавать очередь
     if order.record.progress == Record.PROGRESS_DIARIZED:
+        order.record.progress = Record.PROGRESS_INWORK
+        order.record.save()
+
         order.make_queue()
         order.record.recognize()
-
-        order.record.progress = Record.PROGRESS_INWORK
     else:
         order.record.progress = Record.PROGRESS_ORDERED
 
