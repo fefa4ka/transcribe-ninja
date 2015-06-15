@@ -39,7 +39,7 @@ class Account(models.Model):
 
     rating = models.FloatField(default=0)
     balance = models.FloatField(default=0)
-    site = models.CharField(max_length=50, default=settings.DOMAIN)
+    site = models.CharField(max_length=50)
 
     @property
     def work_length(self):
@@ -259,7 +259,7 @@ def create_account(sender, instance, **kwargs):
         instance.account
         pass
     except:
-        instance.account = Account()
+        instance.account = Account(site=settings.DOMAIN)
         instance.account.save()
 
 
