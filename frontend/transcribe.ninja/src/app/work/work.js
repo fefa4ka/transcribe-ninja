@@ -167,19 +167,25 @@ angular.module( 'transcribe-ninja.work', [
         var current_length = $input.val().length;
         
         if(current_length > previous_length) {
-          // $input.val( $previous_input.val() + $input.val() );
-          // $input.trigger('input');
-          previous_piece[previous_input_index].text = $previous_input.val() + $input.val();
+          setTimeout(function(){ 
+            $input = $('textarea[data-piece=' + piece.id + '][data-index=' + (input_index)  + ']');
+            $input.focus();
+            // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
+            $input.selectRange(previous_length);
+          });
+          
 
-          $input.selectRange(previous_length);
-          console.log('pieces', piece, previous_piece);
           // Если это на стыке кусков, удаляем крайний
-          if(piece == previous_piece || input_index > 0) {
-            console.log('c > p same piece', previous_piece.transcriptions);
+          if(input_index > 0) {
+            console.log('c > p same piece', input_index);
 
+            piece.transcriptions[input_index].text = piece.transcriptions[previous_input_index].text + $input.val();
             piece.transcriptions.splice(input_index - 1, 1);
+
             console.log('c > p update', piece.transcriptions, $scope.queue.pieces);
           } else {
+            piece.transcriptions[input_index].text = previous_piece.transcriptions[previous_input_index].text + $input.val();
+
             console.log('c > p not same', previous_piece.transcriptions);
             previous_piece.transcriptions.pop();
           }
@@ -188,19 +194,31 @@ angular.module( 'transcribe-ninja.work', [
 
           // $previous_input.val( $previous_input.val() + $input.val() );
           // $previous_input.trigger('input');
-          previous_piece[previous_input_index].text = $previous_input.val() + $input.val();
 
-          $previous_input.focus();
-          // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
-          $previous_input.selectRange(previous_length);
+          if(input_index > 0) {
+            console.log('same piece', input_index);
+            piece.transcriptions[previous_input_index].text += piece.transcriptions[input_index].text;
+          } else {
+            console.log('not same piece');
+            previous_piece.transcriptions[previous_piece.transcriptions.length - 1].text += piece.transcriptions[input_index].text;
+          }
+
+          setTimeout(function(){ 
+            $previous_input = $('textarea[data-piece=' + piece_id + '][data-index=' + (previous_input_index)  + ']');
+            $previous_input.focus();
+            // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
+            $previous_input.selectRange(previous_length);
+          });
 
           // Если это на стыке кусков, удаляем крайний
           console.log('c < p', piece.transcriptions, input_index);
           piece.transcriptions.splice(input_index, 1);
           console.log('c < p update', piece.transcriptions, $scope.queue.pieces);
+
         }
 
       }
+      console.log($scope.queue);
 
     }
   }).
@@ -424,7 +442,6 @@ angular.module( 'transcribe-ninja.work', [
       }
     }
     console.log($scope.queue);
-    console.log(transcriptions);
     // Отравляем данные на сервер
     api.transcription.create(transcriptions, function () {
       // Загружаем новую задачу
@@ -551,8 +568,10 @@ angular.module( 'transcribe-ninja.work', [
 
       
     }
+    console.log($scope.queue);
   };
 
+  $scope.loadQueue();
 
 }])
 
