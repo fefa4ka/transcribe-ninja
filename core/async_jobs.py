@@ -26,7 +26,7 @@ def record_prepare(record):
     record_analys.delay(record)
 
 
-@job('analys', timeout=3600)
+@job('analys', timeout=4600)
 def record_analys(record):
     record.diarization()
 
@@ -61,7 +61,7 @@ def make_queue(order):
     else:
         order.record.progress = Record.PROGRESS_ORDERED
 
-order.record.save()
+    order.record.save()
 
 # @job('transcribe')
 
