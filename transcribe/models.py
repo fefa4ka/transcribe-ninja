@@ -211,8 +211,6 @@ class Record(AudioFile, Trash):
             os.path.dirname(audio_file_path),
             ignore_errors=True)
 
-        self.progress = 2
-
     def recognize(self):
         """
             Распознаём записи
@@ -224,8 +222,6 @@ class Record(AudioFile, Trash):
 
         for piece in self.pieces.all():
             piece.recognize(as_record=as_record)
-
-        self.progress = 3
 
 
 class Speaker(models.Model):

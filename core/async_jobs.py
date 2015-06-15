@@ -30,10 +30,19 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
+    if record.progress == 1:
+        order = record.order.all()[0]
+        make_queue.delay(order)
+
+    record.progress = 2
+    record.save()
+
+
 @job('queue')
 def update_near(queue):
     queue.update_priority()
     queue.update_payments()
+
 
 @job('queue')
 def make_queue(order):
@@ -41,8 +50,11 @@ def make_queue(order):
     if order.record.progress == 2:
         order.make_queue()
         order.record.recognize()
-    else:
-        make_queue.delay(order, ttl=10)
+
+    order.record.progress = 3
+    order.record.save()
+
+# @job('transcribe')
 
     # Берём все заказы, где записи не распознаны
 

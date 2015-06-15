@@ -81,7 +81,7 @@ class Order(Trash):
         owner       - заказчик стенографирования
 
     """
-    record = models.ForeignKey(Record)
+    record = models.ForeignKey(Record, related_name='order')
     start_at = models.FloatField()
     end_at = models.FloatField()
 
