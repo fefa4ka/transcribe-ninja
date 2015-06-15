@@ -26,7 +26,7 @@ def record_prepare(record):
     record_analys.delay(record)
 
 
-@job('analys')
+@job('analys', timeout=3600)
 def record_analys(record):
     record.diarization()
 
@@ -49,7 +49,7 @@ def update_near(queue):
     queue.update_payments()
 
 
-@job('queue')
+@job('queue', timeout=1200)
 def make_queue(order):
     # TODO: Пока не диаризируется, не создавать очередь
     if order.record.progress == Record.PROGRESS_DIARIZED:
@@ -61,7 +61,7 @@ def make_queue(order):
     else:
         order.record.progress = Record.PROGRESS_ORDERED
 
-    order.record.save()
+order.record.save()
 
 # @job('transcribe')
 
