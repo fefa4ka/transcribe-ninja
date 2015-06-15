@@ -42,7 +42,6 @@ class TranscribeNinjaSystem(Node):
     class Queue(UpstartService):
         name = 'redis-server'
 
-  
     @map_roles(host=('web', 'engine'))
     class Application(DjangoDeployment):
         def create_storage(self):
