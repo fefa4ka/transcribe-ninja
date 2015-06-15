@@ -3,7 +3,7 @@
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from settings import *
+from settings_development import *
 
 DOMAIN = 'transcribe.ninja'
 
@@ -46,7 +46,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 if DEBUG:
     FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
     STATICFILES_DIRS = (
-        # FRONTEND_ROOT,
+        FRONTEND_ROOT,
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
     )
 

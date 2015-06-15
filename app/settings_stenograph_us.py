@@ -3,7 +3,7 @@
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from settings import *
+from settings_production import *
 
 DOMAIN = 'stenograph.us'
 

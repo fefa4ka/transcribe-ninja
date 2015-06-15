@@ -176,4 +176,9 @@ engine_configure = [
     # Запстить очереди
 ]
 
-
+reload_supervisor = [
+   {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/supervisor.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf"}},
+    {"action": "sudo", "params": "service supervisor restart",
+        "message": "Restarting supervisor"},
+]

@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from app import settings
+from app import settings_production as settings
 
 from deployer.node import Node
 from deployer.utils import esc1
+
 
 import boto
 import boto.rds2
@@ -33,6 +34,7 @@ class AWS(Node):
         # Создаём машины
         for host in self.hosts.get_hosts():
             name = "%s-%s" % (settings.PROJECT_NAME, host.slug)
+            print name
             # Проверяем, создана ли машина
             instance = self._ec2_get_instance(name)
 

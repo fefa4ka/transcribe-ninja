@@ -6,17 +6,13 @@
 from deployer.node import Node, map_roles
 from deployer.utils import esc1
 
-from app import settings
 from app.deploy.service import *
 from app.deploy.django import *
 import app.deploy.tasks as tasks
 
-from boto.s3.connection import S3Connection
-from boto.s3.connection import Location
-
 import os.path
 
-import time
+from app import settings_production as settings
 
 class TranscribeNinjaSystem(Node):
 
@@ -93,7 +89,7 @@ class TranscribeNinjaSystem(Node):
         frontend_path = os.path.join(settings.PROJECT_DIR, 'frontend')
 
         def create(self):
-            self.ec2_create([
+            self._ec2_create([
                 tasks.common_configure,
                 tasks.web_configure
             ])
@@ -113,10 +109,13 @@ class TranscribeNinjaSystem(Node):
     @map_roles(host='engine')
     class Engine(DjangoDeployment):
         def create(self):
-            self.ec2_create([
+            self._ec2_create([
                 tasks.common_configure,
                 tasks.engine_configure
             ])
+
+        def restart(self):
+            self._ec2_configure_instance(tasks.reload_supervisor)
 
         def migrate(self):
             self.run_management_command('migrate')

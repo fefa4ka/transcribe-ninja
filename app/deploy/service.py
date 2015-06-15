@@ -4,10 +4,6 @@
 from deployer.node import Node, required_property
 from deployer.utils import esc1
 
-from app import settings
-
-import os
-
 
 class UpstartService(Node):
 

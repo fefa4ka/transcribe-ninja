@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 # Deploy
-from deployer.host import SSHHost, LocalHost
-
-from app import settings
+from deployer.host import SSHHost
 
 import boto
 import boto.ec2
+
+from app import settings_production as settings
 
 class TranscribeNinjaHost(SSHHost):
     username = settings.EC2_SERVER_USERNAME
