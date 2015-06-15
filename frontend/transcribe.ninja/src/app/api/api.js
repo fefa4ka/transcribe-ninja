@@ -16,7 +16,7 @@ angular.module( 'transcribe-ninja.api', [
   return {
     auth: $resource("/api/auth/basic/", {}, {
       register: {
-        url: "/api/auth/register\\/",
+        url: "/api/auth/register/",
         method: 'POST'
       },
       login: { 
@@ -41,7 +41,7 @@ angular.module( 'transcribe-ninja.api', [
       }
     }),
 
-    transcription: $resource('/api/transcriptions\\/:transcriptionId', { transcriptionId: '@id' }, {
+    transcription: $resource('/api/transcriptions/:transcriptionId', { transcriptionId: '@id' }, {
       list: {
         method: 'GET'
       },

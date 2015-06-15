@@ -1,7 +1,9 @@
 angular.module( 'transcribe-ninja.api', [
   'ngResource'
 ])
-
+.config(function($resourceProvider) {
+  $resourceProvider.defaults.stripTrailingSlashes = false;
+})
 // API 
 .factory('api', ["$http", "$resource", function($http, $resource){
   function add_auth_header(data, headersGetter){
