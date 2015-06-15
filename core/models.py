@@ -43,10 +43,13 @@ class Account(models.Model):
 
     @property
     def work_length(self):
-        work = self.user.queue.all().aggregate(work=Sum('work_length'))
-        mistakes = self.user.queue.all().aggregate(mistakes=Sum('mistakes_length'))
+        try:
+            work = self.user.queue.all().aggregate(work=Sum('work_length'))
+            mistakes = self.user.queue.all().aggregate(mistakes=Sum('mistakes_length'))
 
-        return work['work'] - mistakes['mistakes']
+            return work['work'] - mistakes['mistakes']
+        except:
+            return 0
 
 
 
