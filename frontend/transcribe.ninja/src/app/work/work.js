@@ -385,6 +385,8 @@ angular.module( 'transcribe-ninja.work', [
     $scope.queue = {};
     $scope.originalTranscriptions = [];
 
+    $('#new-transcription').val("");
+    
     // Загружаем 
     api.queue.get().
       $promise.
