@@ -250,15 +250,11 @@ class QueueViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
     def get_queue(self):
-        queue_priority = Queue.objects.filter(priority=2,
+        queues = Queue.objects.filter(priority__in=[1,2],
                                               locked__isnull=True,
-                                              completed__isnull=True).order_by('?')[:5]
+                                              completed__isnull=True).order_by('?')[:10]
 
-        queue = Queue.objects.filter(priority=1,
-                                     locked__isnull=True,
-                                     completed__isnull=True).order_by('?')[:5]
-
-        for q in list(chain(queue_priority, queue)):
+        for q in queues:
             # Если над какой-то из частей работал этот пользователь - ищем
             # другую часть.
             pieces = [q.piece.previous, q.piece, q.piece.next]
