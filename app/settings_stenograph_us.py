@@ -44,9 +44,11 @@ VK_API_SECRET = 'DPuBGWwzZioNYexUYKJx'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 
 if DEBUG:
-    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
     STATICFILES_DIRS = (
-        # FRONTEND_ROOT,
+        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
+    )
+else:
+    STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
     )
 
