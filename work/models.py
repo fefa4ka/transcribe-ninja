@@ -45,11 +45,11 @@ class Price(models.Model):
 
     WORK_TYPE_TRANSCRIBE = 0
     WORK_TYPE_EDIT = 1
-    WORK_TYPE_CHECK = 2
+    WORK_TYPE_LISTENING = 2
     WORK_TYPE_TRANSCRIBE_SPEECHKIT = 3
     WORK_TYPE_CHOICES = (
         (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
-        (WORK_TYPE_CHECK, 'Read and check transcription'),
+        (WORK_TYPE_LISTENING, 'Read and check transcription'),
         (WORK_TYPE_EDIT, 'Transcription edit'),
         (WORK_TYPE_TRANSCRIBE_SPEECHKIT, 'Transcribe by SpeechKit')
     )
