@@ -111,7 +111,7 @@ class TranscribeNinjaSystem(Node):
 
         def reset_db(self):
             self.run_management_command('reset')
-            self.run_management_command('syncdb')
+            self.run_management_command('syncdb --settings=app.settings_stenograph_us')
 
     def create(self):
         # Если созданы — удалить
