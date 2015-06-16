@@ -107,7 +107,7 @@ class TranscribeNinjaSystem(Node):
             self._ec2_configure_instance(tasks.reload_supervisor)
 
         def migrate(self):
-            self.run_management_command('migrate')
+            self.run_management_command('migrate --settings=app.settings_stenograph_us')
 
         def reset_db(self):
             self.run_management_command('reset')
