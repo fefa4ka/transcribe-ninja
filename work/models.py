@@ -44,8 +44,8 @@ class Price(models.Model):
     work_type = models.IntegerField(default=0)
 
     WORK_TYPE_TRANSCRIBE = 0
-    WORK_TYPE_CHECK = 1
-    WORK_TYPE_EDIT = 2
+    WORK_TYPE_EDIT = 1
+    WORK_TYPE_CHECK = 2
     WORK_TYPE_TRANSCRIBE_SPEECHKIT = 3
     WORK_TYPE_CHOICES = (
         (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
@@ -107,7 +107,7 @@ class Order(Trash):
             check_object_id = ContentType.objects.get_for_model(Queue).id
             check_price = Price.objects.filter(
                 content_type_id=check_object_id,
-                work_type=Price.WORK_TYPE_CHECK,
+                work_type=Price.WORK_TYPE_EDIT,
                 default=1)[0]
 
             # work_type = 0 - транскрибция
@@ -206,10 +206,10 @@ class Queue(AudioFile):
     price = models.ForeignKey(Price)
 
     TRANSCRIBE = 0
-    CHECK = 1
+    EDIT = 1
     WORK_TYPE_CHOICES = (
         (TRANSCRIBE, 'Transcribe'),
-        (CHECK, 'Check and edit')
+        (EDIT, 'Check and edit')
     )
     work_type = models.IntegerField(
         choices=WORK_TYPE_CHOICES,
@@ -235,7 +235,7 @@ class Queue(AudioFile):
 
     @property
     def pieces(self):
-        if self.work_type == self.CHECK and self.piece.next != None:
+        if self.work_type == self.ENDIT and self.piece.next != None:
             return [self.piece, self.piece.next]
         else:
             return [self.piece]
@@ -258,7 +258,7 @@ class Queue(AudioFile):
             return np.round(self.piece.end_at)
 
         # Если проверка, то провремя кусок в связке с соседним.
-        elif self.work_type == self.CHECK:
+        elif self.work_type == self.EDIT:
             # Берём время, когда заканчивается кусок, следующий за текущим.
             next_piece = self.piece.next
 
@@ -305,14 +305,14 @@ class Queue(AudioFile):
     def total_price(self):
         duration = self.end_at - self.start_at
         # TODO: загружать цену за прослушивание автоматически
-        price_listening = 0.1
+        price_listening = Price.objects.filter(content_type_id=type(self), work_type=Price.WORK_TYPE_LISTENING, default=1)[0]
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
             total_price = (self.work_length - self.mistakes_length) * self.price.price
 
             # Если всё впорядке и это исправление, даём цену за прослушивание
-            if total_price >= 0 and self.work_type == self.CHECK:
+            if total_price >= 0 and self.work_type == self.EDIT:
                 total_price += price_listening * duration
 
             if total_price > 0:
@@ -322,7 +322,7 @@ class Queue(AudioFile):
                 return 0
 
         # Если проверка. То отдельно за прослушку и за каждое исправление
-        if self.work_type == self.CHECK:
+        if self.work_type == self.EDIT:
             return price_listening * duration
 
         # Если стенографирование, то считаем за символ
