@@ -59,7 +59,6 @@ class Price(models.Model):
     )
 
     price = models.FloatField()
-    price_min = models.FloatField()
 
     default = models.BooleanField(default=False)
 
@@ -305,6 +304,8 @@ class Queue(AudioFile):
     @property
     def total_price(self):
         duration = self.end_at - self.start_at
+        # TODO: загружать цену за прослушивание автоматически
+        price_listening = 0.1
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
@@ -312,7 +313,7 @@ class Queue(AudioFile):
 
             # Если всё впорядке и это исправление, даём цену за прослушивание
             if total_price >= 0 and self.work_type == self.CHECK:
-                total_price += self.price.price_min * duration
+                total_price += price_listening * duration
 
             if total_price > 0:
                 return total_price
@@ -322,7 +323,7 @@ class Queue(AudioFile):
 
         # Если проверка. То отдельно за прослушку и за каждое исправление
         if self.work_type == self.CHECK:
-            return self.price.price_min * duration
+            return price_listening * duration
 
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:

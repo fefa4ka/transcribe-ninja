@@ -56,15 +56,6 @@ angular.module( 'transcribe-ninja.work', [
 
   }
 
-  // Обноваляем баланс часто
-  $interval(function () {
-      api.account.get().
-        $promise.
-          then(function (data) {
-            $rootScope.currentUser = data;
-          });
-    }, 5000);
-
   $translate.use("ru");
 
   // Hotkeys
@@ -387,6 +378,12 @@ angular.module( 'transcribe-ninja.work', [
 
     $('#new-transcription').val("");
     
+    api.account.get().
+      $promise.
+        then(function (data) {
+          $rootScope.currentUser = data;
+        });
+        
     // Загружаем 
     api.queue.get().
       $promise.
