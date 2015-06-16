@@ -172,8 +172,8 @@ engine_configure = [
     {"action": "sudo", "params": "service supervisor restart",
         "message": "Restarting supervisor"},
 
-    # Передвинуть voiceid и liam
     # Запстить очереди
+    # TODO: настроить редис как внешний сервер
 ]
 
 reload_supervisor = [

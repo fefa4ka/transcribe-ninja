@@ -1,6 +1,6 @@
 [program:transribe_prepare]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker prepare
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker prepare --settings=app.settings_transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_prepare.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_prepare.err.log
@@ -10,7 +10,7 @@ redirect_stderr=true
 
 [program:transribe_analys]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker analys
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker analys --settings=app.settings_transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_analys.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_analys.err.log
@@ -20,7 +20,7 @@ redirect_stderr=true
 
 [program:transribe_queue]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker queue
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker queue --settings=app.settings_transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_queue.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_queue.err.log
