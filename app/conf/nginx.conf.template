@@ -18,17 +18,13 @@ server {
 
     }
 
-    location /assets {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/transcribe.ninja/bin/assets;
-    }
-
     location ~ ^/(admin|api)/ {
         uwsgi_pass  django_transcribe_ninja;
         include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
     }
 
     location / {
-        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/transcribe.ninja/bin/;  
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/transcribe.ninja/;  
     }
 }
 
@@ -44,17 +40,13 @@ server {
 
     }
 
-    location /assets {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/stenograph.us/bin/assets;
-    }
-
     location ~ ^/(admin|api)/ {
         uwsgi_pass  django_stenograph_us;
         include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
     }
 
     location / {
-        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/frontend/stenograph.us/bin/;  
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/stenograph.us/;  
     }
 }
 

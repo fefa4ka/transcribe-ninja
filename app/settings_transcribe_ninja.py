@@ -43,12 +43,12 @@ VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 
-if DEBUG:
+if not PROD and DEBUG:
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
     )
 else:
-    TATICFILES_DIRS = (
+    STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
     )
 
