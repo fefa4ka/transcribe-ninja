@@ -384,7 +384,7 @@ class Queue(AudioFile):
             queue_position = self_position + version
 
             # Проверяем, есть ли транскрибция такая
-            if len(queues) >= queue_position and (self_position + queue_position) >= 0 and self_position > 0:
+            if len(queues) >= queue_position and (self_position + queue_position) >= 0 and self_position >= 0:
                 if queue_position == len(queues):
                     queue_position = self_position
 
