@@ -235,7 +235,7 @@ class Queue(AudioFile):
 
     @property
     def pieces(self):
-        if self.work_type == self.ENDIT and self.piece.next != None:
+        if self.work_type == self.EDIT and self.piece.next != None:
             return [self.piece, self.piece.next]
         else:
             return [self.piece]
