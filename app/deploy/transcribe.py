@@ -61,6 +61,10 @@ class TranscribeNinjaSystem(Node):
             cors_cfg.add_rule('GET', '*')
             bucket.set_cors(cors_cfg)
 
+        def update(self):
+            self.checkout()
+            self.pull()
+
         def checkout(self, commit="."):
             with self.hosts.cd(settings.PROJECT_DIR, expand=True):
                 self.hosts.run("git checkout '%s'" % esc1(commit))
@@ -146,9 +150,11 @@ class TranscribeNinjaSystem(Node):
 
 
     def deploy(self):
-        self.Application.pull()
+        self.Application.update()
 
         self.Application.python_packages_install()
+
+        self.update_hosts()
 
         self.Frontend.restart()
 
