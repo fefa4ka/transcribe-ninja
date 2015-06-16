@@ -3,7 +3,7 @@
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from settings_development import *
+from settings_production import *
 
 DOMAIN = 'transcribe.ninja'
 
@@ -44,9 +44,11 @@ VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 
 if DEBUG:
-    FRONTEND_ROOT = os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
     STATICFILES_DIRS = (
-        FRONTEND_ROOT,
+        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
+    )
+else:
+    TATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
     )
 
