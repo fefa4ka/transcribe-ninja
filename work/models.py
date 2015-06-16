@@ -382,7 +382,9 @@ class Queue(AudioFile):
             queue_position = self_position + version
 
             # Проверяем, есть ли транскрибция такая
-            if len(queues) > queue_position and (self_position + queue_position) >= 0:
+            if (self_position + queue_position) >= 0:
+                if len(queues) > queue_position:
+                    queue_position = self_position
                 # Выдаём транскрибцию
                 transcriptions += piece.all_transcriptions.filter(
                     queue=queues[queue_position]).order_by('index')
