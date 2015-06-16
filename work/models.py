@@ -314,7 +314,7 @@ class Queue(AudioFile):
 
             # Если всё впорядке и это исправление, даём цену за прослушивание
             if total_price >= 0 and self.work_type == self.EDIT:
-                total_price += price_listening * duration
+                total_price += price_listening.price * duration
 
             if total_price > 0:
                 return total_price
@@ -324,7 +324,7 @@ class Queue(AudioFile):
 
         # Если проверка. То отдельно за прослушку и за каждое исправление
         if self.work_type == self.EDIT:
-            return price_listening * duration
+            return price_listening.price * duration
 
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:
