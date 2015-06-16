@@ -252,11 +252,11 @@ class QueueViewSet(viewsets.ViewSet):
     def get_queue(self):
         queue_priority = Queue.objects.filter(priority=2,
                                               locked__isnull=True,
-                                              completed__isnull=True).order_by('?')
+                                              completed__isnull=True).order_by('?')[:5]
 
         queue = Queue.objects.filter(priority=1,
                                      locked__isnull=True,
-                                     completed__isnull=True).order_by('?')
+                                     completed__isnull=True).order_by('?')[:5]
 
         for q in list(chain(queue_priority, queue)):
             # Если над какой-то из частей работал этот пользователь - ищем
