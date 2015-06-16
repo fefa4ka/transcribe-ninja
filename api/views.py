@@ -270,7 +270,7 @@ class QueueViewSet(viewsets.ViewSet):
 
                 if piece.queue.filter(completed__isnull=False, owner=self.request.user).count():
                     q = None
-                    continue
+                    break
 
             # Если всё ок, берём очередь в работу
             if q:
