@@ -306,7 +306,7 @@ class Queue(AudioFile):
         duration = self.end_at - self.start_at
         # TODO: загружать цену за прослушивание автоматически
         price_listening_object_id = ContentType.objects.get_for_model(type(self)).id
-        price_listening = Price.objects.filter(content_type_id=type(price_listening_object_id), work_type=Price.WORK_TYPE_LISTENING, default=1)[0]
+        price_listening = Price.objects.filter(content_type_id=price_listening_object_id, work_type=Price.WORK_TYPE_LISTENING, default=1)[0]
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
