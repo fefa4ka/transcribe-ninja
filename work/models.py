@@ -328,7 +328,8 @@ class Queue(AudioFile):
 
         # Если стенографирование, то считаем за символ
         if self.work_type == self.TRANSCRIBE:
-            return self.order.record.speed * self.price.price
+            # return self.order.record.speed * self.price.price
+            return 0
 
     @property
     def original_transcription(self):
