@@ -19,7 +19,7 @@
             Ваши записи ещё не проверили.
         </p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-6" ng-show="uncheckedStatistics.work_length">
         <h4>Ожидают проверки – {{ uncheckedStatistics.work_length }} символов</h4>
         <table class="table">
             <tr>
@@ -39,6 +39,6 @@
                 </td>
             </tr>
         </table>
-        <pagination total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="pageChanged()"></pagination>
+        <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="pageChanged()"></pagination>
     </div>
 </section>

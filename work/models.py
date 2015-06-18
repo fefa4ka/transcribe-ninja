@@ -378,26 +378,28 @@ class Queue(AudioFile):
         transcriptions = []
 
         for piece in self.pieces:
-            self_position = -1
-            # Получаем очереди, которые участвовали в транскрибировании куска
             queue_ids = piece.all_transcriptions.values('queue_id').distinct()
-            queues = Queue.objects.filter(id__in=queue_ids).order_by('completed')
 
-            # print piece.all_transcriptions
-            for index, q in enumerate(queues):
-                if q == self:
-                    self_position = index
+            # Если версия предыдущая, берём первую транскрибцию из очереди младше
+            if version == -1:
+                queue = Queue.objects.filter(id__in=queue_ids, completed__lt=self.completed).order_by('completed')
+                if len(queue) > 0:
+                    queue = queue[0]
+                else:
+                    continue
 
-            queue_position = self_position + version
+            elif version == 0:
+                queue = self
+            elif version == 1:
+                queue = Queue.objects.filter(id__in=queue_ids, completed__gt=self.completed).order_by('completed')
+                if len(queue) > 0:
+                    queue = queue[0]
+                else:
+                    queue = self
 
-            # Проверяем, есть ли транскрибция такая
-            if len(queues) >= queue_position and (self_position + queue_position) >= 0 and self_position >= 0:
-                if queue_position == len(queues):
-                    queue_position = self_position
-
-                # Выдаём транскрибцию
-                transcriptions += piece.all_transcriptions.filter(
-                    queue=queues[queue_position]).order_by('index')
+            # Выдаём транскрибцию
+            transcriptions += piece.all_transcriptions.filter(
+                queue=queue).order_by('index')
 
         return transcriptions
 
@@ -421,7 +423,7 @@ class Queue(AudioFile):
         self.work_length = self._work_length
         self.mistakes_length = self._mistakes_length
 
-        if self.checked:
+        if checked:
             return
 
         # Если проверен кусок, помечаем как проверенную
