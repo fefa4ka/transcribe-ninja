@@ -30,7 +30,7 @@ def record_prepare(record):
 def record_analys(record):
     record.diarization()
 
-    record = Record.objects.get(record.id)
+    record = Record.objects.get(id=record.id)
 
     if record.progress == Record.PROGRESS_ORDERED:
         # Если до этого заказали, то создаём очередь
