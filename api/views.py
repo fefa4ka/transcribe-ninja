@@ -6,10 +6,14 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 from django.shortcuts import get_object_or_404
 
+import django_filters
+
 from rest_framework import generics
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import status
+from rest_framework import filters
+from rest_framework import pagination
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -29,7 +33,6 @@ from datetime import datetime
 from itertools import chain
 
 # from lazysignup.decorators import allow_lazy_user
-
 
 class AuthView(APIView):
 
@@ -122,7 +125,6 @@ class RecordViewSet(mixins.ListModelMixin,
 
 
 class PieceViewSet(generics.ListAPIView):
-
     """
         Список кусков записи
     """
@@ -294,6 +296,71 @@ class QueueViewSet(viewsets.ViewSet):
             q.skipped += 1
 
             q.save()
+
+
+class HistoryFilter(django_filters.FilterSet):
+    class Meta:
+        model = Queue
+        fields = [ 'id', 'completed', 'checked' ]
+
+class StandartResultSetPagination(pagination.PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
+class HistoryViewSet(generics.ListAPIView):
+    """
+        Список кусков записи
+    """
+    model = Queue
+    serializer_class = HistorySerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)
+    pagination_class = StandartResultSetPagination
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = HistoryFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        if 'checked' in self.request.QUERY_PARAMS:
+            return user.account.queues(unchecked=False).order_by('-checked')
+        elif 'unchecked' in self.request.QUERY_PARAMS:
+            return user.account.queues(unchecked=True).order_by('-completed')
+
+        return user.queue.filter(completed__isnull=False)
+
+class StatisticsView(APIView):
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)
+
+    def get(self, request, *args, **kwargs):
+        after_date = request.query_params.get('after_date', None)
+        account = request.user.account
+        statistics = {
+            "work_length": 0,
+            "mistakes_length": 0,
+            "duration_transcribe": 0,
+            "duration_check": 0
+        }
+
+        try:
+            if 'unchecked' in self.request.QUERY_PARAMS:
+                queues = account.queues(unchecked=True, after_date=after_date).order_by('-completed')
+            else:
+                queues = account.queues(unchecked=False, after_date=after_date).order_by('-checked')
+
+            for queue in queues:
+                statistics["work_length"] += queue.work_length
+                statistics["mistakes_length"] += queue.mistakes_length
+
+                if queue.work_type == Queue.TRANSCRIBE:
+                    statistics["duration_transcribe"] += queue.duration
+                elif queue.work_type == Queue.EDIT:
+                    statistics["duration_check"] += queue.duration
+
+            return Response(statistics)
+        except:
+            return Response({"success": False})
 
 
 class TranscriptionViewSet(viewsets.ModelViewSet):

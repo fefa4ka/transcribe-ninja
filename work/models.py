@@ -16,6 +16,7 @@ import os
 
 from pydub import AudioSegment
 
+from datetime import datetime
 
 class Price(models.Model):
 
@@ -229,6 +230,7 @@ class Queue(AudioFile):
                               null=True,
                               related_name='queue')
     completed = models.DateTimeField(null=True)
+    checked   = models.DateTimeField(null=True)
 
     def __unicode__(self):
         return "%d: %d-%d sec" % (self.id, self.start_at, self.end_at)
@@ -239,6 +241,10 @@ class Queue(AudioFile):
             return [self.piece, self.piece.next]
         else:
             return [self.piece]
+
+    @property
+    def duration(self):
+        return self.end_at - self.start_at
 
     @property
     def start_at(self):
@@ -414,6 +420,19 @@ class Queue(AudioFile):
     def update_work_metrics(self):
         self.work_length = self._work_length
         self.mistakes_length = self._mistakes_length
+
+        if checked:
+            return
+
+        # Если проверен кусок, помечаем как проверенную
+        for piece in self.pieces:
+            for queue in piece.queue.all():
+                if not queue.completed:
+                    return
+
+        self.checked = datetime.now()
+
+        self.save()
 
     def update_payments(self):
         # Для всех задач учавствовавших в транскрибации куска делаем перерасчёт

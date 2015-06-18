@@ -22,8 +22,17 @@ if settings.DOMAIN == "stenograph.us":
     )
 
 elif settings.DOMAIN == "transcribe.ninja":
-    router.register(r'queue', views.QueueViewSet)
+    router.register(r'queue', views.QueueViewSet, "")
     router.register(r'transcriptions', views.TranscriptionViewSet)
+
+    urlpatterns += (
+        url(r'^api/statistics/$',
+            views.StatisticsView.as_view()),
+        url(r'^api/history/$',
+            views.HistoryViewSet.as_view()),
+    )
+
+
 
 
 # The API URLs are now determined automatically by the router.

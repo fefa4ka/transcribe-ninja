@@ -118,3 +118,14 @@ class QueueSerializer(serializers.ModelSerializer):
             "work_type", "price", "total_price",
             "offset_parts",
             "pieces")
+
+
+class HistorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Queue
+        fields = (
+            "id",
+            "work_type", "duration",
+            "work_length",
+            "mistakes_length", "completed", "checked")

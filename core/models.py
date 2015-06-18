@@ -51,6 +51,21 @@ class Account(models.Model):
         except:
             return 0
 
+    def calculate_work(self, unchecked=False, after_date=None):
+        # Считаем работу TODO: за определённый период
+        try:
+            work = self.queues(unchecked=unchecked, after_date=after_date).aggregate(work=Sum('work_length'))
+            mistakes = self.queues(unchecked=unchecked, after_date=after_date).aggregate(mistakes=Sum('mistakes_length'))
+
+            return (work['work'], mistakes['mistakes'])
+        except:
+            return 0
+
+    def queues(self, unchecked=False, after_date=None):
+        if not after_date:
+            return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked)
+        else:
+            return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked, completed__gt=after_date)
 
 
 class Trash(models.Model):

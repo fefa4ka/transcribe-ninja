@@ -7,6 +7,7 @@ angular.module( 'transcribe-ninja', [
   'transcribe-ninja.auth',
   'transcribe-ninja.main',
   'transcribe-ninja.work',
+  'transcribe-ninja.history',
 
   'ui.router',
   'ui.bootstrap',

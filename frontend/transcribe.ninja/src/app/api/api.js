@@ -32,12 +32,29 @@ angular.module( 'transcribe-ninja.api', [
       }
     }),
 
+    statistics: $resource('/api/statistics/', {}, {
+      get: {
+        method: 'GET'
+      }
+    }),
+
     queue: $resource('/api/queue/', {}, {
       get: {
         method: 'GET'
       },
       create: {
         method: 'POST'
+      }
+    }),
+
+    history: $resource('/api/history/', {}, {
+      list: {
+        method: 'GET',
+        isArray: false
+      },
+      get: {
+        method: 'GET',
+        isArray: false
       }
     }),
 
