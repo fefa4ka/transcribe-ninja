@@ -14,7 +14,7 @@ urlpatterns = ()
 
 if settings.DOMAIN == "stenograph.us":
     router.register(r'records', views.RecordViewSet)
-    router.register(r'orders', views.OrderViewSet)
+    router.register(r'orders', views.OrderViewSet, "")
 
     urlpatterns += (
         url(r'^api/records/(?P<record_id>.+)/pieces/$',
