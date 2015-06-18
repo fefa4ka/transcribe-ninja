@@ -421,7 +421,7 @@ class Queue(AudioFile):
         self.work_length = self._work_length
         self.mistakes_length = self._mistakes_length
 
-        if checked:
+        if self.checked:
             return
 
         # Если проверен кусок, помечаем как проверенную
