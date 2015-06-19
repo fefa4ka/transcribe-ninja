@@ -128,7 +128,7 @@ angular.module( 'transcribe-ninja.work', [
           piece = $scope.queue.pieces[index];
           piece_id = piece.id;
           
-          if(index == 0 ) {
+          if(index === 0 ) {
             previous_piece = piece;
           }
           if (piece.id == $input.data('piece')) {
@@ -387,6 +387,8 @@ angular.module( 'transcribe-ninja.work', [
     transcription.speaker = transcription.gender + index;
   };
   
+  $scope.newTranscription = {};
+
   // Загрузка задачи
   $scope.loadQueue = function () {  
     $scope.queue = {};
@@ -426,8 +428,8 @@ angular.module( 'transcribe-ninja.work', [
         }
 
         $scope.newTranscription = {
-          gender: $scope.queue.pieces[0].gender,
-          speaker: $scope.queue.pieces[0].gender + 1
+          gender: $scope.queue.pieces[0].speaker,
+          speaker: $scope.queue.pieces[0].speaker + '1'
         };
 
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
@@ -444,7 +446,6 @@ angular.module( 'transcribe-ninja.work', [
 
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
-
 
     // Готовим данные
     for(var p_index in $scope.queue.pieces) {
@@ -523,7 +524,7 @@ angular.module( 'transcribe-ninja.work', [
     var text = $input.val(),
         transcription = $scope.newTranscription,
         index = 0;
-  
+    
 
     // Если событие произошло не в инпуте иил инпут пустой
     if($input.is('textarea') === false || $input.val() === "") {
@@ -542,7 +543,7 @@ angular.module( 'transcribe-ninja.work', [
         }
       }
 
-      index = $input.data('index') + 1;
+      index = $input.data('index') + 2;
 
       // Часть, которая остаётся
       piece.transcriptions[$input.data('index')].text = text.slice(0, $input[0].selectionStart);
@@ -577,19 +578,22 @@ angular.module( 'transcribe-ninja.work', [
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text,
-          speaker: transcription.speaker
+          speaker: transcription.speaker,
+          gender: transcription.gender
         });
       } else {
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text.slice(0, $input[0].selectionStart),
-          speaker: transcription.speaker
+          speaker: transcription.speaker,
+          gender: transcription.gender
         });
 
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text.slice($input[0].selectionStart, text.length),
-          speaker: transcription.speaker
+          speaker: transcription.speaker,
+          gender: transcription.gender
         });
       }
 
