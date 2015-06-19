@@ -35,6 +35,12 @@ angular.module( 'transcribe-ninja.player', [
           .addClass('fa-play');
         });
 
+        scope.wavesurfer.on('finish', function () {
+          $('.fa-pause')
+              .removeClass('fa-pause')
+          .addClass('fa-play');
+        });
+
         scope.wavesurfer.on('loading', function (percent) {
             scope.loading_percent = percent;
             scope.$apply();

@@ -59,7 +59,7 @@ class TranscriptionSerializer(serializers.ModelSerializer):
         fields = (
             "start_at", "end_at",
             "piece", "index",
-            "text", "name",
+            "text", "speaker", "gender",
             "total_price")
 
 class PieceSerializer(serializers.ModelSerializer):

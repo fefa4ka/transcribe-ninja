@@ -98,7 +98,7 @@ angular.module( 'transcribe-ninja.work', [
       
       event.preventDefault();
 
-      $scope.applyTranscriptionChange($input);
+      $scope.applyTranscriptionChange($input, true);
     }
   })
   .add({
@@ -131,7 +131,6 @@ angular.module( 'transcribe-ninja.work', [
           if(index == 0 ) {
             previous_piece = piece;
           }
-          console.log(index, piece, previous_piece, piece_id);
           if (piece.id == $input.data('piece')) {
             break;
           }
@@ -209,7 +208,6 @@ angular.module( 'transcribe-ninja.work', [
         }
 
       }
-      console.log($scope.queue);
 
     }
   }).
@@ -355,6 +353,9 @@ angular.module( 'transcribe-ninja.work', [
            drag: false,
            resize: false
         });
+
+        $scope.wavesurfer.play(start_at);
+        $scope.wavesurfer.pause();
         
     });
 
@@ -371,6 +372,21 @@ angular.module( 'transcribe-ninja.work', [
     $rootScope.$broadcast('elastic:adjust');
   };
 
+  $scope.selectSpeaker = function (transcription, index, same_gender) {
+    // Прячем выбор сразу
+    transcription.speakerHover = false;
+
+    if(same_gender === false) {
+      if(transcription.gender == "F") {
+        transcription.gender = "M";
+      } else {
+        transcription.gender = "F";
+      }
+    } 
+
+    transcription.speaker = transcription.gender + index;
+  };
+  
   // Загрузка задачи
   $scope.loadQueue = function () {  
     $scope.queue = {};
@@ -409,6 +425,10 @@ angular.module( 'transcribe-ninja.work', [
           }
         }
 
+        $scope.newTranscription = {
+          gender: $scope.queue.pieces[0].gender
+        };
+
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
         $timeout($scope.textareaAdjust, 500);
         // Выравниваем текстареа. Костыль BUG
@@ -436,11 +456,11 @@ angular.module( 'transcribe-ninja.work', [
           queue: $scope.queue.id,
           piece: piece.id,
           text: transcription.text,
-          index: t_index
+          index: t_index,
+          speaker: transcription.speaker
         });
       }
     }
-    console.log($scope.queue);
     // Отравляем данные на сервер
     api.transcription.create(transcriptions, function () {
       // Загружаем новую задачу
@@ -495,9 +515,12 @@ angular.module( 'transcribe-ninja.work', [
     }
   };
 
+
+
   // Добавить данные в модель
-  $scope.applyTranscriptionChange = function ($input) {
+  $scope.applyTranscriptionChange = function ($input, enter) {
     var text = $input.val(),
+        transcription = $scope.newTranscription,
         index = 0;
   
 
@@ -509,7 +532,7 @@ angular.module( 'transcribe-ninja.work', [
     // Если курсор в самом начале, и предыдущая пустая, то ничего не делаем
 
     // Если разделяем существующую транскрипцию
-    if(typeof $input.data('index') != "undefined") {
+    if(typeof $input.data('index') != "undefined" && typeof enter !== undefined) {
       // Ищем кусок с нужным айди
       for(index in $scope.queue.pieces) {
         piece = $scope.queue.pieces[index];
@@ -525,11 +548,15 @@ angular.module( 'transcribe-ninja.work', [
       // $input.val(text.slice(0, $input[0].selectionStart));
       // $input.trigger('input');
 
+      var speaker = piece.transcriptions[index-1].speaker,
+          gender = piece.transcriptions[index-1].gender;
 
       // Добавляем в нужное место
       piece.transcriptions.splice(index, 0, {
         piece: piece.id,
-        text: text.slice($input[0].selectionStart, text.length).trim()
+        text: text.slice($input[0].selectionStart, text.length).trim(),
+        speaker: speaker,
+        gender: gender
       });
 
       // После того как отрендерица переводим курсор
@@ -545,20 +572,23 @@ angular.module( 'transcribe-ninja.work', [
       piece = $scope.queue.pieces[$scope.queue.pieces.length-1];
       index = (piece.transcriptions && piece.transcriptions.length) || 0;
 
-      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart === 0) {
+      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart === 0 || typeof enter === undefined) {
         piece.transcriptions.push({
           piece: piece.id,
-          text: text
+          text: transcription.text,
+          speaker: transcription.speaker
         });
       } else {
         piece.transcriptions.push({
           piece: piece.id,
-          text: text.slice(0, $input[0].selectionStart)
+          text: transcription.text.slice(0, $input[0].selectionStart),
+          speaker: transcription.speaker
         });
 
         piece.transcriptions.push({
           piece: piece.id,
-          text: text.slice($input[0].selectionStart, text.length)
+          text: transcription.text.slice($input[0].selectionStart, text.length),
+          speaker: transcription.speaker
         });
       }
 
@@ -567,7 +597,6 @@ angular.module( 'transcribe-ninja.work', [
 
       
     }
-    console.log($scope.queue);
   };
 
   $scope.loadQueue();

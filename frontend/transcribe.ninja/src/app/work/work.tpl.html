@@ -3,64 +3,102 @@
 
 <div class="instruction" ng-show="queue.work_type == 0">
     Напечатайте, что говорит {{ queue.pieces[0].speaker == "F" ? "женщина" : "мужчина" }} в <span class="green">выделенном куске</span>
-    <p ng-hide="true">
-        За стенографирование {{ queue.duration | humanSeconds }} заработаете около <strong>{{ queue.total_price | number : 2 }} ₷</strong>
-    </p>
 </div>
 
 <div class="instruction" ng-show="queue.work_type == 1">
     Послушайте <span class="green">выделенный кусок</span> записи и исправьте ошибки
-    <p ng-hide="true">
-        За проверку {{ queue.duration | humanSeconds }} заработаете <strong>{{ queue.total_price | number : 2 }} ₷</strong>, плюс <strong>{{ queue.price * 100 | number : 0 }} копейки</strong> за каждое исправление.
-    </p>
 </div>
 
 <tn-player audio-file="{{ queue.audio_file }}"></tn-player>
 
-<div class="transcription row">
-    <div class="col-xs-12 col-md-8">
-        <ul class="hotkeys-cheatsheet list-inline">
-            <li><span class="hotkeys-key">esc</span> – проигрывать или пауза</li>
-            <li><span class="hotkeys-key">alt + &larr;</span> – перемотать назад</li>
-            <li><span class="hotkeys-key">alt + &rarr;</span> – перемотать вперёд</li>
-        </ul>
+<ul class="hotkeys-cheatsheet list-inline">
+    <li><span class="hotkeys-key">esc</span> – проигрывать или пауза</li>
+    <li><span class="hotkeys-key">alt + &larr;</span> – перемотать назад</li>
+    <li><span class="hotkeys-key">alt + &rarr;</span> – перемотать вперёд</li>
+</ul>
 
-        <p ng-show="queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
-         
+<div class="transcription row">
+    <div class="col-xs-12 col-md-9">
+        <p class="offset-top col-md-offset-1" ng-show="queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
+            <li class="row" ng-repeat="transcription in piece.transcriptions">
+                <div class="speakers-block col-md-1" ng-mouseover="transcription.speakerHover = 1" ng-mouseleave="transcription.speakerHover = 0">
+                        <div class="speakers" ng-show="transcription.speakerHover" >
+                            <div class="genders">
+                                <i class="speaker-3 fa" ng-click="selectSpeaker(transcription, 3)" ng-class="transcription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                                <i class="speaker-2 fa" ng-click="selectSpeaker(transcription, 2)" ng-class="transcription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                                <i class="speaker-1 fa" ng-click="selectSpeaker(transcription, 1)" ng-class="transcription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                            </div>
 
-            <li ng-repeat="transcription in piece.transcriptions">
-                <textarea class="transcriptions msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                            <div class="genders">
+                                <i class="speaker-3 fa" ng-click="selectSpeaker(transcription, 3, false)" ng-class="transcription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                                <i class="speaker-2 fa" ng-click="selectSpeaker(transcription, 2, false)" ng-class="transcription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                                <i class="speaker-1 fa" ng-click="selectSpeaker(transcription, 1, false)" ng-class="transcription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                            </div>
+                        </div>
+                        
+                        <i class="fa speaker" ng-class="[transcription.gender == 'F' ? 'fa-female' : 'fa-male', transcription.speaker[1] > 0 ? 'speaker-' + transcription.speaker[1] : 'speaker-1']"></i>
+                    </a>
+
+                    <i class="triangle"></i>
+                </div>
                 
+                <div class="col-md-11 text-block">
+                    <textarea class="transcriptions msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                </div>
+
+                <div class="clearfix visible-xs-block"></div>
             </li>
+
         </ul>
 
         <ul class="queue-transcriptions" ng-show="queue.work_type == 0">
-            <li>
-                <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription" autofocus></textarea>
+            <li class="row">
+                <div class="speakers-block col-md-1" ng-mouseover="newTranscription.speakerHover = 1" ng-mouseleave="newTranscription.speakerHover = 0">
+                        <div class="speakers" ng-show="newTranscription.speakerHover" >
+                            <div class="genders">
+                                <i class="speaker-3 fa" ng-click="selectSpeaker(newTranscription, 3)" ng-class="newTranscription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                                <i class="speaker-2 fa" ng-click="selectSpeaker(newTranscription, 2)" ng-class="newTranscription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                                <i class="speaker-1 fa" ng-click="selectSpeaker(newTranscription, 1)" ng-class="newTranscription.gender == 'F' ? 'fa-female' : 'fa-male'"></i>
+                            </div>
+
+                            <div class="genders">
+                                <i class="speaker-3 fa" ng-click="selectSpeaker(newTranscription, 3, false)" ng-class="newTranscription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                                <i class="speaker-2 fa" ng-click="selectSpeaker(newTranscription, 2, false)" ng-class="newTranscription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                                <i class="speaker-1 fa" ng-click="selectSpeaker(newTranscription, 1, false)" ng-class="newTranscription.gender == 'F' ? 'fa-male' : 'fa-female'"></i>
+                            </div>
+                        </div>
+                        
+                        <i class="fa speaker" ng-class="[newTranscription.gender == 'F' ? 'fa-female' : 'fa-male', newTranscription.speaker[1] > 0 ? 'speaker-' + newTranscription.speaker[1] : 'speaker-1']"></i>
+                    </a>
+
+                    <i class="triangle"></i>
+                </div>
+                
+                <div class="col-md-11 text-block">
+                    <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription.text" autofocus></textarea>
+                </div>
             </li>
         </ul>
         
-        <p ng-show="queue.offset_parts[1]">{{ queue.offset_parts[1] }}...</p>
+        <p class="offset-bottom col-md-offset-1" ng-show="queue.offset_parts[1]">{{ queue.offset_parts[1] }}...</p>
         
         
+        <section class="controls col-md-offset-1">
+            <button class="skip btn btn-default btn-xs" 
+                    ng-click="loadQueue()">Пропустить задачу</button>
 
-        <button class="btn btn-default btn-xs" 
-                ng-click="loadQueue()">Пропустить задачу</button>
-
-        <div class="pull-right">
-            <p ng-hide="true">
-                Заработаете  <strong>{{ earnMoneyValue() | number : 2 }} ₷</strong>
-            </p>
-            <p>
-                Набрали  <strong>{{ workLength() | number : 0 }} знаков</strong>
-            </p>
-            <button class="btn btn-primary" 
-                    ng-click="saveTranscription()">Отправить на проверку</button>
-        </div>
+            <div class="pull-right">
+                <p>
+                    Набрали  <strong>{{ workLength() | number : 0 }} знаков</strong>
+                </p>
+                <button class="btn btn-primary" 
+                        ng-click="saveTranscription()">Отправить на проверку</button>
+            </div>
+        </section>
     </div>
-    <div class="col-xs-6 col-md-4">
+    <div class="col-xs-6 col-md-3">
         
     </div>
 </div>

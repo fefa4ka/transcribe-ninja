@@ -488,7 +488,7 @@ class Transcription(models.Model):
     text = models.TextField()
 
     work_type = models.IntegerField(default=0)
-    speaker = models.IntegerField(default=0)
+    speaker = models.CharField(max_length=2)
 
     queue = models.ForeignKey('work.Queue', related_name='transcriptions')
 
@@ -505,9 +505,9 @@ class Transcription(models.Model):
     @property
     def name(self):
         if self.speaker:
-            speaker = self.speaker
+            return self.speaker
         else:
-            speaker = self.piece.speaker
+            return self.piece.speaker.name
 
         # print speaker
         # # Если нет имени
@@ -517,7 +517,14 @@ class Transcription(models.Model):
         #     # то имена «Женщина» или «Мужчина»
         #     name = "Female" if speaker.gender == "F" else "Male"
 
-        return speaker.name
+        # return speaker.name
+
+    @property
+    def gender(self):
+        if self.speaker > 0:
+            return self.speaker[0]
+        else:
+            return self.piece.speaker.gender
 
     @property
     def previous(self):
