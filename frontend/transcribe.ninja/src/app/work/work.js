@@ -426,7 +426,8 @@ angular.module( 'transcribe-ninja.work', [
         }
 
         $scope.newTranscription = {
-          gender: $scope.queue.pieces[0].gender
+          gender: $scope.queue.pieces[0].gender,
+          speaker: $scope.queue.pieces[0].gender + 1
         };
 
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
