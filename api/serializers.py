@@ -38,7 +38,7 @@ class TranscriptionQueueSerializer(serializers.ModelSerializer):
         model = Transcription
         fields = (
             "piece", "queue",
-            "index", "text")
+            "index", "text", "speaker")
 
     def validate(self, data):
         if not data["queue"].locked:
