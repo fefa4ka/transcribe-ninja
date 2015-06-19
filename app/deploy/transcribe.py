@@ -158,7 +158,7 @@ class TranscribeNinjaSystem(Node):
 
         self.Frontend.restart()
 
-        self.Backend.restart()
+        self.Engine.restart()
 
     def frontend_deploy(self):
         self.Application.update()
@@ -168,5 +168,5 @@ class TranscribeNinjaSystem(Node):
     def backend_deploy(self):
         self.Application.update()
         self.update_hosts()
-        self.Backend.restart()
+        self.Engine.restart()
 

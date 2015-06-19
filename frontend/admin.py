@@ -150,8 +150,8 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Queue)
 class QueueAdmin(admin.ModelAdmin):
-    list_display = ('record', 'work_type', 'duration', 'work_length', 'mistakes_length', 'priority', 'skipped', 'locked', 'completed', 'owner')
-    list_filter = ('priority', 'work_type', 'locked', 'completed')
+    list_display = ('record', 'work_type', 'duration', 'work_length', 'mistakes_length', 'priority', 'skipped', 'locked', 'completed', 'checked', 'owner')
+    list_filter = ('priority', 'work_type', 'locked', 'completed', 'checked')
 
     readonly_fields = ('total_price', 'work_length', 'mistakes_length', 'original_transcription', 'transcription', 'checked_transcription')
 
