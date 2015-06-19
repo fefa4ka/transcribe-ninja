@@ -384,7 +384,7 @@ angular.module( 'transcribe-ninja.work', [
       }
     } 
 
-    transcription.speaker = transcription.gender + index;
+    transcription.speaker_code = transcription.gender + index;
   };
   
   $scope.newTranscription = {};
@@ -429,7 +429,7 @@ angular.module( 'transcribe-ninja.work', [
 
         $scope.newTranscription = {
           gender: $scope.queue.pieces[0].speaker,
-          speaker: $scope.queue.pieces[0].speaker + '1'
+          speaker_code: $scope.queue.pieces[0].speaker + '1'
         };
 
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
@@ -459,7 +459,7 @@ angular.module( 'transcribe-ninja.work', [
           piece: piece.id,
           text: transcription.text,
           index: t_index,
-          speaker: transcription.speaker
+          speaker_code: transcription.speaker_code
         });
       }
     }
@@ -550,14 +550,14 @@ angular.module( 'transcribe-ninja.work', [
       // $input.val(text.slice(0, $input[0].selectionStart));
       // $input.trigger('input');
 
-      var speaker = piece.transcriptions[index-1].speaker,
+      var speaker_code = piece.transcriptions[index-1].speaker_code,
           gender = piece.transcriptions[index-1].gender;
 
       // Добавляем в нужное место
       piece.transcriptions.splice(index, 0, {
         piece: piece.id,
         text: text.slice($input[0].selectionStart, text.length).trim(),
-        speaker: speaker,
+        speaker_code: speaker_code,
         gender: gender
       });
 
@@ -578,21 +578,21 @@ angular.module( 'transcribe-ninja.work', [
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text,
-          speaker: transcription.speaker,
+          speaker_code: transcription.speaker_code,
           gender: transcription.gender
         });
       } else {
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text.slice(0, $input[0].selectionStart),
-          speaker: transcription.speaker,
+          speaker_code: transcription.speaker_code,
           gender: transcription.gender
         });
 
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text.slice($input[0].selectionStart, text.length),
-          speaker: transcription.speaker,
+          speaker_code: transcription.speaker_code,
           gender: transcription.gender
         });
       }
