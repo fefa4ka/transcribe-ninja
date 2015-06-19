@@ -77,10 +77,6 @@ class TranscribeNinjaSystem(Node):
     class Frontend(DjangoDeployment):
         frontend_path = os.path.join(settings.PROJECT_DIR, 'frontend')
 
-        def deploy(self):
-            self.update()
-            self.restart()
-
         def create(self):
             self._ec2_create([
                 tasks.common_configure,
@@ -163,3 +159,14 @@ class TranscribeNinjaSystem(Node):
         self.Frontend.restart()
 
         self.Backend.restart()
+
+    def frontend_deploy(self):
+        self.Application.update()
+        self.update_hosts()
+        self.Frontend.restart()
+
+    def backend_deploy(self):
+        self.Application.update()
+        self.update_hosts()
+        self.Backend.restart()
+
