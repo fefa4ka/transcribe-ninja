@@ -364,7 +364,7 @@ class Queue(AudioFile):
 
         letters_count = self._diff_result(
             self.transcription,
-            self.checked_transcription, [-1])
+            self.checked_transcription, [-1,])
 
         return letters_count
 
@@ -411,8 +411,8 @@ class Queue(AudioFile):
         # Сколько заработали на нём
         diff = d.diff_main(original_transcription, transcription)
         letters_count = 0
-        for work in diff_type:
-            if work[0] in [1, -1]:
+        for work in diff:
+            if work[0] in diff_type:
                 letters_count += len(work[1])
 
         # Берём предыдущую транскрибцию по времени и сравниваем
