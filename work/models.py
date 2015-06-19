@@ -353,7 +353,7 @@ class Queue(AudioFile):
     def _work_length(self):
         letters_count = self._diff_result(
             self.original_transcription,
-            self.transcription)
+            self.transcription, [1])
 
         return letters_count
 
@@ -364,7 +364,7 @@ class Queue(AudioFile):
 
         letters_count = self._diff_result(
             self.transcription,
-            self.checked_transcription)
+            self.checked_transcription, [-1])
 
         return letters_count
 
@@ -403,7 +403,7 @@ class Queue(AudioFile):
 
         return transcriptions
 
-    def _diff_result(self, original_transcription, transcription):
+    def _diff_result(self, original_transcription, transcription, diff_type=[1,-1]):
         from diff_match_patch import diff_match_patch
 
         d = diff_match_patch()
@@ -411,7 +411,7 @@ class Queue(AudioFile):
         # Сколько заработали на нём
         diff = d.diff_main(original_transcription, transcription)
         letters_count = 0
-        for work in diff:
+        for work in diff_type:
             if work[0] in [1, -1]:
                 letters_count += len(work[1])
 

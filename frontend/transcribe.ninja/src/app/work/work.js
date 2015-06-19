@@ -496,7 +496,7 @@ angular.module( 'transcribe-ninja.work', [
         for(var index in diffs) {
           var diff = diffs[index];
           // Если была работа 1 — добавление -1 - удаление
-          if([1,-1].indexOf(diff[0]) > -1) {
+          if([1].indexOf(diff[0]) > -1) {
             // console.log(diff[1]);
             check_length += diff[1].length;
           }
