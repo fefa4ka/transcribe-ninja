@@ -8,7 +8,7 @@
                 <th>Исправлено <small>символов</small></th>
                 <th>Учтено <small>символов</small></th>
             </tr>
-            <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0">
+            <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0 && statistics[$index-1].work_length != stat.work_length">
                 <td>
                     {{ statisticsDescription[$index] }}
                 </td>
@@ -69,7 +69,6 @@
                     <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
                 </td>
                 <td class="length">
-                    <a popup-show="historydiff.html" class="btn btn-primary">Show popup!</a>
                     {{ queue.work_length }} 
                 </td>
                 <td>
