@@ -1,4 +1,4 @@
-<h3>История вашей работы – {{ currentUser.work_length | number : 0 }} знаков</h3>
+<h3>История вашей работы</h3>
 <section class="queues row-fluid">
     <div class="col-md-6 checked">        
         <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
@@ -6,6 +6,7 @@
                 <th>Период</th>
                 <th>Напечатано <small>символов</small></th>
                 <th>Исправлено <small>символов</small></th>
+                <th>Проверено <small>символов</small></th>
             </tr>
             <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0">
                 <td>
@@ -19,35 +20,7 @@
                 </td>
             </tr>
         </table>
-
-        <h4>Проверенные</h4>
-        <p ng-show="statistics[statistics.length-1].work_length == 0">
-            Ваши записи ещё не проверили
-        </p>
-
-        <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
-            <tr>
-                <th>Задача</th>
-                <th>Набрано <small>символов</small></th>
-                <th>Исправлено <small>символов</small></th>
-            </tr>
-            <tr ng-repeat="queue in checkedQueues.results" ng-mouseover="currentQueue = queue.id">
-                <td class="work-type">
-                    {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
-                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
-                </td>
-                <td class="length">
-                    <a popup-show="historydiff.html" class="btn btn-primary">Show popup!</a>
-                    {{ queue.work_length }} 
-                </td>
-                <td>
-                    {{ queue.mistakes_length  }}
-                </td>
-            </tr>
-        </table>
-        <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
-    </div>
-    <div class="col-md-6" ng-show="uncheckedStatistics.work_length">
+        
         <h4>Ожидают проверки – {{ uncheckedStatistics.work_length }} символов</h4>
         <table class="table">
             <tr>
@@ -72,5 +45,35 @@
           dlsadlasd
         </script>
         <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="uncheckedPageChanged()"></pagination>
+
+        
+    </div>
+    <div class="col-md-6">
+        <h4>Проверенные</h4>
+        <p ng-show="checkedQueues.count == 0">
+            Ваши записи ещё не проверили
+        </p>
+
+        <table class="table" ng-show="checkedQueues.count > 0">
+            <tr>
+                <th>Задача</th>
+                <th>Набрано <small>символов</small></th>
+                <th>Исправлено <small>символов</small></th>
+            </tr>
+            <tr ng-repeat="queue in checkedQueues.results" ng-mouseover="currentQueue = queue.id">
+                <td class="work-type">
+                    {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
+                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
+                </td>
+                <td class="length">
+                    <a popup-show="historydiff.html" class="btn btn-primary">Show popup!</a>
+                    {{ queue.work_length }} 
+                </td>
+                <td>
+                    {{ queue.mistakes_length  }}
+                </td>
+            </tr>
+        </table>
+        <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
     </div>
 </section>

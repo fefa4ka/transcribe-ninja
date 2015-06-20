@@ -355,25 +355,34 @@ class StatisticsView(APIView):
             "duration_transcribe": 0,
             "duration_check": 0
         }
+        queues = None
 
-        try:
-            if 'unchecked' in self.request.QUERY_PARAMS:
-                queues = account.queues(unchecked=True, after_date=after_date).order_by('-completed')
+    # try:
+
+        if 'unchecked' in self.request.QUERY_PARAMS:
+            queues = account.queues(unchecked=True, after_date=after_date).order_by('-completed')
+
+        if 'checked' in self.request.QUERY_PARAMS:
+            queues = account.queues(unchecked=False, after_date=after_date).order_by('-checked')
+
+        if not queues:
+            if after_date:
+                queues = request.user.queue.filter(completed__gt=after_date)
             else:
-                queues = account.queues(unchecked=False, after_date=after_date).order_by('-checked')
+                queues = request.user.queue.filter(completed__isnull=False)
 
-            for queue in queues:
-                statistics["work_length"] += queue.work_length
-                statistics["mistakes_length"] += queue.mistakes_length
+        for queue in queues:
+            statistics["work_length"] += queue.work_length
+            statistics["mistakes_length"] += queue.mistakes_length
 
-                if queue.work_type == Queue.TRANSCRIBE:
-                    statistics["duration_transcribe"] += queue.duration
-                elif queue.work_type == Queue.EDIT:
-                    statistics["duration_check"] += queue.duration
+            if queue.work_type == Queue.TRANSCRIBE:
+                statistics["duration_transcribe"] += queue.duration
+            elif queue.work_type == Queue.EDIT:
+                statistics["duration_check"] += queue.duration
 
-            return Response(statistics)
-        except:
-            return Response({"success": False})
+        return Response(statistics)
+        # except:
+        #     return Response({"success": False})
 
 
 class TranscriptionViewSet(viewsets.ModelViewSet):

@@ -44,7 +44,7 @@ angular.module( 'transcribe-ninja.history', [
   
   $scope.uncheckedStatistics = api.statistics.get({ 'unchecked': true });
 
-  $scope.unchekedPageChanged = function() {
+  $scope.uncheckedPageChanged = function() {
     api.history.list({ unchecked: true, page: $scope.uncheckedQueuePage }).
       $promise.then(function(data) {
         $scope.uncheckedQueues.results = data.results;
