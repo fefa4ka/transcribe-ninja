@@ -3,6 +3,7 @@
 
 import django.db.models.signals as signals
 
+from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 from django.db import models
@@ -18,7 +19,6 @@ import subprocess
 from decimal import Decimal
 
 from pydub import AudioSegment
-
 
 class Account(models.Model):
     """
@@ -50,6 +50,20 @@ class Account(models.Model):
             return work['work'] - mistakes['mistakes']
         except:
             return 0
+    @property
+    def balances(self):
+        # queue_object_id = ContentType.objects.get_for_model(Queue).id
+        return self.user.user_payments.values('content_type_id').annotate(total=Sum('total'))
+
+    @property
+    def avg_speed(self):
+        speed = []
+
+        for queue in self.user.queue.filter(completed__isnull=False):
+            time = (queue.completed - queue.locked).total_seconds()
+            speed.append(queue.duration / float(time))
+
+        return sum(speed) / float(len(speed))
 
     def calculate_work(self, unchecked=False, after_date=None):
         # Считаем работу TODO: за определённый период
@@ -66,6 +80,30 @@ class Account(models.Model):
             return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked)
         else:
             return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked, completed__gt=after_date)
+
+
+class Feedback(models.Model):
+    """
+        Обратная связь
+
+        owner    - пользователь
+
+        email    - почта, если не зареган
+
+        subject - тема
+
+        text    - текст
+
+        created - когда создан
+    """
+
+    owner = models.OneToOneField(User)
+    email = models.CharField(max_length=255)
+
+    subject = models.CharField(max_length=255, blank=True, null=True)
+    text = models.TextField()
+
+    created = models.DateTimeField(auto_now=True)
 
 
 class Trash(models.Model):
@@ -227,7 +265,8 @@ class AudioFile(models.Model):
             if end_at + offset > self.duration:
                 end_at = self.duration
             else:
-                end_at = (end_at + offset) * 1000
+                # end_at = (end_at + offset) * 1000
+                end_at = end_at * 1000
 
             # Вырезаем кусок и сохраняем
             piece = as_record[start_at:end_at]
