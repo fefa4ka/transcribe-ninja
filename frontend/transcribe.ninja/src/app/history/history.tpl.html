@@ -31,13 +31,13 @@
     </div>
     <div class="col-md-6">
         <h4>Статистика работы</h4>
-        <p class="desc">Оплачивается работа, только после проверки. Оцените сколько вы сможете заработать за день, за неделю и за месяц</p>
+        <p class="desc">Оплачивается только проверенная работа. Оцените сколько вы сможете заработать за день, за неделю и за месяц</p>
         <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
             <tr>
                 <th>Период</th>
                 <th class="length">Напечатано <small>символов</small></th>
                 <th class="length">Исправлено <small>символов</small></th>
-                <th class="length">Оплачиваются <small>символы</small></th>
+                <th class="length">Проверено<small>символов</small></th>
             </tr>
             <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0 && statistics[$index-1].work_length != stat.work_length">
                 <td>
@@ -54,35 +54,34 @@
                 </td>
             </tr>
         </table>
-        <h4>Проверенные</h4>
-        <p class="desc">Работу, которую мы проверили и в которой нашли ошибки</p>
-        <p ng-show="checkedQueues.count == 0">
-            В ваших записях не нашли ошибок
-        </p>
+        <div ng-show="checkedQueues.count > 0">
+            <h4>Проверенные с ошибками</h4>
+            <p class="desc">Работу, которую мы проверили и в которой нашли ошибки</p>
 
-        <table class="table" ng-show="checkedQueues.count > 0">
-            <tr>
-                <th>Задача</th>
-                <th class="length">Набрано <small>символов</small></th>
-                <th class="length">Исправлено <small>символов</small></th>
-                <th class="length">Учтено <small>символов</small></th>
-            </tr>
-            <tr ng-repeat="queue in checkedQueues.results">
-                <td class="work-type">
-                    {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
-                    <a class="btn btn-xs btn-default pull-right" ng-click="queueDetail(queue)"><i class="fa fa-lg fa-align-left"></i></a>
-                </td>
-                <td class="length">
-                    {{ queue.work_length }} 
-                </td>
-                <td class="length mistakes">
-                    {{ queue.mistakes_length  }}
-                </td>
-                <td class="length checked">
-                    {{ queue.work_length - queue.mistakes_length  }}
-                </td>
-            </tr>
-        </table>
+            <table class="table">
+                <tr>
+                    <th>Задача</th>
+                    <th class="length">Набрано <small>символов</small></th>
+                    <th class="length">Исправлено <small>символов</small></th>
+                    <th class="length">Проверено <small>символов</small></th>
+                </tr>
+                <tr ng-repeat="queue in checkedQueues.results">
+                    <td class="work-type">
+                        {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
+                        <a class="btn btn-xs btn-default pull-right" ng-click="queueDetail(queue)"><i class="fa fa-lg fa-align-left"></i></a>
+                    </td>
+                    <td class="length">
+                        {{ queue.work_length }} 
+                    </td>
+                    <td class="length mistakes">
+                        {{ queue.mistakes_length  }}
+                    </td>
+                    <td class="length checked">
+                        {{ queue.work_length - queue.mistakes_length  }}
+                    </td>
+                </tr>
+            </table>
+        </div>
         <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
     </div>
 </section>
