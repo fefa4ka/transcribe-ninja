@@ -36,7 +36,7 @@ angular.module( 'transcribe-ninja.history', [
   }
 
   $scope.uncheckedQueues = api.history.list({ unchecked: true });
-  $scope.checkedQueues = api.history.list({ checked: true });
+  $scope.checkedQueues = api.history.list({ checked: true, min_mistakes: 1 });
   // $scope.checkedQueues = api.history.list({ checked: true });
 
   $scope.statistics = [api.statistics.get({ 'after_date': getDateBefore(1) }), api.statistics.get({ 'after_date': getDateBefore(7) }), api.statistics.get({ 'after_date': getDateBefore(31) }), api.statistics.get()];

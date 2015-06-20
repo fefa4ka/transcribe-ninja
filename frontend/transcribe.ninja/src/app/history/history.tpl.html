@@ -37,7 +37,7 @@
                 <th>Период</th>
                 <th class="length">Напечатано <small>символов</small></th>
                 <th class="length">Исправлено <small>символов</small></th>
-                <th class="length">Учтено <small>символов</small></th>
+                <th class="length">Оплачиваются <small>символы</small></th>
             </tr>
             <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0 && statistics[$index-1].work_length != stat.work_length">
                 <td>
@@ -55,7 +55,7 @@
             </tr>
         </table>
         <h4>Проверенные</h4>
-        <p class="desc">Работу, которую мы проверили и за которую вы получите деньги</p>
+        <p class="desc">Работу, которую мы проверили и в которой нашли ошибки</p>
         <p ng-show="checkedQueues.count == 0">
             Ваши записи ещё не проверили
         </p>

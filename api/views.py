@@ -310,9 +310,10 @@ class QueueViewSet(viewsets.ViewSet,
 
 
 class HistoryFilter(django_filters.FilterSet):
+    min_mistakes = django_filters.NumberFilter(name="mistakes_length", lookup_type='gte')
     class Meta:
         model = Queue
-        fields = [ 'id', 'completed', 'checked' ]
+        fields = [ 'id', 'min_mistakes' ]
 
 
 class StandartResultSetPagination(pagination.PageNumberPagination):
@@ -330,8 +331,8 @@ class HistoryViewSet(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
     pagination_class = StandartResultSetPagination
-    # filter_backends = (filters.DjangoFilterBackend,)
-    # filter_class = HistoryFilter
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = HistoryFilter
 
     def get_queryset(self):
         user = self.request.user
