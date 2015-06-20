@@ -54,14 +54,14 @@
                     <a href ui-sref="work">Поработать</a>
                 </li>
 
+                <li ui-sref-active="active">
+                    <a href ui-sref="history">История</a>
+                </li>
+
                 <li ng-show="currentUser.id">
                     <div class="btn-group" dropdown>
                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a ui-sref="history">История вашей работы</a>
-                            </li>
-                            <li class="divider"></li>
                             <li>
                                 <a href="#" ng-click="logout()">Выход</a>
                             </li>
