@@ -405,7 +405,7 @@ angular.module( 'transcribe-ninja.work', [
         $scope.wavesurfer.addRegion({ 
            start: start_at,
            end: end_at,
-           color: 'rgba(183,211,170,0.2)',
+           color: 'rgba(183,211,170,0.4)',
            drag: false,
            resize: false
         });
