@@ -19,6 +19,7 @@ $.fn.selectRange = function(start, end) {
 angular.module( 'transcribe-ninja.work', [
   'transcribe-ninja.player',
 
+  'ngSanitize',
   'ui.router',
   'monospaced.elastic',
   'cfp.hotkeys'
@@ -71,24 +72,35 @@ angular.module( 'transcribe-ninja.work', [
 
   $translate.use("ru");
 
-  $scope.suggests = [
+  $scope.suggests_main = $scope.suggests = [
     'Каждое предложение лучше начинать с новой строки', 
     'Если в записи несколько собеседников, выберете нужного человечка слева от текста', 
-    'Печатайте, то что говорят в зелёной части. Первые полторы секунды для того, чтобы было проще распознавать начало', 
     'В разделе «<a ui-sref="history">История</a>» вся информация о вашей работе',
     'Речь другого собеседника начинайте с новой строки',
-    'Соединяйте разорванные предложения',
     '<a href="mailto:info@transcribe.ninja">Пишите нам</a> с любыми вопросами и предложениями',
-    'Текст распознаёт робот, поэтому там может оказаться бред, просто сотрите и напечатайте правильно',
     'Если вам что-то непонятно, <a href="mailto:info@transcribe.ninja">пишите нам</a>',
-    'Расставляйте знаки препинания',
     'Пользуйтесь горячими клавишами для работы с записью',
     'Можно нажать <kbd>Esc</kbd>, чтобы приостановить воспроизведение записи',
     'Перематывайте запись с помощью стрелок на клавиатуре',
-    'Удобно послушать пару слов, нажать паузу и напечатать их',
-    '',
     'Отличный <a href="http://therules.ru" target="blank">сайт с правилами русского языка</a><br/><small><a href="http://therules.ru" target="blank">therules.ru</a></small>'
   ];
+
+  $scope.suggests_transcribe = [
+    'Печатайте, то что говорят в зелёной части. Первые полторы секунды для того, чтобы было проще распознавать начало', 
+    'Удобно послушать пару слов, нажать паузу и напечатать их'
+  ];
+
+  $scope.suggests_check = [
+    'Соединяйте разорванные предложения',
+    'Текст распознаёт робот, поэтому там может оказаться бред, просто сотрите и напечатайте правильно',
+    'Расставляйте знаки препинания'
+  ];
+
+  // $scope.suggestStippet = function() {
+  //   console.log('suggest',$scope.suggest);
+  //  return $sce.trustAsHtml($scope.suggest);
+  // };
+
   // Hotkeys
   // Player
   hotkeys.bindTo($scope).add({
@@ -477,8 +489,14 @@ angular.module( 'transcribe-ninja.work', [
         };
 
         // Обновляем советы
-        $scope.$apply();
+        
+        if($scope.queue.work_type === 0) {
+          $scope.suggests = $scope.suggests_main.concat($scope.suggests_transcribe);
+        } else {
+          $scope.suggests = $scope.suggests_main.concat($scope.suggests_check);
+        }
 
+        $scope.suggest = $scope.suggests[Math.floor(Math.random() * $scope.suggests.length)];
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
         $timeout($scope.textareaAdjust, 500);
         // Выравниваем текстареа. Костыль BUG
