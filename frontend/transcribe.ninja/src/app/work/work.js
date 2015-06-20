@@ -144,6 +144,16 @@ angular.module( 'transcribe-ninja.work', [
 
       $scope.applyTranscriptionChange($input, true);
     }
+  }).
+  add({
+    combo: 'ctrl+enter',
+    description: 'Split',
+    allowIn: ['TEXTAREA'],
+    callback: function(event, hotkey) {
+      event.preventDefault();
+
+      $scope.saveTranscription();
+    }
   })
   .add({
     combo: 'backspace',
