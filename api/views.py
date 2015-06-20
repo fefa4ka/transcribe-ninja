@@ -352,6 +352,7 @@ class StatisticsView(APIView):
         statistics = {
             "work_length": 0,
             "mistakes_length": 0,
+            "checked_length": 0,
             "duration_transcribe": 0,
             "duration_check": 0
         }
@@ -371,9 +372,14 @@ class StatisticsView(APIView):
             else:
                 queues = request.user.queue.filter(completed__isnull=False)
 
+            checked_queues = account.queues(unchecked=False, after_date=after_date).order_by('-checked')
+            for queue in checked_queues:
+                statistics["checked_length"] += queue.work_length - queue.mistakes_length
+
         for queue in queues:
             statistics["work_length"] += queue.work_length
             statistics["mistakes_length"] += queue.mistakes_length
+
 
             if queue.work_type == Queue.TRANSCRIBE:
                 statistics["duration_transcribe"] += queue.duration
