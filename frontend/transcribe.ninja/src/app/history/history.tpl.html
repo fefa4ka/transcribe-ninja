@@ -31,7 +31,7 @@
     </div>
     <div class="col-md-6">
         <h4>Статистика работы</h4>
-        <p class="desc">Оцените сколько вы сможете заработать за день, за неделю и за месяц</p>
+        <p class="desc">Оплачивается работа, только после проверки. Оцените сколько вы сможете заработать за день, за неделю и за месяц</p>
         <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
             <tr>
                 <th>Период</th>
@@ -57,7 +57,7 @@
         <h4>Проверенные</h4>
         <p class="desc">Работу, которую мы проверили и в которой нашли ошибки</p>
         <p ng-show="checkedQueues.count == 0">
-            Ваши записи ещё не проверили
+            В ваших записях не нашли ошибок
         </p>
 
         <table class="table" ng-show="checkedQueues.count > 0">
