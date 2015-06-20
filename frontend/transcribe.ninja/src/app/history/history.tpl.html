@@ -12,7 +12,7 @@
             <tr ng-repeat="queue in uncheckedQueues.results" ng-mouseover="currentQueue = queue.id">
                 <td class="work-type">
                     {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
-                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
+                    <a class="btn btn-xs btn-default pull-right" ng-click="queueDetail(queue)"><i class="fa fa-lg fa-align-left"></i></a>
                 </td>
                 <td class="length">
                     {{ queue.work_length }} 
@@ -67,10 +67,10 @@
                 <th class="length">Исправлено <small>символов</small></th>
                 <th class="length">Учтено <small>символов</small></th>
             </tr>
-            <tr ng-repeat="queue in checkedQueues.results" ng-mouseover="currentQueue = queue.id">
+            <tr ng-repeat="queue in checkedQueues.results">
                 <td class="work-type">
                     {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
-                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
+                    <a class="btn btn-xs btn-default pull-right" ng-click="queueDetail(queue)"><i class="fa fa-lg fa-align-left"></i></a>
                 </td>
                 <td class="length">
                     {{ queue.work_length }} 

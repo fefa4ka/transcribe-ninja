@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <h3 class="modal-title">Обзор результатов</h3>
+</div>
+<div class="modal-body">
+    <h5>Ваша работа</h5>
+    <p class="desc">{{ queue.work_length }} символов напечатали</p>
+    <pre class="textdiff" diff left-obj="diff.original_transcription" right-obj="diff.transcription"></pre>
+    
+    <div ng-show="queue.mistakes_length > 0">
+        <h5>После проверки</h5>
+        <p class="desc">{{ queue.mistakes_length }} символов исправили</p>
+        <pre class="textdiff" diff left-obj="diff.transcription" right-obj="diff.checked_transcription"></pre>
+    </div>
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">Закрыть</button>
+    <input type="submit" class="btn btn-primary" ng-show="queue.checked" ng-click="review(queue)" value="Оспорить">
+</div>

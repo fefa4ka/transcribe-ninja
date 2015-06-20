@@ -1,7 +1,7 @@
 angular.module( 'transcribe-ninja.history', [
+  'transcribe-ninja.history.detail',
   'ui.router',
-  'diff-match-patch',
-  'rt.popup'
+  'diff-match-patch'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
@@ -20,7 +20,7 @@ angular.module( 'transcribe-ninja.history', [
   });
 }])
 
-.controller( 'HistoryCtrl', ["$scope", "api", "$translate", function HistoryCtrl( $scope, api, $translate) {
+.controller( 'HistoryCtrl', ["$scope", "api", "$translate", "$modal", "$rootScope", function HistoryCtrl( $scope, api, $translate, $modal, $rootScope) {
   $translate.use("ru");
   
   function getDateBefore(days) {
@@ -59,15 +59,21 @@ angular.module( 'transcribe-ninja.history', [
   };
 
 
-  $scope.$on('tooltip.show.before', function() {
-      console.log("SHOWN");
-
-      api.queue.get({ queueId: $scope.currenQueue }).
-        $promise.then(function (data) {
-            $scope.diffTranscription = data;
-        });
-
-   });
+  $scope.queueDetail = function (queue) {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'history/detail/history.detail.tpl.html',
+      controller: 'HistoryDetailModalCtrl',
+      windowClass: 'history-detail',
+      resolve: {
+        queue: function () {
+          return queue;
+        }
+      }
+    });
+  };
+                  
+  
 
 
 

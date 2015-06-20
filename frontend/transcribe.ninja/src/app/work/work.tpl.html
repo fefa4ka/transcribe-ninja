@@ -45,7 +45,7 @@
                 </div>
                 
                 <div class="col-md-11 text-block">
-                    <textarea class="transcriptions msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}"></textarea>
+                    <textarea class="transcriptions msd-elastic" data-ng-model="transcription.text" data-piece="{{ piece.id }}" data-index="{{ $index }}" tabindex="1"></textarea>
                 </div>
 
                 <div class="clearfix visible-xs-block"></div>
@@ -77,7 +77,7 @@
                 </div>
                 
                 <div class="col-md-11 text-block">
-                    <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription.text" autofocus></textarea>
+                    <textarea id="new-transcription" class="transcriptions msd-elastic" data-ng-model="newTranscription.text" autofocus tabindex="2"></textarea>
                 </div>
             </li>
         </ul>
@@ -87,14 +87,14 @@
         
         <section class="controls col-md-offset-1">
             <button class="skip btn btn-default btn-xs" 
-                    ng-click="loadQueue()">Пропустить задачу</button>
+                    ng-click="loadQueue()" tabindex="4">Пропустить задачу</button>
 
             <div class="pull-right">
                 <p>
                     Набрали  <strong>{{ workLength() | number : 0 }} знаков</strong>
                 </p>
                 <button class="btn btn-primary" 
-                        ng-click="saveTranscription()">Отправить на проверку</button>
+                        ng-click="saveTranscription()" tabindex="3">Отправить на проверку</button>
             </div>
         </section>
     </div>
