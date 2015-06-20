@@ -51,6 +51,19 @@ angular.module( 'transcribe-ninja.work', [
     };
 }])
 
+.filter('shuffle', function() {
+    var shuffledArr = [],
+        shuffledLength = 0;
+    return function(arr) {
+        var o = arr.slice(0, arr.length);
+        if (shuffledLength == arr.length) return shuffledArr;
+        for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+        shuffledArr = o;
+        shuffledLength = o.length;
+        return o;
+    };
+})
+
 .controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$interval", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $interval, $timeout) {
   function get_piece(piece_id) {
 
@@ -58,6 +71,24 @@ angular.module( 'transcribe-ninja.work', [
 
   $translate.use("ru");
 
+  $scope.suggests = [
+    'Каждое предложение лучше начинать с новой строки', 
+    'Если в записи несколько собеседников, выберете нужного человечка слева от текста', 
+    'Печатайте, то что говорят в зелёной части. Первые полторы секунды для того, чтобы было проще распознавать начало', 
+    'В разделе «<a ui-sref="history">История</a>» вся информация о вашей работе',
+    'Речь другого собеседника начинайте с новой строки',
+    'Соединяйте разорванные предложения',
+    '<a href="mailto:info@transcribe.ninja">Пишите нам</a> с любыми вопросами и предложениями',
+    'Текст распознаёт робот, поэтому там может оказаться бред, просто сотрите и напечатайте правильно',
+    'Если вам что-то непонятно, <a href="mailto:info@transcribe.ninja">пишите нам</a>',
+    'Расставляйте знаки препинания',
+    'Пользуйтесь горячими клавишами для работы с записью',
+    'Можно нажать <kbd>Esc</kbd>, чтобы приостановить воспроизведение записи',
+    'Перематывайте запись с помощью стрелок на клавиатуре',
+    'Удобно послушать пару слов, нажать паузу и напечатать их',
+    '',
+    'Отличный <a href="http://therules.ru" target="blank">сайт с правилами русского языка</a><br/><small><a href="http://therules.ru" target="blank">therules.ru</a></small>'
+  ];
   // Hotkeys
   // Player
   hotkeys.bindTo($scope).add({
@@ -157,28 +188,29 @@ angular.module( 'transcribe-ninja.work', [
         var current_length = $input.val().length;
         
         if(current_length > previous_length) {
-          setTimeout(function(){ 
-            $input = $('textarea[data-piece=' + piece.id + '][data-index=' + (input_index)  + ']');
-            $input.focus();
-            // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
-            $input.selectRange(previous_length);
-          });
-          
-
           // Если это на стыке кусков, удаляем крайний
           if(input_index > 0) {
             console.log('c > p same piece', input_index);
+
+            previous_input_index = input_index - 1;
 
             piece.transcriptions[input_index].text = piece.transcriptions[previous_input_index].text + $input.val();
             piece.transcriptions.splice(input_index - 1, 1);
 
             console.log('c > p update', piece.transcriptions, $scope.queue.pieces);
           } else {
+            previous_input_index = input_index;
+            previous_length = previous_piece.transcriptions[previous_input_index].text.length;
+
             piece.transcriptions[input_index].text = previous_piece.transcriptions[previous_input_index].text + $input.val();
 
             console.log('c > p not same', previous_piece.transcriptions);
             previous_piece.transcriptions.pop();
           }
+
+          piece_input_id = piece.id;
+          
+
           // Удаляем другой
         } else {
 
@@ -187,25 +219,37 @@ angular.module( 'transcribe-ninja.work', [
 
           if(input_index > 0) {
             console.log('same piece', input_index);
+
+            piece_input_id = piece.id;
+
             piece.transcriptions[previous_input_index].text += piece.transcriptions[input_index].text;
+            
           } else {
             console.log('not same piece');
-            previous_piece.transcriptions[previous_piece.transcriptions.length - 1].text += piece.transcriptions[input_index].text;
+
+            previous_input_index = previous_piece.transcriptions.length - 1;
+            piece_input_id = previous_piece.id;
+
+            previous_piece.transcriptions[previous_input_index].text += piece.transcriptions[input_index].text;
+            
           }
 
-          setTimeout(function(){ 
-            $previous_input = $('textarea[data-piece=' + piece_id + '][data-index=' + (previous_input_index)  + ']');
-            $previous_input.focus();
-            // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
-            $previous_input.selectRange(previous_length);
-          });
-
+          
           // Если это на стыке кусков, удаляем крайний
           console.log('c < p', piece.transcriptions, input_index);
           piece.transcriptions.splice(input_index, 1);
           console.log('c < p update', piece.transcriptions, $scope.queue.pieces);
 
         }
+
+        setTimeout(function(){ 
+          console.log(piece_input_id, previous_input_index);
+          $previous_input = $('textarea[data-piece=' + piece_input_id + '][data-index=' + (previous_input_index)  + ']');
+          $previous_input.focus();
+          // $previous_input[0].selectionStart = $previous_input[0].selectionEnd = length;
+          $previous_input.selectRange(previous_length);
+        });
+
 
       }
 
@@ -432,6 +476,9 @@ angular.module( 'transcribe-ninja.work', [
           speaker_code: $scope.queue.pieces[0].speaker + '1'
         };
 
+        // Обновляем советы
+        $scope.$apply();
+
         // TODO: Избавиться от таймаута. Нужен, потому что ресайз делается после рендера
         $timeout($scope.textareaAdjust, 500);
         // Выравниваем текстареа. Костыль BUG
@@ -525,6 +572,7 @@ angular.module( 'transcribe-ninja.work', [
         transcription = $scope.newTranscription,
         index = 0;
     
+    console.log($scope.queue.pieces, $input, $input.val(), $input.data('index'));
 
     // Если событие произошло не в инпуте иил инпут пустой
     if($input.is('textarea') === false || $input.val() === "") {
@@ -550,8 +598,8 @@ angular.module( 'transcribe-ninja.work', [
       // $input.val(text.slice(0, $input[0].selectionStart));
       // $input.trigger('input');
 
-      var speaker_code = piece.transcriptions[index-1].speaker_code,
-          gender = piece.transcriptions[index-1].gender;
+      var speaker_code = piece.transcriptions[$input.data('index')].speaker_code,
+          gender = piece.transcriptions[$input.data('index')].gender;
 
       // Добавляем в нужное место
       piece.transcriptions.splice(index, 0, {
@@ -564,8 +612,9 @@ angular.module( 'transcribe-ninja.work', [
       // После того как отрендерица переводим курсор
       setTimeout(function(){ 
         // Перемещаем курсор
-        $current_input = $('textarea[data-piece=' + piece.id + '][data-index=' + index + ']');
-
+        var current_index = $input.data('index') + 1;
+        $current_input = $('textarea[data-piece=' + piece.id + '][data-index=' + current_index + ']');
+        console.log(index, piece.id, $current_input[0]);
         $current_input.focus();
         $current_input[0].selectionStart = $current_input[0].selectionEnd = 0;
       });

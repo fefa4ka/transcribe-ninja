@@ -5,6 +5,10 @@
         margin-left: -8px;
     }
 
+    .checked p, .statistics, .table {
+        font-family: 'Roboto';
+    }
+
     .checked {
         padding-left: 0;
     }
@@ -13,5 +17,32 @@
         dl {
             font-size: 12px;
         }
+    }
+
+    .table {
+        td {
+            line-height: 2;
+
+            a {
+                display: none;
+            }
+        }
+
+        tr:hover {
+            a {
+                display: inline-block;;
+            }
+        }
+    }
+
+    .work-type {
+        width: 220px;
+    }
+
+    .length {
+        font-weight: 500;
+
+        width: 80px;
+
     }
 }

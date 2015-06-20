@@ -223,7 +223,8 @@ class OrderViewSet(mixins.ListModelMixin,
         return Order.objects.filter(owner=self.request.user)
 
 
-class QueueViewSet(viewsets.ViewSet):
+class QueueViewSet(viewsets.ViewSet,
+                   viewsets.GenericViewSet):
 
     """
         Элемент из очереди.
@@ -231,6 +232,9 @@ class QueueViewSet(viewsets.ViewSet):
 
     """
     model = Queue
+    serializer_class = QueueSerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)
 
     # @allow_lazy_user
     def list(self, request):
@@ -297,16 +301,25 @@ class QueueViewSet(viewsets.ViewSet):
 
             q.save()
 
+    def retrieve(self, request, pk=None):
+        queryset = Queue.objects.all()
+        queue = get_object_or_404(queryset, pk=pk, owner=request.user)
+        serializer = QueueTranscriptionSerializer(queue)
+
+        return Response(serializer.data)
+
 
 class HistoryFilter(django_filters.FilterSet):
     class Meta:
         model = Queue
         fields = [ 'id', 'completed', 'checked' ]
 
+
 class StandartResultSetPagination(pagination.PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
     max_page_size = 100
+
 
 class HistoryViewSet(generics.ListAPIView):
     """

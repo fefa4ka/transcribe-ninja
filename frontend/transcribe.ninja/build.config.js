@@ -86,7 +86,8 @@ module.exports = {
       'vendor/angular-elastic/elastic.js',
       'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js',
       'vendor/google-diff-match-patch/diff_match_patch_uncompressed.js',
-      'vendor/angular-diff-match-patch/angular-diff-match-patch.js'
+      'vendor/angular-diff-match-patch/angular-diff-match-patch.js',
+      'vendor/angular-rt-popup/dist/angular-rt-popup.js'
       // 'vendor/jquery/dist/jquery.js',
       // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
 

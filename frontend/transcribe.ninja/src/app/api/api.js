@@ -40,6 +40,7 @@ angular.module( 'transcribe-ninja.api', [
 
     queue: $resource('/api/queue/', {}, {
       get: {
+        url: '/api/queue/:queueId',
         method: 'GET'
       },
       create: {

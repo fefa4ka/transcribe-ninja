@@ -1,5 +1,7 @@
 angular.module( 'transcribe-ninja.history', [
-  'ui.router'
+  'ui.router',
+  'diff-match-patch',
+  'rt.popup'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
@@ -33,8 +35,8 @@ angular.module( 'transcribe-ninja.history', [
     return year + '-' + month + '-' + day;
   }
 
-  $scope.historyPage = 0;
   $scope.uncheckedQueues = api.history.list({ unchecked: true });
+  $scope.checkedQueues = api.history.list({ checked: true });
   // $scope.checkedQueues = api.history.list({ checked: true });
 
   $scope.statistics = [api.statistics.get({ 'after_date': getDateBefore(1) }), api.statistics.get({ 'after_date': getDateBefore(7) }), api.statistics.get({ 'after_date': getDateBefore(31) }), api.statistics.get()];
@@ -42,12 +44,32 @@ angular.module( 'transcribe-ninja.history', [
   
   $scope.uncheckedStatistics = api.statistics.get({ 'unchecked': true });
 
-  $scope.pageChanged = function() {
+  $scope.unchekedPageChanged = function() {
     api.history.list({ unchecked: true, page: $scope.uncheckedQueuePage }).
       $promise.then(function(data) {
         $scope.uncheckedQueues.results = data.results;
       });
   };
+
+  $scope.chekedPageChanged = function() {
+    api.history.list({ checked: true, page: $scope.uncheckedQueuePage }).
+      $promise.then(function(data) {
+        $scope.checkedQueues.results = data.results;
+      });
+  };
+
+
+  $scope.$on('tooltip.show.before', function() {
+      console.log("SHOWN");
+
+      api.queue.get({ queueId: $scope.currenQueue }).
+        $promise.then(function (data) {
+            $scope.diffTranscription = data;
+        });
+
+   });
+
+
 
 }])
 

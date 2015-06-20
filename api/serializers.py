@@ -104,6 +104,12 @@ class OrderSerializer(serializers.ModelSerializer):
             "id", "record",
             "start_at", "end_at")
 
+class QueueTranscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Queue
+        fields = (
+            "id", "original_transcription",
+            "transcription", "checked_transcription")
 
 class QueueSerializer(serializers.ModelSerializer):
     pieces = PieceSerializer(many=True)

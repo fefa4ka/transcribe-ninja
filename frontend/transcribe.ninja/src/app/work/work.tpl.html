@@ -99,7 +99,10 @@
         </section>
     </div>
     <div class="col-xs-6 col-md-3">
-        
+        <section class="suggest">
+            <h6>Случайный совет</h6>
+            <p ng-repeat="value in suggests | shuffle | limitTo:1" ng-bind-html-unsafe="html">{{ value }}</p>
+        </section>
     </div>
 </div>
 

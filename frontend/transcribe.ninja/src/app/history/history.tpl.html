@@ -1,44 +1,76 @@
 <h3>История вашей работы – {{ currentUser.work_length | number : 0 }} знаков</h3>
 <section class="queues row-fluid">
-    <div class="col-md-6 checked">
+    <div class="col-md-6 checked">        
+        <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
+            <tr>
+                <th>Период</th>
+                <th>Напечатано <small>символов</small></th>
+                <th>Исправлено <small>символов</small></th>
+            </tr>
+            <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0">
+                <td>
+                    {{ statisticsDescription[$index] }}
+                </td>
+                <td>
+                    {{ stat.work_length }}
+                </td>
+                <td>
+                    {{ stat.mistakes_length }}
+                </td>
+            </tr>
+        </table>
+
         <h4>Проверенные</h4>
-        <section class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0">
-            <h5>{{ statisticsDescription[$index] }} – {{ stat.work_length - stat.mistakes_length }} символов</h5>
-            <dl class="dl-horizontal">
-              <dt>Набрано символов</dt>
-              <dd>{{ stat.work_length }}</dd>
-              <dt>Исправленно</dt>
-              <dd>{{ stat.mistakes_length }}</dd>
-              <dt>Распознано записи</dt>
-              <dd>{{ stat.duration_transcribe | humanSeconds }}</dd>
-              <dt>Вычитано записи</dt>
-              <dd>{{ stat.duration_check | humanSeconds }}</dd>
-            </dl>
-        </section>
         <p ng-show="statistics[statistics.length-1].work_length == 0">
-            Ваши записи ещё не проверили.
+            Ваши записи ещё не проверили
         </p>
+
+        <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
+            <tr>
+                <th>Задача</th>
+                <th>Набрано <small>символов</small></th>
+                <th>Исправлено <small>символов</small></th>
+            </tr>
+            <tr ng-repeat="queue in checkedQueues.results" ng-mouseover="currentQueue = queue.id">
+                <td class="work-type">
+                    {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
+                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
+                </td>
+                <td class="length">
+                    <a popup-show="historydiff.html" class="btn btn-primary">Show popup!</a>
+                    {{ queue.work_length }} 
+                </td>
+                <td>
+                    {{ queue.mistakes_length  }}
+                </td>
+            </tr>
+        </table>
+        <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
     </div>
     <div class="col-md-6" ng-show="uncheckedStatistics.work_length">
         <h4>Ожидают проверки – {{ uncheckedStatistics.work_length }} символов</h4>
         <table class="table">
             <tr>
                 <th>Задача</th>
-                <th>Количество символов</th>
+                <th>Количество <small>символов</small></th>
                 <th>Время набора</th>
             </tr>
-            <tr ng-repeat="queue in uncheckedQueues.results">
-                <td>
+            <tr ng-repeat="queue in uncheckedQueues.results" ng-mouseover="currentQueue = queue.id">
+                <td class="work-type">
                     {{ queue.duration | humanSeconds }} {{ queue.work_type == 0 ? "транскрибации" : "вычитки" }}
+                    <a class="btn btn-xs btn-default pull-right" href="#" role="button"><i class="fa fa-lg fa-align-left"></i></a>
+                </td>
+                <td class="length">
+                    {{ queue.work_length }} 
                 </td>
                 <td>
-                    {{ queue.work_length }}
-                </td>
-                <td>
-                    {{ queue.completed }}
+                    {{ queue.completed | date : 'd MMM в HH:mm' }}
                 </td>
             </tr>
         </table>
-        <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="pageChanged()"></pagination>
+        <script id="historydiff.html" type="text/ng-template">
+          dlsadlasd
+        </script>
+        <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="uncheckedPageChanged()"></pagination>
     </div>
 </section>

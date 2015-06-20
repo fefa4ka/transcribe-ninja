@@ -16,7 +16,8 @@
     "peaks.js": "*",
     "angular-elastic": "2.4.2",
     "jquery-highlighttextarea": "*",
-    "angular-diff-match-patch": "0.1.10"
+    "angular-diff-match-patch": "0.1.10",
+    "angular-rt-popup": "1.0.6"
   },
   "dependencies": {}
 }

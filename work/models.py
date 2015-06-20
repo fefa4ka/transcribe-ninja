@@ -508,7 +508,8 @@ class Queue(AudioFile):
             as_record=as_record,
             file_name=upload_queue_path(self),
             start_at=self.start_at,
-            end_at=self.end_at
+            end_at=self.end_at,
+            offset=offset
         )
 
         # Сохраняем на Амазон с3
