@@ -97,7 +97,7 @@ class QueueInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('record', 'owner', 'duration', 'total', 'completed')
+    list_display = ('record', 'owner', 'duration', 'total', 'spent_money', 'completed')
     fieldsets = (
         (None, {
             'fields': ('record', 'start_at', 'end_at', 'completed')
@@ -124,7 +124,7 @@ class OrderAdmin(admin.ModelAdmin):
         return payment.total
 
     def completed(self, instance):
-        return instance.record.completed
+        return instance.completed_percentage
 
 
 @admin.register(Payment)

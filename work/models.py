@@ -88,10 +88,22 @@ class Order(Trash):
     price = models.ForeignKey(Price)
 
     created = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey('auth.User', related_name='user-orders')
+    owner = models.ForeignKey('auth.User', related_name='user_orders')
 
     def __unicode__(self):
         return "Record %d. %d-%d" % (self.record.id, self.start_at, self.end_at)
+
+    @property
+    def completed_percentage(self):
+        return (self.queue.filter(completed__isnull=False).count() / float(self.queue.all().count())) * 100
+
+    @property
+    def spent_money(self):
+        # Берём айдишники выполненной очереди
+        object_id = ContentType.objects.get_for_model(Queue).id
+        queue_ids = self.queue.filter(completed__isnull=False).values('id').distinct()
+        # по ним считаем сколько платежей
+        return Payment.objects.filter(content_type_id=object_id, object_id__in=queue_ids).aggregate(total=Sum('total'))["total"]
 
     # Logic
     def make_queue(self):
@@ -311,8 +323,12 @@ class Queue(AudioFile):
     def total_price(self):
         duration = self.end_at - self.start_at
         # TODO: загружать цену за прослушивание автоматически
-        price_listening_object_id = ContentType.objects.get_for_model(type(self)).id
-        price_listening = Price.objects.filter(content_type_id=price_listening_object_id, work_type=Price.WORK_TYPE_LISTENING, default=1)[0]
+        queue_object_id = ContentType.objects.get_for_model(type(self)).id
+        price_listening = Price.objects.filter(content_type_id=queue_object_id, work_type=Price.WORK_TYPE_LISTENING, default=1)[0]
+
+        if self.owner_id == 2:
+            price_speeckit = Price.objects.filter(content_type_id=queue_object_id, work_type=Price.WORK_TYPE_TRANSCRIBE_SPEECHKIT, default=1)[0]
+            return price_speeckit.price
 
         # Если очередь выполнена, считаем итоговоую цену
         if self.completed:
@@ -451,13 +467,13 @@ class Queue(AudioFile):
 
             if payment:
                 # Обновляем показатели бабла
-                diff = payment.total - queue.total_price
+                # diff = payment.total - queue.total_price
                 payment.total = queue.total_price
 
-                queue.owner.account.balance += diff
+                # queue.owner.account.balance += diff
 
                 payment.save()
-                queue.owner.account.save()
+                # queue.owner.account.save()
 
     def update_priority(self):
         """
@@ -552,7 +568,7 @@ class Payment(models.Model):
     status = models.IntegerField(default=0)
 
     created = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey('auth.User', related_name='user-payments')
+    owner = models.ForeignKey('auth.User', related_name='user_payments')
 
 
 def create_order_payment(sender, instance, created, **kwargs):
