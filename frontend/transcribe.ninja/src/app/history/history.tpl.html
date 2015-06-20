@@ -4,9 +4,9 @@
         <table class="table" ng-show="statistics[statistics.length-1].work_length > 0">
             <tr>
                 <th>Период</th>
-                <th>Напечатано <small>символов</small></th>
-                <th>Исправлено <small>символов</small></th>
-                <th>Учтено <small>символов</small></th>
+                <th class="length">Напечатано <small>символов</small></th>
+                <th class="length">Исправлено <small>символов</small></th>
+                <th class="length">Учтено <small>символов</small></th>
             </tr>
             <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0 && statistics[$index-1].work_length != stat.work_length">
                 <td>
@@ -15,10 +15,10 @@
                 <td class="length">
                     {{ stat.work_length }}
                 </td>
-                <td class="length">
+                <td class="length mistakes">
                     {{ stat.mistakes_length }}
                 </td>
-                <td class="length ">
+                <td class="length checked">
                     {{ stat.checked_length }}
                 </td>
             </tr>
@@ -28,8 +28,8 @@
         <table class="table">
             <tr>
                 <th>Задача</th>
-                <th>Количество <small>символов</small></th>
-                <th>Время набора</th>
+                <th class="length">Количество <small>символов</small></th>
+                <th class="length">Время набора</th>
             </tr>
             <tr ng-repeat="queue in uncheckedQueues.results" ng-mouseover="currentQueue = queue.id">
                 <td class="work-type">
@@ -60,8 +60,9 @@
         <table class="table" ng-show="checkedQueues.count > 0">
             <tr>
                 <th>Задача</th>
-                <th>Набрано <small>символов</small></th>
-                <th>Исправлено <small>символов</small></th>
+                <th class="length">Набрано <small>символов</small></th>
+                <th class="length">Исправлено <small>символов</small></th>
+                <th class="length">Учтено <small>символов</small></th>
             </tr>
             <tr ng-repeat="queue in checkedQueues.results" ng-mouseover="currentQueue = queue.id">
                 <td class="work-type">
@@ -71,8 +72,11 @@
                 <td class="length">
                     {{ queue.work_length }} 
                 </td>
-                <td>
+                <td class="length mistakes">
                     {{ queue.mistakes_length  }}
+                </td>
+                <td class="length checked">
+                    {{ queue.work_length - queue.mistakes_length  }}
                 </td>
             </tr>
         </table>
