@@ -3,7 +3,7 @@
 </div>
 <div class="modal-body">
     <h5>Ваша работа</h5>
-    <p class="desc">{{ queue.work_length }} символов напечатали</p>
+    <p class="desc">{{ queue.work_length }} символов напечатали и исправили</p>
     <pre ng-class="queue.work_type == 0 ? 'transcribed': 'checked'" class="textdiff" diff left-obj="diff.original_transcription" right-obj="diff.transcription"></pre>
     
     <div ng-show="queue.mistakes_length > 0">
