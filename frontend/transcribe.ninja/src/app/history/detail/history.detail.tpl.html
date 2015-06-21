@@ -4,12 +4,12 @@
 <div class="modal-body">
     <h5>Ваша работа</h5>
     <p class="desc">{{ queue.work_length }} символов напечатали и исправили</p>
-    <pre ng-class="queue.work_type == 0 ? 'transcribed': 'checked'" class="textdiff" diff left-obj="diff.original_transcription" right-obj="diff.transcription"></pre>
+    <pre ng-class="queue.work_type == 0 ? 'transcribed': 'checked'" class="textdiff" semantic-diff left-obj="diff.original_transcription" right-obj="diff.transcription"></pre>
     
     <div ng-show="queue.mistakes_length > 0">
         <h5>После проверки</h5>
         <p class="desc">{{ queue.mistakes_length }} символов исправили</p>
-        <pre class="textdiff checked" diff left-obj="diff.transcription" right-obj="diff.checked_transcription"></pre>
+        <pre class="textdiff checked" semantic-diff left-obj="diff.transcription" right-obj="diff.checked_transcription"></pre>
     </div>
 
     <p class="desc" ng-show="queue.checked && queue.mistakes_length == 0">

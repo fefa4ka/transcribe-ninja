@@ -569,6 +569,9 @@ angular.module( 'transcribe-ninja.work', [
         var dmp = new diff_match_patch();
 
         var diffs = dmp.diff_main($scope.originalTranscriptions.join("\n"), transcriptions.join("\n"));
+        // Семантически. Дорого
+        dmp.diff_cleanupSemantic(diffs);
+
         for(var index in diffs) {
           var diff = diffs[index];
           // Если была работа 1 — добавление -1 - удаление

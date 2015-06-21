@@ -426,6 +426,8 @@ class Queue(AudioFile):
 
         # Сколько заработали на нём
         diff = d.diff_main(original_transcription, transcription)
+        d.diff_cleanupSemantic(diff)
+
         letters_count = 0
         for work in diff:
             if work[0] in diff_type:
