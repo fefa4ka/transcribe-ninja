@@ -2,15 +2,16 @@
 <div ng-show="queue.duration > 0">
 
 <div class="instruction" ng-show="queue.work_type == 0">
-    Напечатайте, что говорят в записи</span>
+    <h4>Напечатайте, что говорят в записи</h4>
 </div>
 
 <div class="instruction" ng-show="queue.work_type == 1">
-    Послушайте запись и исправьте ошибки в транскрибции
+    <h4>Послушайте запись и исправьте ошибки в транскрибции</h2>
+    <p class="desc" ng-show="queue.work_type == 1">
+        Некоторые записи распознаёт робот и получается бред
+    </p>
 </div>
-<p class="desc" ng-show="queue.work_type == 1">
-    Некоторые записи распознаёт робот и получается бред
-</p>
+
 
 <tn-player audio-file="{{ queue.audio_file }}"></tn-player>
 
@@ -90,7 +91,7 @@
         
         <section class="controls col-md-offset-1">
             <button class="skip btn btn-default btn-xs" 
-                    ng-click="loadQueue()" tabindex="4">Пропустить задачу</button>
+                    ng-click="loadQueue(true)" tabindex="4">Пропустить задачу</button>
 
             <div class="pull-right">
                 <p>

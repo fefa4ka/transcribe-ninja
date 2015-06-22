@@ -52,19 +52,6 @@ angular.module( 'transcribe-ninja.work', [
     };
 }])
 
-.filter('shuffle', function() {
-    var shuffledArr = [],
-        shuffledLength = 0;
-    return function(arr) {
-        var o = arr.slice(0, arr.length);
-        if (shuffledLength == arr.length) return shuffledArr;
-        for(var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
-        shuffledArr = o;
-        shuffledLength = o.length;
-        return o;
-    };
-})
-
 .controller( 'WorkCtrl', ["$scope", "$rootScope", "$translate", "$modal", "$stateParams", "hotkeys", "api", "$interval", "$timeout", function WorkCtrl($scope, $rootScope, $translate, $modal, $stateParams, hotkeys, api, $interval, $timeout) {
   function get_piece(piece_id) {
 
@@ -457,9 +444,14 @@ angular.module( 'transcribe-ninja.work', [
   $scope.newTranscription = {};
 
   // Загрузка задачи
-  $scope.loadQueue = function () {  
+  $scope.loadQueue = function (skip) {  
     $scope.queue = {};
     $scope.originalTranscriptions = [];
+
+    // Считаем в метрику
+    if(skip === true) {
+      yaCounter27735045.reachGoal('skip');
+    }
 
     $('#new-transcription').val("");
     
@@ -519,6 +511,9 @@ angular.module( 'transcribe-ninja.work', [
   // Сохранение транскрипции
   $scope.saveTranscription = function () {
     var transcriptions = [];
+
+    // Считаем в Метрику
+    yaCounter27735045.reachGoal('transcribe');
 
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
