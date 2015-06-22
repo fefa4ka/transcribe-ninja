@@ -297,8 +297,8 @@ class Queue(AudioFile):
             last_transcription = self.piece.previous.transcriptions.all(
             ).last().text.split(" ")
 
-            index = 0 if len(last_transcription) < 3 else len(
-                last_transcription) - 3
+            index = 0 if len(last_transcription) < 4 else len(
+                last_transcription) - 5
 
             previous_part = " ".join(
                 last_transcription[index:len(last_transcription)])
@@ -307,11 +307,10 @@ class Queue(AudioFile):
 
         # Если распознана следующая часть, то даём три первых слова
         if self.pieces[-1].next and self.pieces[-1].next.transcriptions.count() > 0:
-            last_transcription = self.pieces[-
-                                             1].next.transcriptions.all().first().text.split(" ")
+            last_transcription = self.pieces[-1].next.transcriptions.all().first().text.split(" ")
 
             index = len(last_transcription) if len(
-                last_transcription) < 3 else 3
+                last_transcription) < 5 else 5
 
             next_part = " ".join(last_transcription[0:index])
         else:
