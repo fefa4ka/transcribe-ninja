@@ -98,6 +98,9 @@ angular.module( 'transcribe-ninja.work', [
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.playPause();
+
+          // Ya.Metrica 
+          yaCounter27735045.reachGoal('keyboard_esc_play');
       }
   }).
   add({
@@ -107,6 +110,9 @@ angular.module( 'transcribe-ninja.work', [
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.skipBackward();
+
+          // Ya.Metrica 
+          yaCounter27735045.reachGoal('keyboard_arrow_left');
       }
   }).
   add({
@@ -116,6 +122,9 @@ angular.module( 'transcribe-ninja.work', [
       callback: function(event, hotkey) {
           event.preventDefault();
           $scope.wavesurfer.skipForward();
+
+          // Ya.Metrica 
+          yaCounter27735045.reachGoal('keyboard_arrow_right');
       }
   }).
 
@@ -130,6 +139,9 @@ angular.module( 'transcribe-ninja.work', [
       event.preventDefault();
 
       $scope.applyTranscriptionChange($input, true);
+
+      // Ya.Metrica 
+      yaCounter27735045.reachGoal('new_line');
     }
   }).
   add({
@@ -140,6 +152,9 @@ angular.module( 'transcribe-ninja.work', [
       event.preventDefault();
 
       $scope.saveTranscription();
+
+      // Ya.Metrica 
+      yaCounter27735045.reachGoal('keyboard_save');
     }
   })
   .add({
@@ -260,7 +275,8 @@ angular.module( 'transcribe-ninja.work', [
           $previous_input.selectRange(previous_length);
         });
 
-
+        // Ya.Metrica 
+        yaCounter27735045.reachGoal('join_lines');
       }
 
     }
@@ -314,6 +330,8 @@ angular.module( 'transcribe-ninja.work', [
         $next_input.selectRange(0);
       }
 
+      // Ya.Metrica 
+      yaCounter27735045.reachGoal('keyboard_arrow_down');
     }
   }).add({
       combo: 'up',
@@ -358,6 +376,9 @@ angular.module( 'transcribe-ninja.work', [
           $next_input.focus();
           $next_input.selectRange($next_input.val().length);
         }
+
+        // Ya.Metrica 
+        yaCounter27735045.reachGoal('keyboard_arrow_up');
     }
   });
 
@@ -439,6 +460,9 @@ angular.module( 'transcribe-ninja.work', [
     } 
 
     transcription.speaker_code = transcription.gender + index;
+
+    // Ya.Metrica 
+    yaCounter27735045.reachGoal('speaker_selection');
   };
   
   $scope.newTranscription = {};
@@ -512,9 +536,6 @@ angular.module( 'transcribe-ninja.work', [
   $scope.saveTranscription = function () {
     var transcriptions = [];
 
-    // Считаем в Метрику
-    yaCounter27735045.reachGoal('transcribe');
-
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
 
@@ -539,6 +560,13 @@ angular.module( 'transcribe-ninja.work', [
       // Загружаем новую задачу
       $scope.loadQueue();
     });
+
+    // Ya.Metrica
+    if($scope.queue.work_type == 0) {
+      yaCounter27735045.reachGoal('transcribe');
+    } else {
+      yaCounter27735045.reachGoal('check_transcribe');
+    }
   };
 
   $scope.workLength = function () {

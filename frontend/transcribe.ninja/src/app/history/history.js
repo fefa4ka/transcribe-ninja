@@ -73,7 +73,8 @@ angular.module( 'transcribe-ninja.history', [
     });
   };
                   
-  
+  // Ya.Metrica
+  yaCounter27735045.reachGoal('history');
 
 
 

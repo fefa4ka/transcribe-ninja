@@ -27,18 +27,27 @@ angular.module( 'transcribe-ninja.player', [
             $('.fa-play')
               .removeClass('fa-play')
               .addClass('fa-pause');
+
+            // Ya.Metrica
+            yaCounter27735045.reachGoal('player_play');
         });
 
         scope.wavesurfer.on('pause', function () {
           $('.fa-pause')
               .removeClass('fa-pause')
           .addClass('fa-play');
+
+          // Ya.Metrica
+          yaCounter27735045.reachGoal('player_pause');
         });
 
         scope.wavesurfer.on('finish', function () {
           $('.fa-pause')
               .removeClass('fa-pause')
           .addClass('fa-play');
+
+          // Ya.Metrica
+          yaCounter27735045.reachGoal('player_finish');
         });
 
         scope.wavesurfer.on('loading', function (percent) {

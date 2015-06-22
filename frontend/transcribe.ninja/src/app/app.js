@@ -98,6 +98,9 @@ angular.module( 'transcribe-ninja', [
       $rootScope.currentUser = undefined;
 
       $location.path( "/" );
+
+      // Ya.Metrica
+      yaCounter27735045.reachGoal('logout');
     });
   };
   

@@ -15,11 +15,15 @@ angular.module( 'transcribe-ninja.history.detail', [
     };
 
     $scope.review = function (queue) {
-
-
-
         $modalInstance.dismiss();
     };
+
+    // Ya.Metrica
+    if($scope.queue.checked) {
+        yaCounter27735045.reachGoal('checked_mistakes_view');
+    } else {
+        yaCounter27735045.reachGoal('unchecked_mistakes_view');
+    }
 
 }])
 

@@ -50,11 +50,16 @@ angular.module( 'transcribe-ninja.auth', [
             }).$promise.
             then(function(data){
                 $modalInstance.dismiss();
-
                 login();
             });
+
+            // Ya.Metrica
+            yaCounter27735045.reachGoal('registration');
         } else {
             login();
+
+            // Ya.Metrica
+            yaCounter27735045.reachGoal('login');
         }
     };
 
