@@ -511,7 +511,7 @@ class Queue(AudioFile):
                 check_queue.priority = 2
                 check_queue.save()
 
-    def audio_file_make(self, as_record=None, offset=1.5):
+    def audio_file_make(self, as_record=None, offset=0):
         """
             Создаёт вырезанный кусок в mp3
 

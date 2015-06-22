@@ -217,7 +217,7 @@ class AudioFile(models.Model):
 
         return total
 
-    def cut_to_file(self, file_name, start_at, end_at, as_record=None, offset=1.5, channels=2):
+    def cut_to_file(self, file_name, start_at, end_at, as_record=None, offset=0, channels=2):
         """
             Создаёт вырезанный кусок в mp3
 
@@ -258,6 +258,7 @@ class AudioFile(models.Model):
             # В первой записи делаем отступ максмум до 0
             if start_at > offset:
                 start_at = (start_at - offset) * 1000
+                start_at = start_at * 1000
             else:
                 start_at = 0
 
@@ -265,7 +266,7 @@ class AudioFile(models.Model):
             if end_at + offset > self.duration:
                 end_at = self.duration
             else:
-                # end_at = (end_at + offset) * 1000
+                end_at = (end_at + offset) * 1000
                 end_at = end_at * 1000
 
             # Вырезаем кусок и сохраняем
