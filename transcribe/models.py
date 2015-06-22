@@ -271,17 +271,21 @@ class Piece(models.Model):
     def transcriptions(self):
         # Смотрим какие очереди выполненны последними и от них выдаём транскрибцию.
         previous_check_queue = self.previous.check_transcription_queue
+
         if previous_check_queue.completed\
             and self.check_transcription_queue.completed\
             and previous_check_queue.completed > self.check_transcription_queue.completed:
-            last_completed = self.all_transcriptions.filter(queue_id = previous_check_queue.id)
+            queue_id = previous_check_queue.id
         else:
             # По умолчанию показывать только последнии трансприпции
             # Отдавать транскрипции, время выполнении очереди у которой последний.
-            last_completed = self.all_transcriptions.order_by('-queue__completed').first()
+            if self.check_transcription_queue.completed:
+                queue_id = self.check_transcription_queue.id
+            else:
+                queue_id = self.transcribe_queue.id
 
-        if last_completed:
-            return self.all_transcriptions.filter(queue=last_completed.queue).order_by('index')
+        if queue_id:
+            return self.all_transcriptions.filter(queue_id=queue_id).order_by('index')
         else:
             return Transcription.objects.none()
 
