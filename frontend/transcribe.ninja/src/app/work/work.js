@@ -405,24 +405,24 @@ angular.module( 'transcribe-ninja.work', [
         // Выделяем кусок, который нужно распознать
 
         // Если начало куска, раньше чем через 1.5 сек, то распознаем раньше
-        start_at = 1.5;
+        // start_at = 1.5;
 
-        if($scope.queue.pieces[0].start_at < start_at) {
-          start_at = 0;
-        } 
+        // if($scope.queue.pieces[0].start_at < start_at) {
+        //   start_at = 0;
+        // } 
         
-        end_at = start_at + $scope.queue.duration;
+        // end_at = start_at + $scope.queue.duration;
 
-        $scope.wavesurfer.addRegion({ 
-           start: start_at,
-           end: end_at,
-           color: 'rgba(183,211,170,0.4)',
-           drag: false,
-           resize: false
-        });
+        // $scope.wavesurfer.addRegion({ 
+        //    start: start_at,
+        //    end: end_at,
+        //    color: 'rgba(183,211,170,0.4)',
+        //    drag: false,
+        //    resize: false
+        // });
 
-        $scope.wavesurfer.play(start_at);
-        $scope.wavesurfer.pause();
+        // $scope.wavesurfer.play();
+        // $scope.wavesurfer.pause();
         
     });
 

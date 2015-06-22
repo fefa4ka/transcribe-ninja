@@ -2,12 +2,15 @@
 <div ng-show="queue.duration > 0">
 
 <div class="instruction" ng-show="queue.work_type == 0">
-    Напечатайте, что говорит {{ queue.pieces[0].speaker == "F" ? "женщина" : "мужчина" }} в <span class="green">выделенном куске</span>
+    Напечатайте, что говорят в записи</span>
 </div>
 
 <div class="instruction" ng-show="queue.work_type == 1">
-    Послушайте <span class="green">выделенный кусок</span> записи и исправьте ошибки
+    Послушайте запись и исправьте ошибки в транскрибции
 </div>
+<p class="desc" ng-show="queue.work_type == 1">
+    Некоторые записи распознаёт робот и получается бред
+</p>
 
 <tn-player audio-file="{{ queue.audio_file }}"></tn-player>
 
