@@ -4,28 +4,28 @@
     </div>
     <div class="modal-body">
             <div class="centered-text">
-                <a href="/api/social/login/vk-oauth/" alt="Войти через Вконтакт"><div class="social" aria-hidden="true" data-icon="&#xe003;"></div></a>
-                <a href="/api/social/login/facebook/" alt="Войти через Фейсбук"><div class="social" aria-hidden="true" data-icon="&#xe021;"></div></a>
-                <a href="/api/social/login/google-oauth2/" alt="Войти через Google"><div class="social" aria-hidden="true" data-icon="&#xe01b;"></div></a>
+                <a tabindex="1" href="/api/social/login/vk-oauth/" alt="Войти через Вконтакт"><div class="social" aria-hidden="true" data-icon="&#xe003;" alt="Войти через Вконтакт"></div></a>
+                <a tabindex="2" href="/api/social/login/facebook/" alt="Войти через Фейсбук"><div class="social" aria-hidden="true" data-icon="&#xe021;" alt="Войти через Фейсбук"></div></a>
+                <a tabindex="3" href="/api/social/login/google-oauth2/" alt="Войти через Google"><div class="social" aria-hidden="true" data-icon="&#xe01b;" alt="Войти через Google">></div></a>
                 <h4 class="text-line">или используя электронную почту</h4>
             </div>
             <div class="form-group">
-                <input ng-model="username" required name="username"
+                <input tabindex="4" ng-model="username" required name="username"
                        type="text" placeholder="Адрес электронной почты" alt="Войти через электронную почту" class="form-control">
             </div>
             <div class="form-group">
                     <div class="btn-group">
-                        <label class="btn btn-default" ng-model="new_user" btn-radio="'1'">Я новый пользователь</label>
-                        <label class="btn btn-default active" ng-model="new_user" btn-radio="'2'">Я уже зарегистрирован</label>
+                        <label class="btn btn-default" ng-model="new_user" btn-radio="'1'" tabindex="5">Я новый пользователь</label>
+                        <label class="btn btn-default active" ng-model="new_user" btn-radio="'2'" tabindex="6">Я уже зарегистрирован</label>
                     </div>
                 </div>
             <div class="form-group" ng-show="new_user > 0">
                 <input ng-model="password" required name="password" type="password"
-                       placeholder="Пароль" alt="Пароль" class="form-control">
+                       placeholder="Пароль" alt="Пароль" class="form-control" tabindex="7">
             </div>
             <div  class="form-group" ng-show="new_user == 1">
                 <input ng-model="repeat_password" name="repeat_password" type="password"
-                       placeholder="Повторите пароль" alt="Повторить пароль" class="form-control"> 
+                       placeholder="Повторите пароль" alt="Повторить пароль" class="form-control" tabindex="8"> 
             </div>
             <div class="password-recovery text-line" ng-show="new_user == 2">
                 <a href="#">Восстановить пароль</a>
@@ -33,6 +33,6 @@
             
     </div>
     <div class="modal-footer">
-        <input type="submit" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'" alt="Войти">
+        <input type="submit" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'" alt="Войти" tabindex="9">
     </div>
 </form>
