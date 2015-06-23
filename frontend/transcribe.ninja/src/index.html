@@ -38,7 +38,7 @@
     <div class="container">
         <header ng-hide="stateName === 'main'">
             <h1 class="logo">
-                <a ui-sref="main">
+                <a ui-sref="main" alt="Перейти на главную страницу">
                   <img src="/static/assets/logo_head.svg">
                 </a>    
             </h1>
@@ -52,11 +52,11 @@
                 
 
                 <li ui-sref-active="active">
-                    <a href ui-sref="work">Поработать</a>
+                    <a href ui-sref="work" alt="Перейти к заданиям">Поработать</a>
                 </li>
 
                 <li ui-sref-active="active">
-                    <a href ui-sref="history">История</a>
+                    <a href ui-sref="history" alt="Перейти к истории рабаботы">История</a>
                 </li>
 
                 <li ng-show="currentUser.id">
@@ -64,7 +64,7 @@
                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="#" ng-click="logout()">Выход</a>
+                                <a href="#" ng-click="logout()" alt="Выйти из системы">Выход</a>
                             </li>
                         </ul>
                     </div>
