@@ -221,7 +221,7 @@ class PaymentAdmin(admin.ModelAdmin):
 
 @admin.register(Queue)
 class QueueAdmin(admin.ModelAdmin):
-    list_display = ('record', 'work_type', 'duration', 'work_length', 'mistakes_length', 'priority', 'skipped', 'locked', 'completed', 'checked', 'owner')
+    list_display = ('id', 'record', 'work_type', 'duration', 'owner', 'total_price', 'work_length', 'mistakes_length', 'locked', 'completed', 'checked', 'priority', 'skipped')
     list_filter = ('priority', 'work_type', 'locked', 'completed', 'checked')
 
     readonly_fields = ('total_price', 'work_length', 'mistakes_length', 'original_transcription', 'transcription', 'checked_transcription')
@@ -249,6 +249,16 @@ class QueueAdmin(admin.ModelAdmin):
 
     def duration(self, instance):
         return instance.end_at - instance.start_at
+
+    def total_price(self, instance):
+        queue_object_id = ContentType.objects.get_for_model(Queue).id
+
+        try:
+            payment = Payment.objects.get(content_type_id=queue_object_id, object_id=instance.id)
+
+            return payment.total
+        except:
+            return 0
 
     def has_add_permission(self, request):
         return False
