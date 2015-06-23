@@ -13,7 +13,7 @@ angular.module( 'transcribe-ninja.auth', [
         $modalInstance.dismiss('cancel');
     };
 
-    $scoe.new_user = 1;
+    $scope.new_user = 1;
 
     $scope.authLogin = function() {
         var login = function () {
