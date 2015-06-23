@@ -93,17 +93,15 @@ class Order(Trash):
     def __unicode__(self):
         return "Record %d. %d-%d" % (self.record.id, self.start_at, self.end_at)
 
-    @property
-    def completed_percentage(self):
-        return (self.queue.filter(completed__isnull=False).count() / float(self.queue.all().count())) * 100
-
-    @property
-    def spent_money(self):
+    def spent_money(self, work_type=0):
         # Берём айдишники выполненной очереди
         object_id = ContentType.objects.get_for_model(Queue).id
-        queue_ids = self.queue.filter(completed__isnull=False).values('id').distinct()
+        queue_ids = self.queue.filter(completed__isnull=False, work_type=work_type).values('id').distinct()
         # по ним считаем сколько платежей
         return Payment.objects.filter(content_type_id=object_id, object_id__in=queue_ids).aggregate(total=Sum('total'))["total"]
+
+    def completed_percentage(self, work_type=0):
+        return (self.queue.filter(completed__isnull=False, work_type=work_type).count() / float(self.queue.filter(work_type=work_type).count())) * 100
 
     # Logic
     def make_queue(self):
