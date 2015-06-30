@@ -1,7 +1,5 @@
-from django.conf import settings
-from django.contrib.auth.backends import ModelBackend
-from django.core.exceptions import ImproperlyConfigured
-from django.db.models import get_model
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from django.contrib.auth.models import User
 
 
