@@ -69,7 +69,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'api',
-    'djoser',
 
     # Web
     'frontend',
@@ -220,7 +219,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
+    # Pagination,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
 }
 
 
