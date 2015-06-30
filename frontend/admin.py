@@ -3,6 +3,8 @@
 
 from django.contrib import admin
 
+from django.db.models import Sum
+
 from core.models import *
 from transcribe.models import *
 from work.models import *
@@ -157,7 +159,7 @@ class QueueInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('record', 'owner', 'duration', 'total', 'spent_money', 'spent_money_transcribe', 'spent_money_check', 'transcribe_completed', 'check_completed')
+    list_display = ('record', 'owner', 'duration', 'length', 'total', 'spent_money', 'spent_money_yandex', 'spent_money_transcribe', 'spent_money_check', 'transcribe_completed', 'check_completed')
     fieldsets = (
         (None, {
             'fields': ('record', 'start_at', 'end_at', 'transcribe_completed', 'check_completed')
@@ -177,6 +179,10 @@ class OrderAdmin(admin.ModelAdmin):
     def duration(self, instance):
         return instance.end_at - instance.start_at
 
+    def length(self, instance):
+        length = Queue.objects.filter(order=instance, completed__isnull=False).aggregate(Sum('work_length'))
+        return length["work_length__sum"]
+
     def total(self, instance):
         order_object_id = ContentType.objects.get_for_model(Order).id
         payment = Payment.objects.get(content_type_id=order_object_id, object_id=instance.id)
@@ -185,6 +191,9 @@ class OrderAdmin(admin.ModelAdmin):
 
     def spent_money(self, instance):
         return instance.spent_money(work_type=0) + instance.spent_money(work_type=1)
+
+    def spent_money_yandex(self, instance):
+        return instance.spent_money(work_type=0, owner_id=2)
 
     def spent_money_transcribe(self, instance):
         return instance.spent_money(work_type=0)
