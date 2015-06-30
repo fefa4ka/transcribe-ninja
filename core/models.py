@@ -1,14 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import django.db.models.signals as signals
-
-from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models import Sum
 
 from core.extra import *
 from core.utils import *
@@ -19,67 +15,6 @@ import subprocess
 from decimal import Decimal
 
 from pydub import AudioSegment
-
-class Account(models.Model):
-    """
-        Расширенная информация по учётной записи
-
-        user    - пользователь
-
-        phone   - номер телефона
-
-        raing   - рейтинг
-
-        balance - баланс
-    """
-
-    user = models.OneToOneField(User)
-
-    phone = models.CharField(max_length=50, blank=True, null=True)
-
-    rating = models.FloatField(default=0)
-    balance = models.FloatField(default=0)
-    site = models.CharField(max_length=50)
-
-    @property
-    def work_length(self):
-        try:
-            work = self.user.queue.all().aggregate(work=Sum('work_length'))
-            mistakes = self.user.queue.all().aggregate(mistakes=Sum('mistakes_length'))
-
-            return work['work'] - mistakes['mistakes']
-        except:
-            return 0
-    @property
-    def balances(self):
-        # queue_object_id = ContentType.objects.get_for_model(Queue).id
-        return self.user.user_payments.values('content_type_id').annotate(total=Sum('total'))
-
-    @property
-    def avg_speed(self):
-        speed = []
-
-        for queue in self.user.queue.filter(completed__isnull=False):
-            time = (queue.completed - queue.locked).total_seconds()
-            speed.append(queue.duration / float(time))
-
-        return sum(speed) / float(len(speed))
-
-    def calculate_work(self, unchecked=False, after_date=None):
-        # Считаем работу TODO: за определённый период
-        try:
-            work = self.queues(unchecked=unchecked, after_date=after_date).aggregate(work=Sum('work_length'))
-            mistakes = self.queues(unchecked=unchecked, after_date=after_date).aggregate(mistakes=Sum('mistakes_length'))
-
-            return (work['work'], mistakes['mistakes'])
-        except:
-            return 0
-
-    def queues(self, unchecked=False, after_date=None):
-        if not after_date:
-            return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked)
-        else:
-            return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked, completed__gt=after_date)
 
 
 class Feedback(models.Model):
@@ -308,18 +243,3 @@ class AudioFile(models.Model):
                  settings.MEDIA_ROOT + file_name_format])
 
         return file_name_format
-
-def create_account(sender, instance, **kwargs):
-    """
-        Создание учётки, если она не создана
-    """
-    try:
-        instance.account
-        pass
-    except:
-        instance.account = Account(site=settings.DOMAIN)
-        instance.account.save()
-
-
-# После сохранении User, создаём Account, если ещё не создан
-signals.post_save.connect(create_account, sender=User)
