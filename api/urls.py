@@ -40,14 +40,11 @@ elif settings.DOMAIN == "transcribe.ninja":
 urlpatterns += (
     url(r'api/', include(router.urls)),
 
-    url(r'^api/auth/', include('djoser.urls')),
+    url(r'^api/auth/', include('api.account.urls')),
     url(r'^api/auth/basic',
         views.AuthView.as_view(),
         name='authenticate'),
     url(r'api/social/', include('social_auth.urls')),
-
-    url(r'^api/account/',
-        views.CurrentUserView.as_view()),
 
     # url(r'^api/queue/',
     #     views.QueueView.as_view()),
