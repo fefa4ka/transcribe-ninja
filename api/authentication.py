@@ -1,5 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from rest_framework.authentication import BasicAuthentication
-
 
 class QuietBasicAuthentication(BasicAuthentication):
     # disclaimer: once the user is logged in, this should NOT be used as a
