@@ -45,10 +45,7 @@ class Account(models.Model):
 
     phone = models.CharField(max_length=50, blank=True, null=True)
 
-<<<<<<< HEAD
-=======
     blind = models.BooleanField(default=0)
->>>>>>> refactoring
     rating = models.FloatField(default=0)
     balance = models.FloatField(default=0)
     site = models.CharField(max_length=50)
