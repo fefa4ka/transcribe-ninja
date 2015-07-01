@@ -1,10 +1,15 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from django.contrib.auth import get_user_model, user_logged_in, user_logged_out, login, logout
+from django.contrib.auth.tokens import default_token_generator
+
 from rest_framework import generics, permissions, status, response, views
+
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from django.contrib.auth.tokens import default_token_generator
-from . import serializers, settings, utils, signals
+
+from . import serializers, settings, utils, signals, authentication
 
 User = get_user_model()
 
@@ -18,8 +23,9 @@ class RootView(views.APIView):
         urls_mapping = {
             'me': 'user',
             'register': 'register',
-            'login': 'login',
-            'logout': 'logout',
+            # 'login': 'login',
+            # 'logout': 'logout',
+            'basic': 'basic_auth',
             'activate': 'activate',
             'change-' + User.USERNAME_FIELD: 'set_username',
             'change-password': 'set_password',
@@ -67,44 +73,28 @@ class RegistrationView(utils.SendEmailViewMixin, generics.CreateAPIView):
         return context
 
 
-class LoginView(utils.ActionViewMixin, generics.GenericAPIView):
-    """
-    Use this endpoint to obtain user authentication token.
-    """
-    serializer_class = serializers.LoginSerializer
-    permission_classes = (
-        permissions.AllowAny,
-    )
+class AuthView(views.APIView):
 
-    def action(self, serializer):
-        login(self.request, self.request.user)
+    """
+        Класс аутентификации.
+        post    - залогиниться
+        delete  - разлогиниться
+    """
+    authentication_classes = (authentication.QuietBasicAuthentication,)
+
+    def post(self, request, *args, **kwargs):
+        login(request, request.user)
 
         return response.Response(
-            UserSerializer(
+            serializers.UserSerializer(
                 request.user,
                 context={'request': request}
             ).data)
-        # user = serializer.user
-        # token, _ = Token.objects.get_or_create(user=user)
-        # user_logged_in.send(sender=user.__class__, request=self.request, user=user)
-        # return Response(
-        #     data=serializers.TokenSerializer(token).data,
-        #     status=status.HTTP_200_OK,
-        # )
 
+    def delete(self, request, *args, **kwargs):
+        logout(request)
 
-class LogoutView(views.APIView):
-    """
-    Use this endpoint to logout user (remove user authentication token).
-    """
-    permission_classes = (
-        permissions.IsAuthenticated,
-    )
-
-    def post(self, request):
-        Token.objects.filter(user=request.user).delete()
-        user_logged_out.send(sender=request.user.__class__, request=request, user=request.user)
-        return response.Response(status=status.HTTP_200_OK)
+        return response.Response({})
 
 
 class PasswordResetView(utils.ActionViewMixin, utils.SendEmailViewMixin, generics.GenericAPIView):
