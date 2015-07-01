@@ -14,4 +14,4 @@ if not settings.PROD and settings.DEBUG:
         url(r'^(?P<path>(?:js|css|img|data)/.*)$', 'serve'),
     )
 
-urlpatterns = format_suffix_patterns(urlpatterns)
+    urlpatterns = format_suffix_patterns(urlpatterns)
