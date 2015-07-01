@@ -175,6 +175,10 @@ class Record(AudioFile, Trash):
             Разделяем запись на собеседников
         """
 
+        # Проверяем, есть ли уже куски
+        if len(self.pieces) > 0:
+            return
+
         # Загружаем ролик
         audio_file_path = settings.MEDIA_ROOT + self.audio_file_format('wav')
 
