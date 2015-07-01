@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+import django.db.models.signals as signals
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
@@ -235,7 +236,14 @@ class Queue(AudioFile):
         transcriptions = []
 
         for piece in self.pieces:
-            queue_ids = piece.all_transcriptions.values('queue_id').distinct()
+            # Определяем очереди, которые участвовали в проверке
+            # Это очереди этого куска и очередь на проверку предыдущего.
+            queue_ids = list(Queue.objects.\
+                filter(piece_id=piece.id, completed__isnull=False).\
+                values_list('id', flat=True).distinct())
+
+            if piece.previous and piece.previous.check_transcription_queue.completed:
+                queue_ids.append(piece.previous.check_transcription_queue.id)
 
             # Если версия предыдущая, берём первую транскрибцию из очереди младше
             if version == -1:
@@ -381,3 +389,39 @@ class Queue(AudioFile):
         )
 
         return audio_file_path
+
+def create_queue_payment(sender, instance, created, raw, using, update_fields, **kwargs):
+    # Берём дефолтный прайс для объекта
+    if not instance.completed:
+        return
+
+    # Если есть платёж, новый не создаём
+    try:
+        type_id = ContentType.objects.get_for_model(type(instance)).id
+        payment = Payment.objects.get(content_type_id=type_id, object_id=instance.id)
+        return
+    except Payment.DoesNotExist:
+        pass
+
+    # TODO: Если платёж по этому объекту уже есть, то ничего не делать
+
+    owner = instance.owner
+
+    price = instance.price
+
+    total = instance.total_price
+
+    payment = Payment(
+        content_object=instance,
+        price=price,
+        total=total,
+        owner=owner)
+
+    owner.account.balance += total
+
+    payment.save()
+    owner.account.save()
+
+# register the signal
+signals.post_save.connect(create_queue_payment, sender=Queue)
+

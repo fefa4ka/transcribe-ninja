@@ -2,20 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-import django.db.models.signals as signals
-
-from transcribe.models import *
-
-from core.models import *
 
 from account import Price
 
-from order import Order
-
-from queue import Queue
 
 class Payment(models.Model):
 
@@ -47,65 +38,5 @@ class Payment(models.Model):
     created = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey('auth.User', related_name='user_payments')
 
-
-def create_order_payment(sender, instance, created, **kwargs):
-    if not created:
-        return
-
-    owner = instance.owner
-
-    object_id = ContentType.objects.get_for_model(type(instance)).id
-    price = Price.objects.filter(content_type_id=object_id, default=1)[0]
-    duration = instance.end_at - instance.start_at
-    total = price.price * duration / 60
-
-    payment = Payment(
-        content_object=instance,
-        price=price,
-        total=total,
-        owner=owner)
-
-    owner.account.balance -= total
-
-    payment.save()
-    owner.account.save()
-
-    instance.record.progress = 1
-    instance.record.save()
-
-
-def create_queue_payment(sender, instance, created, raw, using, update_fields, **kwargs):
-    # Берём дефолтный прайс для объекта
-    if not instance.completed:
-        return
-
-    # Если есть платёж, новый не создаём
-    try:
-        type_id = ContentType.objects.get_for_model(type(instance)).id
-        payment = Payment.objects.get(content_type_id=type_id, object_id=instance.id)
-        return
-    except Payment.DoesNotExist:
-        pass
-
-    # TODO: Если платёж по этому объекту уже есть, то ничего не делать
-
-    owner = instance.owner
-
-    price = instance.price
-
-    total = instance.total_price
-
-    payment = Payment(
-        content_object=instance,
-        price=price,
-        total=total,
-        owner=owner)
-
-    owner.account.balance += total
-
-    payment.save()
-    owner.account.save()
-
-# register the signal
-signals.post_save.connect(create_order_payment, sender=Order)
-signals.post_save.connect(create_queue_payment, sender=Queue)
+    def __unicode__(self):
+        return "Payment for %s: %s" % (self.content_object.__class__.__name__, self.content_object)

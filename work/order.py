@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-
+from django.db.models import Sum
+import django.db.models.signals as signals
 from django.contrib.contenttypes.models import ContentType
-
 from django.conf import settings
 
-from transcribe.models import *
-
-from core.models import *
+from core.models import Trash
+from transcribe.models import Record
 
 from account import Price
+from payment import Payment
 
 from pydub import AudioSegment
 
@@ -44,7 +44,7 @@ class Order(Trash):
 
     def spent_money(self, work_type=0, owner_id=None):
         # Берём айдишники выполненной очереди
-        object_id = ContentType.objects.get_for_model(Queue).id
+        object_id = ContentType.objects.get_for_model(self.queue.all()[0]).id
         if owner_id:
             queue_ids = self.queue.filter(completed__isnull=False, work_type=work_type, owner_id=owner_id).values('id').distinct()
         else:
@@ -122,3 +122,32 @@ class Order(Trash):
 
     def flush_queue(self):
         self.queue.all().delete()
+
+
+def create_order_payment(sender, instance, created, **kwargs):
+    if not created:
+        return
+
+    owner = instance.owner
+
+    object_id = ContentType.objects.get_for_model(type(instance)).id
+    price = Price.objects.filter(content_type_id=object_id, default=1)[0]
+    duration = instance.end_at - instance.start_at
+    total = price.price * duration / 60
+
+    payment = Payment(
+        content_object=instance,
+        price=price,
+        total=total,
+        owner=owner)
+
+    owner.account.balance -= total
+
+    payment.save()
+    owner.account.save()
+
+    instance.record.progress = 1
+    instance.record.save()
+
+
+signals.post_save.connect(create_order_payment, sender=Order)
