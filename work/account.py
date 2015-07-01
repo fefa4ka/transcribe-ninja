@@ -50,6 +50,9 @@ class Account(models.Model):
     balance = models.FloatField(default=0)
     site = models.CharField(max_length=50)
 
+    def __unicode__(self):
+        return self.user.username
+
     @property
     def work_length(self):
         """
