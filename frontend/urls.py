@@ -6,6 +6,8 @@ from django.conf.urls import patterns, url
 
 from rest_framework.urlpatterns import format_suffix_patterns
 
+urlpatterns = ()
+
 # В продакшене фронтенд отдаёт NGINX
 if not settings.PROD and settings.DEBUG:
     urlpatterns = patterns(
@@ -14,4 +16,4 @@ if not settings.PROD and settings.DEBUG:
         url(r'^(?P<path>(?:js|css|img|data)/.*)$', 'serve'),
     )
 
-    urlpatterns = format_suffix_patterns(urlpatterns)
+urlpatterns = format_suffix_patterns(urlpatterns)
