@@ -50,9 +50,10 @@ class Piece(models.Model):
     def transcriptions(self):
         # Смотрим какие очереди выполненны
         # последними и от них выдаём транскрибцию.
-        previous_check_queue = self.previous.check_transcription_queue
+        if self.previous:
+            previous_check_queue = self.previous.check_transcription_queue
 
-        if previous_check_queue.completed\
+        if self.previous and previous_check_queue.completed\
             and self.check_transcription_queue.completed\
             and previous_check_queue.completed > self.check_transcription_queue.completed:
             queue_id = previous_check_queue.id

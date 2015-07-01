@@ -23,7 +23,7 @@
 
 <div class="transcription row">
     <div class="col-xs-12 col-md-9">
-        <p class="offset-top col-md-offset-1" ng-show="queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
+        <p class="offset-top col-md-offset-1" ng-show="queue.work_type && queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
             <li class="row" ng-repeat="transcription in piece.transcriptions">
@@ -86,7 +86,7 @@
             </li>
         </ul>
         
-        <p class="offset-bottom col-md-offset-1" ng-show="queue.offset_parts[1]">{{ queue.offset_parts[1] }}...</p>
+        <p class="offset-bottom col-md-offset-1" ng-show="queue.work_type && queue.offset_parts[1]">{{ queue.offset_parts[1] }}...</p>
         
         
         <section class="controls col-md-offset-1">

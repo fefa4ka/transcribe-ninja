@@ -26,7 +26,7 @@ angular.module( 'transcribe-ninja.api', [
       logout: { method: 'DELETE' }
     }),
 
-    account: $resource('/api/account/', {}, {
+    account: $resource('/api/auth/me/', {}, {
       get: {
         method: 'GET'
       }

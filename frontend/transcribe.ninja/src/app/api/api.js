@@ -14,7 +14,7 @@ angular.module( 'transcribe-ninja.api', [
 
 
   return {
-    auth: $resource("/api/auth/login/", {}, {
+    auth: $resource("/api/auth/basic/", {}, {
       register: {
         url: "/api/auth/register/",
         method: 'POST'
@@ -23,7 +23,9 @@ angular.module( 'transcribe-ninja.api', [
         method: 'POST', 
         transformRequest: add_auth_header
       },
-      logout: { method: 'DELETE' }
+      logout: { 
+        method: 'DELETE' 
+      }
     }),
 
     account: $resource('/api/auth/me/', {}, {
