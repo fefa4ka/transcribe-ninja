@@ -52,7 +52,10 @@ UUID = '12345A781234567B1234567812345678'
 
 # Application definition
 INSTALLED_APPS = (
+    'bootstrap_admin',
     'django.contrib.admin',
+    'django_rq_dashboard',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -95,6 +98,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
 )
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, "admin/templates/"),)
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 

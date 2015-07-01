@@ -3,19 +3,17 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
 
 from rest_framework import viewsets
 
 import core.async_jobs
 
-# from core.models import *
 from work.models import Queue
 
 from serializers import *
 
-# from api.serializers import *
 from api.permissions import *
-# from api.authentication import *
 
 from datetime import datetime
 
@@ -138,15 +136,15 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
             id=request.data[0]['queue'], owner=request.user)
 
         if queue.completed:
-            return Response({'error': 'Queue already completed'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
 
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)
             if not serializer.is_valid():
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
             if data['queue'] != queue.id:
-                return Response({'error': 'Queue should be the same'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
 
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)
@@ -164,4 +162,4 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # Меняем приоритет у других кусков и перерасчёт бабла
         core.async_jobs.update_near.delay(queue)
 
-        return Response({'done': 'ok'}, status=status.HTTP_201_CREATED)
+        return Response({'done': 'ok'}, status=HTTP_201_CREATED)
