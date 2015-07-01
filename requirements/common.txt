@@ -5,7 +5,7 @@ django-rq==0.7.0    # Async process
 djangorestframework==3.1 # REST API
 markdown==2.5.2       # Markdown support for the browsable API.
 django-rq-dashboard
-django-filter=0.10  # Filtering support
+django-filter=0.10.0  # Filtering support
 #https://github.com/fefa4ka/voiceid/archive/master.zip
 numpy==1.9.1
 pydub==0.9.5
