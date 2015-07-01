@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.db.models import FileField
 from django.forms import forms
@@ -23,7 +25,7 @@ class TrashManager(models.Manager):
         query_set = super(TrashManager, self).get_queryset()
         return query_set.filter(trashed_at__isnull=False)
 
-
+# TODO: Нихуя не работает
 class ContentTypeRestrictedFileField(FileField):
 
     """

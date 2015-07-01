@@ -3,7 +3,7 @@
     ng-controller="RecordUploadCtrl">
         <img src="/static/assets/logo.svg" class="logo">
         <h1>– Расшифровка звука в текст</h1>
-        <ul class="nav nav-pills">
+        <ul class="nav nav-pills" ng-hide="true">
             <li class="upload-button">
                 <span class="btn btn-primary btn-file"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
             </li>
@@ -21,12 +21,7 @@
         <p>
             <strong>Конфиденциально</strong>
         </p>
-        <h6>Пример стенограммы</h6>
-        <ul>
-            <li><a href="#">Интервью</a></li>
-            <li><a href="#">Фокус группа</a></li>
-            <li><a href="#">Выступление</a></li>
-        </p>
+ 
     </section>
 
     <section class="col-md-6 description">

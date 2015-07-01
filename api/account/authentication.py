@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 from rest_framework.authentication import BasicAuthentication
 
 

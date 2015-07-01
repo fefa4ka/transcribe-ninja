@@ -23,10 +23,12 @@ angular.module( 'transcribe-ninja.api', [
         method: 'POST', 
         transformRequest: add_auth_header
       },
-      logout: { method: 'DELETE' }
+      logout: { 
+        method: 'DELETE' 
+      }
     }),
 
-    account: $resource('/api/account/', {}, {
+    account: $resource('/api/auth/me/', {}, {
       get: {
         method: 'GET'
       }
