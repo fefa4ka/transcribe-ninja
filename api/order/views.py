@@ -1,26 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from django.shortcuts import get_object_or_404
-
 from rest_framework.response import Response
-
-# import rest_framework_bulk.mixins
+from rest_framework import mixins
+from rest_framework.viewsets import GenericViewSet
 
 import core.async_jobs
 
-from core.models import *
+from serializers import *
 
-from api.serializers import *
 from api.permissions import *
-from api.authentication import *
-
-from datetime import datetime
 
 
 class OrderViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
                    mixins.DestroyModelMixin,
-                   viewsets.GenericViewSet):
+                   GenericViewSet):
 
     """
         Заказ на транскрибцию

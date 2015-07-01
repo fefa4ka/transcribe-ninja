@@ -52,9 +52,16 @@ class QueueViewSet(viewsets.ViewSet,
         return Response(serializer.data)
 
     def get_queue(self):
-        queues = Queue.objects.filter(priority__in=[1,2],
-                                      locked__isnull=True,
-                                      completed__isnull=True).order_by('?')[:10]
+        # Если слепой, выдаём задачи на транскрибирование
+        if self.request.user.account.blind:
+            queues = Queue.objects.filter(work_type=0,
+                                          priority__in=[1,2],
+                                          locked__isnull=True,
+                                          completed__isnull=True).order_by('?')[:10]
+        else:
+            queues = Queue.objects.filter(priority__in=[1,2],
+                                          locked__isnull=True,
+                                          completed__isnull=True).order_by('?')[:10]
 
         for q in queues:
             # Если над какой-то из частей работал этот пользователь - ищем

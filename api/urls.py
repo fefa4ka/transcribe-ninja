@@ -41,9 +41,6 @@ urlpatterns += (
     url(r'api/', include(router.urls)),
 
     url(r'^api/auth/', include('api.account.urls')),
-    url(r'^api/auth/basic',
-        views.AuthView.as_view(),
-        name='authenticate'),
     url(r'api/social/', include('social_auth.urls')),
 
     # url(r'^api/queue/',

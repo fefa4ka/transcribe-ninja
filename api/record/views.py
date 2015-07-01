@@ -2,25 +2,25 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import get_object_or_404
 
-
-from rest_framework import viewsets
 from rest_framework import mixins
-from rest_framework import status
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.generics import ListAPIView
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from rest_framework.response import Response
 
 import core.async_jobs
 
-from core.models import *
+from transcribe.models import Record
 
-from api.serializers import *
+from serializers import *
+
 from api.permissions import *
-from api.authentication import *
 
 
 class RecordViewSet(mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
-                    viewsets.GenericViewSet):
+                    GenericViewSet):
     """
         Обработка данных про записи.
         Список записей, Просмотр, Удаление.
@@ -55,11 +55,29 @@ class RecordViewSet(mixins.ListModelMixin,
         # Если плохие данные, выдаём ошибку
         return Response(
             serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST)
+            status=HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
-        queryset = Record.objects.all()
+        queryset = Record.objects.filter(owner=request.user)
         record = get_object_or_404(queryset, pk=pk)
         serializer = RecordDetailSerializer(record)
 
         return Response(serializer.data)
+
+
+class PieceViewSet(ListAPIView):
+    """
+        Список кусков записи
+    """
+    model = Piece
+    serializer_class = PieceSerializer
+    permission_classes = (permissions.IsAuthenticated,
+                          IsOwner,)
+
+    def get_queryset(self):
+        """
+            Список кусков, только для конкретной записи record_id
+        """
+        record_id = self.kwargs['record_id']
+        return Piece.objects.filter(record_id=record_id)
+

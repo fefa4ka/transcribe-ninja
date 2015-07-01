@@ -3,12 +3,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from core.models import *
+# from core.models import *
 
-from api.serializers import *
+# from api.serializers import *
 from api.permissions import *
-from api.authentication import *
-
+# from api.authentication import *
+from work.models import Queue
 
 class StatisticsView(APIView):
     permission_classes = (permissions.IsAuthenticated,
@@ -27,7 +27,6 @@ class StatisticsView(APIView):
         queues = None
 
         try:
-
             if 'unchecked' in self.request.QUERY_PARAMS:
                 queues = account.queues(unchecked=True, after_date=after_date).order_by('-completed')
 
