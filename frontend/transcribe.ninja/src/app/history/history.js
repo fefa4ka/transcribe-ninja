@@ -51,7 +51,7 @@ angular.module( 'transcribe-ninja.history', [
       });
   };
 
-  $scope.chekedPageChanged = function() {
+  $scope.checkedPageChanged = function() {
     api.history.list({ checked: true, page: $scope.uncheckedQueuePage }).
       $promise.then(function(data) {
         $scope.checkedQueues.results = data.results;
@@ -74,7 +74,7 @@ angular.module( 'transcribe-ninja.history', [
   };
                   
   // Ya.Metrica
-  yaCounter27735045.reachGoal('history');
+  // yaCounter27735045.reachGoal('history');
 
 
 

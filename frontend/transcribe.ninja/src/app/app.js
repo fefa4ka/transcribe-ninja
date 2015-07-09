@@ -49,17 +49,16 @@ angular.module( 'transcribe-ninja', [
       event.preventDefault();
 
       // Мог ещё не подгрузится логин
-      api.account.get().
-        $promise.
-        then(function (data) {
-          if(angular.isUndefined(data.id)) {
+      $http.get('/api/auth/me/').
+        success(function(data, status, headers, config) {
+          $rootScope.currentUser = data;
+            $state.go(toState.name, toParams);
+            
+        }).
+        error(function(data, status, headers, config) {
             $scope.authModal(function () {
               return $state.go(toState.name, toParams);
             });
-          } else {
-            $rootScope.currentUser = data;
-            $state.go(toState.name, toParams);
-          }
         });
       
     }
