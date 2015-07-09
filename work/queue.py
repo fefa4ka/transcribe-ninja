@@ -72,7 +72,7 @@ class Queue(AudioFile):
         default=TRANSCRIBE
     )
 
-    priority = models.IntegerField(default=0, max_length=1)
+    priority = models.IntegerField(default=0)
 
     work_length = models.IntegerField(default=0)
     mistakes_length = models.IntegerField(default=0)
