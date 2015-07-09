@@ -181,7 +181,7 @@ class Record(AudioFile, Trash):
         """
 
         # Проверяем, есть ли уже куски
-        if len(self.pieces) > 0:
+        if self.pieces.count() > 0:
             return
 
         # Загружаем ролик
