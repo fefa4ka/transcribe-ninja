@@ -12,7 +12,7 @@
         <ul>
             <li>
                 <label class="price">
-                    Стенографирование (15 ₷ / минута)
+                    Стенографирование (12 ₷ / минута)
                 </label>
                 <label class="price pull-right">
                     {{ record.duration / 60 * 15 | number: 0 }} ₷
@@ -36,7 +36,7 @@
             </li>
             <li>
                 <label>
-                    Транскрипция в .doc .pdf .srt .xls .txt
+                    Транскрипция в .doc .srt .xls .txt
                 </label>
                 <label class="pull-right">
                     Бесплатно
@@ -44,7 +44,7 @@
             </li>
         </ul>
         <p class="total-price pull-right">
-            Итого: {{ record.duration / 60 * 15 | number: 0 }} ₷
+            Итого: {{ record.duration / 60 * 12 | number: 0 }} ₷
         </p>
         </div>
     </div>

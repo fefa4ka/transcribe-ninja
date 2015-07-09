@@ -64,7 +64,8 @@ angular.module( 'transcribe-ninja.record.upload', [
     authModal = $scope.authModal;
 
   $modalInstance = {};
-  
+  $scope.modal = {};
+
   $scope.open = function(){
     $modalInstance = $modal.open({
       templateUrl: 'record/upload/upload.list.tpl.html',
@@ -113,6 +114,8 @@ angular.module( 'transcribe-ninja.record.upload', [
       },
       size: 'lg'
     });
+
+    $scope.modal=$modalInstance;
   };
 
   uploader.playerInit = function () {
@@ -146,12 +149,14 @@ angular.module( 'transcribe-ninja.record.upload', [
   uploader.onSuccessItem = function(item, response, status, headers) {
     uploader.clearQueue();
 
+    console.log($modalInstance, $scope.modal);
     $modalInstance.close();
 
     $state.go('record-list', { });
   };
 
   uploader.onCompleteAll = function() {
+    console.log($modalInstance, $scope.modal);
       $modalInstance.close();
       uploader.clearQueue();
   };
