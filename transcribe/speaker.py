@@ -7,7 +7,7 @@ from django.db import models
 class Speaker(models.Model):
 
     """
-        Собеседники в записи
+        Организация в которой
 
         name   - имя
         gender - пол

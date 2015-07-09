@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin import StackedInline
 from django.db.models import Sum
@@ -67,7 +68,7 @@ class UserAdmin(UserAdmin):
         queue_object_id = ContentType.objects.get_for_model(Queue).id
         order_object_id = ContentType.objects.get_for_model(Order).id
 
-        if instance.account.site == "transcribe.ninja":
+        if settings.DOMAIN == "transcribe.ninja":
             object_id = queue_object_id
         else:
             object_id = order_object_id

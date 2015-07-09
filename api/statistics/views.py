@@ -22,7 +22,8 @@ class StatisticsView(APIView):
             "mistakes_length": 0,
             "checked_length": 0,
             "duration_transcribe": 0,
-            "duration_check": 0
+            "duration_check": 0,
+            "total_price": 0
         }
         queues = None
 
@@ -54,6 +55,8 @@ class StatisticsView(APIView):
                     statistics["duration_transcribe"] += queue.duration
                 elif queue.work_type == Queue.EDIT:
                     statistics["duration_check"] += queue.duration
+
+                statistics["total_price"] += queue.total_price
 
             return Response(statistics)
         except:

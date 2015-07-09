@@ -47,7 +47,6 @@ class Account(models.Model):
 
     blind = models.BooleanField(default=0)
     rating = models.FloatField(default=0)
-    balance = models.FloatField(default=0)
     site = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -66,6 +65,24 @@ class Account(models.Model):
         except:
             # Если не работал. Вылетает ошибка, потому что не нашлись записи
             return 0
+
+    @property
+    def balance(self):
+        from .models import Queue, Order
+
+        queue_object_id = ContentType.objects.get_for_model(Queue).id
+        order_object_id = ContentType.objects.get_for_model(Order).id
+
+        if settings.DOMAIN == "transcribe.ninja":
+            object_id = queue_object_id
+        else:
+            object_id = order_object_id
+
+        for balance in self.balances:
+            if balance['content_type_id'] == object_id:
+                return balance["total"] or 0
+
+        return 0
 
     @property
     def balances(self):

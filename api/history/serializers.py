@@ -13,5 +13,5 @@ class HistorySerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "work_type", "duration",
-            "work_length",
+            "work_length", "total_price",
             "mistakes_length", "completed", "checked")

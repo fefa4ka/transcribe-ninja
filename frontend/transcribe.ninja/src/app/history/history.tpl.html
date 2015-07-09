@@ -7,7 +7,7 @@
             <tr>
                 <th>Задача</th>
                 <th class="length">Количество <small>символов</small></th>
-                <th class="length">Время набора</th>
+                <th class="length">Заработано</th>
             </tr>
             <tr ng-repeat="queue in uncheckedQueues.results" ng-mouseover="currentQueue = queue.id">
                 <td class="work-type">
@@ -17,14 +17,11 @@
                 <td class="length">
                     {{ queue.work_length }} 
                 </td>
-                <td class="text-right">
-                    {{ queue.completed | date : 'd MMM в HH:mm' }}
+                <td class="length">
+                    {{ queue.total_price | number : 2 }} ₷ 
                 </td>
             </tr>
         </table>
-        <script id="historydiff.html" type="text/ng-template">
-          dlsadlasd
-        </script>
         <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="uncheckedPageChanged()"></pagination>
 
         
@@ -37,7 +34,7 @@
                 <th>Период</th>
                 <th class="length">Напечатано <small>символов</small></th>
                 <th class="length">Исправлено <small>символов</small></th>
-                <th class="length">Проверено <small>символов</small></th>
+                <th class="length">Заработано</th>
             </tr>
             <tr class="statistics" ng-repeat="stat in statistics" ng-show="stat.work_length > 0 && statistics[$index-1].work_length != stat.work_length">
                 <td>
@@ -50,7 +47,7 @@
                     {{ stat.mistakes_length }}
                 </td>
                 <td class="length checked">
-                    {{ stat.checked_length }}
+                    {{ stat.total_price | number : 2 }} ₷
                 </td>
             </tr>
         </table>
@@ -63,7 +60,7 @@
                     <th>Задача</th>
                     <th class="length">Набрано <small>символов</small></th>
                     <th class="length">Исправлено <small>символов</small></th>
-                    <th class="length">Проверено <small>символов</small></th>
+                    <th class="length">Заработано</th>
                 </tr>
                 <tr ng-repeat="queue in checkedQueues.results">
                     <td class="work-type">
@@ -77,7 +74,7 @@
                         {{ queue.mistakes_length  }}
                     </td>
                     <td class="length checked">
-                        {{ queue.work_length - queue.mistakes_length  }}
+                        {{ queue.total_price | number : 2 }} ₷
                     </td>
                 </tr>
             </table>
