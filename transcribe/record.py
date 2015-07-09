@@ -19,8 +19,6 @@ from core.extra import *
 
 from pydub import AudioSegment
 
-from speaker import Speaker
-
 
 class Record(AudioFile, Trash):
 
@@ -181,6 +179,9 @@ class Record(AudioFile, Trash):
         """
             Разделяем запись на собеседников
         """
+        from speaker import Speaker
+        from piece import Piece
+
 
         # Проверяем, есть ли уже куски
         if self.pieces.count() > 0:
