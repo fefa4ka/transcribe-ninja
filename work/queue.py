@@ -419,8 +419,6 @@ def create_queue_payment(sender, instance, created, raw, using, update_fields, *
         total=total,
         owner=owner)
 
-    owner.account.balance += total
-
     payment.save()
     owner.account.save()
 

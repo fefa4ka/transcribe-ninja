@@ -147,8 +147,6 @@ def create_order_payment(sender, instance, created, **kwargs):
         total=total,
         owner=owner)
 
-    owner.account.balance -= total
-
     payment.save()
     owner.account.save()
 

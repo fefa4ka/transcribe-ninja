@@ -22,7 +22,7 @@ angular.module( 'transcribe-ninja.order', [
 
         callback();
         
-        $modalInstance.dismiss();
+        $modalInstance.dismiss('cancel');
 
 
     };
