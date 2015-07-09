@@ -1,5 +1,5 @@
 angular.module( 'transcribe-ninja.record.upload', [
-  'transcribe-ninja.player',
+  'ngAudio',
   'ui.router',
   'angularFileUpload'
   ])
@@ -26,24 +26,24 @@ angular.module( 'transcribe-ninja.record.upload', [
     };
 }])
 
-.directive('tnGetDuration', function () {
-  return {
-    link: function (scope, element, attrs) {
-      element.on('canplaythrough', function (e) {
-        scope.item.formData[0].duration = e.target.duration;
-        scope.$apply();
-      });
-    }
-  };
-})
+// .directive('tnGetDuration', function () {
+//   return {
+//     link: function (scope, element, attrs) {
+//       element.on('canplaythrough', function (e) {
+//         scope.item.formData[0].duration = e.target.duration;
+//         scope.$apply();
+//       });
+//     }
+//   };
+// })
 
-.controller( 'RecordUploadCtrl', ["$scope", "$translate", "$modal", "FileUploader", "$state", "api", function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $state, api ) {
+.controller( 'RecordUploadCtrl', ["$scope", "$translate", "$modal", "FileUploader", "$state", "api", "ngAudio", function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $state, api, ngAudio ) {
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
+            var cookie = cookies[i].trim();
             // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) == (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -71,6 +71,10 @@ angular.module( 'transcribe-ninja.record.upload', [
       windowClass: 'upload-modal',
       controller: ["$scope", "$modalInstance", "$log", "$rootScope", "uploader", function($scope, $modalInstance, $log, $rootScope, uploader){
         $scope.uploader = uploader;
+
+        
+        
+        $scope.sound = ngAudio.load($scope.uploader.queue[0].formData[0].file);
 
         $scope.startUpload = function () {
           // Если не залогинен логинимся
@@ -113,9 +117,9 @@ angular.module( 'transcribe-ninja.record.upload', [
 
   uploader.playerInit = function () {
     console.log('player init', $scope);
-    $scope.wavesurfer.on('ready', function() {
-      console.log('wavesurfer load', $scope.wavesurfer);
-    });
+    // $scope.wavesurfer.on('ready', function() {
+    //   console.log('wavesurfer load', $scope.wavesurfer);
+    // });
   };
 
   uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {

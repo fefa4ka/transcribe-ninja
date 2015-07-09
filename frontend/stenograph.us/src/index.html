@@ -20,7 +20,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- font awesome from BootstrapCDN -->
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet">
 
     <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
     <link rel="stylesheet" type="text/css" href="/static/<%= file %>" /><% }); %>
@@ -59,13 +59,6 @@
                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="#">Оплата</a>
-                            </li>
-                            <li>
-                                <a href="#">Учётная запись</a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
                                 <a href="#" ng-click="logout()">Выход</a>
                             </li>
                         </ul>
@@ -82,8 +75,15 @@
 
     <section class="container footer row-fluid navbar-fixed-bottom">
         <div class="row-fluid">
-          
-            <div class=" col-md-offset-1 col-md-5 second">
+            <div ng-class="stateName == 'main' ? 'col-md-5 col-md-offset-1 first-to-right' : 'col-md-6 first-to-left'">
+                <ul class="list-inline">
+                    <li>
+                        <a ui-sref="record-list">Ваши записи</a>
+                    </li>
+                    <li>API</li>
+                </ul>
+            </div>
+            <div class="col-md-5 second">
                 <ul class="list-inline">
                     <li>
                         <a href="mailto:info@stenographus.ru">Обратная связь</a>

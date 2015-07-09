@@ -31,14 +31,13 @@ class PieceSerializer(serializers.ModelSerializer):
 
 
 class RecordSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Record
         fields = (
             "id",
             "title", "audio_file",
             "duration", "speakers",
-            "completed", "progress")
+            "completed", "progress", "order")
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):
@@ -51,4 +50,4 @@ class RecordDetailSerializer(serializers.ModelSerializer):
             "title", "audio_file",
             "duration",
             "completed", "progress",
-            "transcriptions")
+            "transcriptions", "order")

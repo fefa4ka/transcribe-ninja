@@ -1,6 +1,7 @@
 angular.module( 'transcribe-ninja.record.list', [
   'transcribe-ninja.order',
-  'ui.router'
+  'ui.router',
+  'ngAudio'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
@@ -32,8 +33,10 @@ angular.module( 'transcribe-ninja.record.list', [
 
   $scope.records = api.record.list();
 
+  $scope.floor = Math.floor;
   $scope.upload = function() {
     $('input[type=file]').click();
+
   };
 
   $scope.remove = function ( record ) {

@@ -71,28 +71,11 @@ module.exports = {
       'vendor/es5-shim/es5-shim.js',
       'vendor/angular-translate/angular-translate.min.js',
       'vendor/angular-file-upload/angular-file-upload.js',
-      'vendor/angular-hotkeys/build/hotkeys.min.js',
       'vendor/angular-resource/angular-resource.js',
+      'vendor/angular-audio/app/angular.audio.js',
       'vendor/jquery/dist/jquery.js',
-      'vendor/wavesurfer.js/src/wavesurfer.js',
-      'vendor/wavesurfer.js/src/util.js',
-      'vendor/wavesurfer.js/src/webaudio.js',
-      'vendor/wavesurfer.js/src/mediaelement.js',
-      'vendor/wavesurfer.js/src/drawer.js',
-      'vendor/wavesurfer.js/src/drawer.canvas.js',
-      'vendor/wavesurfer.js/plugin/wavesurfer.regions.js',
-      'vendor/peaks.js/peaks.min.js',
-      'vendor/peaks.js/peaks.min.map',
-      'vendor/angular-elastic/elastic.js',
-      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js'
-      // 'vendor/jquery/dist/jquery.js',
-      // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
-
-      
-      
     ],
     css: [
-      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.css'
     ],
     assets: [
     ]

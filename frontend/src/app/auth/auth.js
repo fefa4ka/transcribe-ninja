@@ -6,7 +6,7 @@ angular.module( 'transcribe-ninja.auth', [
 
 })
 
-.controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, hotkeys, api ) {
+.controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
     $scope.authCallback = authCallback;
 
     $scope.cancel = function () {

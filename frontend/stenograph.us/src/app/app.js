@@ -33,10 +33,18 @@ angular.module( 'transcribe-ninja', [
   $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
 }])
 
+.filter('secondsToDateTime', function() {
+    return function(seconds) {
+        var d = new Date(0,0,0,0,0,0,0);
+        d.setSeconds(seconds);
+        return d;
+    };
+})
+
 .run( function run () {
 })
 
-.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "$interval", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, $interval, api ) {
+.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "$interval", "$http", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, $interval, $http, api ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Стенограф.ус' ;
@@ -49,21 +57,19 @@ angular.module( 'transcribe-ninja', [
 
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
-
+      console.log("stat change");
       // Мог ещё не подгрузится логин
-      api.account.get().
-        $promise.
-        then(function (data) {
-          if(angular.isUndefined(data.id)) {
+      $http.get('/api/auth/me/').
+        success(function(data, status, headers, config) {
+          $rootScope.currentUser = data;
+            $state.go(toState.name, toParams);
+            
+        }).
+        error(function(data, status, headers, config) {
             $scope.authModal(function () {
               return $state.go(toState.name, toParams);
             });
-          } else {
-            $rootScope.currentUser = data;
-            $state.go(toState.name, toParams);
-          }
         });
-      
     }
   });
 

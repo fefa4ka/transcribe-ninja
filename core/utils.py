@@ -23,6 +23,20 @@ def upload_record_path(instance, file_name):
                     extension))
 
 
+def upload_export_path(instance, file_name):
+    """
+    Папка и имя записи
+    """
+
+    file_name, extension = os.path.splitext(file_name)
+
+    return urlquote("record/export/%s%s" % (
+                    md5(
+                        file_name.encode('utf8') + str(time.time()) + extension
+                    ).hexdigest(),
+                    extension))
+
+
 def upload_queue_path(instance, file_name=""):
     """
         Папка и имя для аудиофрагмента от записи
