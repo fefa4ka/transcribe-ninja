@@ -186,6 +186,19 @@ RQ_QUEUES = {
     }
 }
 
+RQ = {
+    'host': HOSTS['REDIS'],
+    'port': 6379,
+    'db': 0,
+    'password': None,
+    'socket_timeout': None,
+    'connection_pool': None,
+    'charset': 'utf-8',
+    'errors': 'strict',
+    'decode_responses': False,
+    'unix_socket_path': None,
+}
+
 # Fixtures
 FIXTURE_DIRS = (
     os.path.join(BASE_DIR, "app/fixtures/"),
@@ -223,9 +236,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny'
     ],
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler',
-    # Pagination,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination'
+    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
 }
 
 
