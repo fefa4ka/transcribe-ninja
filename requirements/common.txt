@@ -17,3 +17,4 @@ bootstrap-admin
 djoser
 diff-match-patch
 newrelic
+xlsxwriter
