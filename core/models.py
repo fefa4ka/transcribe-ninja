@@ -195,7 +195,6 @@ class AudioFile(models.Model):
             # В первой записи делаем отступ максмум до 0
             if start_at > offset:
                 start_at = (start_at - offset) * 1000
-                start_at = start_at * 1000
             else:
                 start_at = 0
 
@@ -204,7 +203,6 @@ class AudioFile(models.Model):
                 end_at = self.duration
             else:
                 end_at = (end_at + offset) * 1000
-                end_at = end_at * 1000
 
             # Вырезаем кусок и сохраняем
             piece = as_record[start_at:end_at]
