@@ -176,7 +176,7 @@ RQ_QUEUES = {
     'analys': {
         'HOST': HOSTS['REDIS'],
         'PORT': 6379,
-        'DB': 1,
+        'DB': 0,
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     },
@@ -184,7 +184,7 @@ RQ_QUEUES = {
     'queue': {
         'HOST': HOSTS['REDIS'],
         'PORT': 6379,
-        'DB': 2,
+        'DB': 0,
         'PASSWORD': '',
         'DEFAULT_TIMEOUT': 360,
     }
