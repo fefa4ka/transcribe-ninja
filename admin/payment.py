@@ -35,7 +35,5 @@ class PaymentAdmin(ModelAdmin):
         if type(instance.content_object) == Order:
             return instance.content_object.end_at - instance.content_object.start_at
 
-    def has_add_permission(self, request):
-        return False
 
 admin_site.register(Payment, PaymentAdmin)

@@ -48,6 +48,7 @@ class AccountInline(StackedInline):
 
 
 class PaymentClientInline(TabularInline):
+    # TODO DONT WORK!!!!
     model = Payment
 
     extra = 1
@@ -61,7 +62,7 @@ class PaymentClientInline(TabularInline):
         queue_object_id = ContentType.objects.get_for_model(Queue).id
         print "EBALA"
         kwargs["queryset"] = Payment.objects.filter(owner=parent_user).exclude(content_type_id=queue_object_id)
-        
+
         return super(PaymentClientInline, self).formfield_for_foreignkey(field, request, **kwargs)
 
     def get_object(self, request, model):
@@ -85,11 +86,12 @@ class UserAdmin(UserAdmin):
         'date_joined'
     )
 
-    inlines = (AccountInline,PaymentClientInline)
+    inlines = (AccountInline,)
 
     def balance(self, instance):
         queue_object_id = ContentType.objects.get_for_model(Queue).id
         order_object_id = ContentType.objects.get_for_model(Order).id
+        account_object_id = ContentType.objects.get_for_model(Account).id
 
         if settings.DOMAIN == "transcribe.ninja":
             object_id = queue_object_id
