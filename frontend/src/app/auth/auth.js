@@ -8,40 +8,43 @@ angular.module( 'transcribe-ninja.auth', [
 
 .controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
     $scope.authCallback = authCallback;
+    $scope.logining = false;
+    $scope.alerts = [];
+    $scope.new_user = 1;
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
 
-    $scope.new_user = 1;
+    
+    $scope.closeAlert = function(index) {
+        $scope.alerts.splice(index, 1);
+    };
 
     $scope.authLogin = function() {
         var login = function () {
+            $scope.logining = true;
+
             api.auth.login({
                 username: $scope.username,
                 password: $scope.password
-            }).
-            $promise.
-                then(function(data){
+            }, function(data){
                     $modalInstance.dismiss();
 
-                    api.account.get().
-                        $promise.
-                        then(function(data) {
-                            if(angular.isUndefined(data.id)) {
-                                $rootScope.currentUser = undefined;
-                            } else {
-                                $rootScope.currentUser = data;
-                                // Если есть коллбэк
-                                if(angular.isUndefined($scope.authCallback) === false) {
-                                    $scope.authCallback();
-                                }
-                            }
-                        });
-
-                    
-                });
-            };
+                    api.account.get({}, function (data) {
+                        $rootScope.currentUser = data;
+                        // Если есть коллбэк
+                        if(angular.isUndefined($scope.authCallback) === false) {
+                            $scope.authCallback();
+                        }
+                    });  
+            }, function (data) {
+                $rootScope.currentUser = undefined;
+                $scope.logining = false;
+                
+                $scope.alerts.push({ type: 'danger', msg: 'Неправильный логин или пароль' });
+            });
+        };
 
         // Если новый, то регистрируем
         if($scope.new_user == 1) {

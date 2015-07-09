@@ -11,7 +11,7 @@
             </div>
             <div class="form-group">
                 <input tabindex="4" ng-model="username" required name="username"
-                       type="text" placeholder="Адрес электронной почты" alt="Войти через электронную почту" class="form-control"
+                       type="email" placeholder="Адрес электронной почты" alt="Войти через электронную почту" class="form-control"
                        id='auth_username'>
             </div>
             <div class="form-group">
@@ -34,6 +34,7 @@
             
     </div>
     <div class="modal-footer">
-        <input type="submit" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'" alt="Войти" tabindex="9">
+        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
+        <input type="submit" ng-hide="logining" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'" alt="Войти" tabindex="9">
     </div>
 </form>
