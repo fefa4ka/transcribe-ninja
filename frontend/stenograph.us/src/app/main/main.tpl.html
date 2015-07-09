@@ -16,7 +16,7 @@
             <strong >12 ₷</strong> за минуту стенографирования
         </p>
         <p>В цену включена разметка по времени<br/>и экспорт DOC, XLS, TXT, SRT</p>
-        <p ng-hide="false && currentUser.id && currentUser.records.length > 0">
+        <p ng-hide="true || currentUser.id && currentUser.records.length > 0">
             <strong>10 минут бесплатно</strong>
         </p>
         <p>
@@ -46,7 +46,7 @@
         </div>
         <div class="clearfix visible-xs-block"></div>
         <div class="row-fluid">
-            <div class="col-md-6" ng-hide="currentUser.id && currentUser.records.length > 0">
+            <div class="col-md-6" ng-hide="true || currentUser.id && currentUser.records.length > 0">
                 <h6>Стенографируем бесплатно</h6>
                 <p>10 минут вашей записи для демонстрации</p>
             </div>

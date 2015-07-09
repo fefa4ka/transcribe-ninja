@@ -57,7 +57,6 @@ angular.module( 'transcribe-ninja', [
 
     if (requireLogin && angular.isUndefined($rootScope.currentUser)) {
       event.preventDefault();
-      console.log("stat change");
       // Мог ещё не подгрузится логин
       $http.get('/api/auth/me/').
         success(function(data, status, headers, config) {

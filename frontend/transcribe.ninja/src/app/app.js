@@ -34,7 +34,7 @@ angular.module( 'transcribe-ninja', [
 .run( function run () {
 })
 
-.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "api", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, api ) {
+.controller( 'AppCtrl', ["$scope", "$location", "$rootScope", "$state", "$translate", "$modal", "api", "$http", function AppCtrl ( $scope, $location, $rootScope, $state, $translate, $modal, api, $http ) {
   $scope.$on('$stateChangeSuccess', function(event, toState, toParams, fromState, fromParams){
     if ( angular.isDefined( toState.data.pageTitle ) ) {
       $scope.pageTitle = toState.data.pageTitle + ' | Transcribe.ninja' ;

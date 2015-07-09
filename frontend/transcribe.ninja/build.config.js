@@ -19,6 +19,7 @@ module.exports = {
    * main HTML file, `less` is our main stylesheet, and `unit` contains our
    * app's unit tests.
    */
+   
   app_files: {
     commonjs: [ '../src/app/**/*.js', '!../src/app/**/*.spec.js' ],
     js: [ 'src/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
