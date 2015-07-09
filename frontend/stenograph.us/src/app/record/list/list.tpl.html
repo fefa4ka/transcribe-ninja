@@ -8,7 +8,7 @@
 
 <section class="records row-fluid">
     
-    <section class="inprogress col-md-4" ng-show="(records | filter : { order: '!0' }).length > 0">
+    <section class="inprogress col-sm-4" ng-show="(records | filter : { order: '!0' }).length > 0">
         <h4>Загруженные</h4>
 
         <ul class="list-unstyled">
@@ -33,7 +33,7 @@
             </li>
         </ul>
     </section>
-    <section class="inprogress col-md-4" ng-show="(records | filter : { completed: '!100', order: '0' }).length > 0">
+    <section class="inprogress col-sm-4" ng-show="(records | filter : { completed: '!100', order: '0' }).length > 0">
         <h4>В работе</h4>
 
         <ul class="list-unstyled">
@@ -59,7 +59,7 @@
             </li>
         </ul>
     </section>
-    <section class="finished col-md-4" ng-show="(records | filter : { completed_percentage: '100' }).length > 0">
+    <section class="finished col-sm-4" ng-show="(records | filter : { completed_percentage: '100' }).length > 0">
         <h4>Готовые записи</h4>
         <ul>
             <li ng-repeat="record in records | filter : { completed_percentage: '100' }">

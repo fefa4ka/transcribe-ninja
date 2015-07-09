@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.admin import StackedInline
+from django.contrib.admin import StackedInline, TabularInline
 from django.db.models import Sum
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
-from work.models import Account, Order, Queue
+from work.models import Account, Order, Queue, Payment
 
 from numpy import mean
 from site import admin_site
@@ -47,6 +47,29 @@ class AccountInline(StackedInline):
         return self.speed(instance, 1)
 
 
+class PaymentClientInline(TabularInline):
+    model = Payment
+
+    extra = 1
+    # exclude = ("user", ) # auto-update user field in save_formset method of parent modeladmin.
+    def __init__(self, model, admin_site, dist=False):
+        self.dist = dist
+        super(PaymentClientInline, self).__init__(model, admin_site)
+
+    def formfield_for_foreignkey(self, field, request, **kwargs):
+        parent_user = self.get_object(request, User)
+        queue_object_id = ContentType.objects.get_for_model(Queue).id
+        print "EBALA"
+        kwargs["queryset"] = Payment.objects.filter(owner=parent_user).exclude(content_type_id=queue_object_id)
+        
+        return super(PaymentClientInline, self).formfield_for_foreignkey(field, request, **kwargs)
+
+    def get_object(self, request, model):
+        object_id = request.META['PATH_INFO'].strip('/').split('/')[-1]
+        return model.objects.get(pk=object_id)
+
+
+
 class UserAdmin(UserAdmin):
     list_display = (
         'username',
@@ -62,7 +85,7 @@ class UserAdmin(UserAdmin):
         'date_joined'
     )
 
-    inlines = (AccountInline,)
+    inlines = (AccountInline,PaymentClientInline)
 
     def balance(self, instance):
         queue_object_id = ContentType.objects.get_for_model(Queue).id
