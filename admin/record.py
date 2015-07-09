@@ -20,6 +20,10 @@ from site import admin_site
 #     formset = PieceFormSet
 #     extra = 0
 
+class OrderInline(TabularInline):
+    model = Order
+    extra = 0
+
 
 class RecordForm(ModelForm):
 
@@ -66,7 +70,7 @@ class RecordAdmin(ModelAdmin):
 
     actions = [analys]
 
-    # inlines = [PieceInline]
+    inlines = [OrderInline]
 
     def pieces_count(self, instance):
         return instance.pieces.count()
