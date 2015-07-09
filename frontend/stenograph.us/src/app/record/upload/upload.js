@@ -77,7 +77,10 @@ angular.module( 'transcribe-ninja.record.upload', [
         
         $scope.sound = ngAudio.load($scope.uploader.queue[0].formData[0].file);
 
+
         $scope.startUpload = function () {
+          $scope.uploader.queue[0].formData[0].duration = $scope.sound.duration;
+          
           // Если не залогинен логинимся
           if (angular.isUndefined($rootScope.currentUser)) {
             var callback = function () {
