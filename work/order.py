@@ -43,6 +43,9 @@ class Order(Trash):
         return "Record %d. %d-%d" % (self.record.id, self.start_at, self.end_at)
 
     def spent_money(self, work_type=0, owner_id=None):
+        if self.queue.filter(completed__isnull=False).count() == 0:
+            return 0
+
         # Берём айдишники выполненной очереди
         object_id = ContentType.objects.get_for_model(self.queue.all()[0]).id
         if owner_id:

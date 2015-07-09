@@ -54,8 +54,11 @@ class OrderViewSet(mixins.ListModelMixin,
                     # Сохраняем заказ для определённого пользователя
                     obj = serializer.save(owner=request.user, price=price)
 
+                    # Fix Error after update to Django >1.8
+                    from copy import deepcopy
+                    obj_copy = deepcopy(obj)
                     # Создаём очередь, чтобы работать с записью
-                    core.async_jobs.make_queue.delay(obj)
+                    core.async_jobs.make_queue.delay(obj_copy)
 
                     # Если всё хорошо, отправляем информацию о созданном заказе
                     return Response(serializer.data)

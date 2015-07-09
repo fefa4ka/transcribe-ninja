@@ -111,14 +111,15 @@ class RecordAdmin(ModelAdmin):
         amount = 0
         for order in instance.orders.all():
             queue_length = Queue.objects.filter(order=order, completed__isnull=False).aggregate(Sum('work_length'))
-            amount += queue_length["work_length__sum"]
+            print queue_length
+            amount += queue_length["work_length__sum"] or 0
         return amount
 
     def mistakes_length(self, instance):
         amount = 0
         for order in instance.orders.all():
             queue_length = Queue.objects.filter(order=order, completed__isnull=False).aggregate(Sum('mistakes_length'))
-            amount += queue_length["mistakes_length__sum"]
+            amount += queue_length["mistakes_length__sum"] or 0
         return amount
 
 
