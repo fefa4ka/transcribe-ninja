@@ -19,28 +19,28 @@ from pydub import AudioSegment
 from datetime import datetime
 
 
-class Feedback(models.Model):
-    """
-        Обратная связь
+# class Feedback(models.Model):
+#     """
+#         Обратная связь
 
-        owner    - пользователь
+#         owner    - пользователь
 
-        email    - почта, если не зареган
+#         email    - почта, если не зареган
 
-        subject - тема
+#         subject - тема
 
-        text    - текст
+#         text    - текст
 
-        created - когда создан
-    """
+#         created - когда создан
+#     """
 
-    owner = models.OneToOneField(User)
-    email = models.CharField(max_length=255)
+#     owner = models.OneToOneField(User)
+#     email = models.CharField(max_length=255)
 
-    subject = models.CharField(max_length=255, blank=True, null=True)
-    text = models.TextField()
+#     subject = models.CharField(max_length=255, blank=True, null=True)
+#     text = models.TextField()
 
-    created = models.DateTimeField(auto_now=True)
+#     created = models.DateTimeField(auto_now=True)
 
 
 class Trash(models.Model):
