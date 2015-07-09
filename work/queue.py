@@ -367,6 +367,8 @@ class Queue(AudioFile):
 
             offset  - сколько записи по краям оставлять
         """
+        from django.core.files import File
+
         # Если запись уже создана, возвращаем название файла
         if self.audio_file:
             return self.audio_file_local()
