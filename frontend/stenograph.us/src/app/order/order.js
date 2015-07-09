@@ -6,7 +6,7 @@ angular.module( 'transcribe-ninja.order', [
 
 }])
 
-.controller( 'OrderModalCtrl', ["$scope", "$modalInstance", "record", "api", function OrderModalCtrl( $scope, $modalInstance, record, api ) {
+.controller( 'OrderModalCtrl', ["$scope", "$modalInstance", "record", "callback", "api", function OrderModalCtrl( $scope, $modalInstance, record, callback, api ) {
     $scope.record = record;
 
     $scope.cancel = function () {
@@ -21,6 +21,8 @@ angular.module( 'transcribe-ninja.order', [
         });
 
         $modalInstance.dismiss();
+
+        callback();
     };
 
 }])

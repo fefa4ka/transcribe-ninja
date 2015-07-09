@@ -80,7 +80,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
         $scope.startUpload = function () {
           $scope.uploader.queue[0].formData[0].duration = $scope.sound.duration;
-          
+
           // Если не залогинен логинимся
           if (angular.isUndefined($rootScope.currentUser)) {
             var callback = function () {
@@ -153,14 +153,14 @@ angular.module( 'transcribe-ninja.record.upload', [
     uploader.clearQueue();
 
     console.log($modalInstance, $scope.modal);
-    $modalInstance.close();
+    $modalInstance.dismiss();
 
     $state.go('record-list', { });
   };
 
   uploader.onCompleteAll = function() {
     console.log($modalInstance, $scope.modal);
-      $modalInstance.close();
+      $modalInstance.dismiss()
       uploader.clearQueue();
   };
 
