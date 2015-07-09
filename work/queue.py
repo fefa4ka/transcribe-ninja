@@ -10,7 +10,7 @@ from core.models import *
 from transcribe.models import *
 from account import Price
 from order import Order
-
+from payment import Payment
 from datetime import datetime
 
 import numpy as np

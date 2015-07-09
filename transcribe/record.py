@@ -75,6 +75,11 @@ class Record(AudioFile, Trash):
     def __unicode__(self):
         return "%d: %d sec" % (self.id, self.duration)
 
+    @property
+    def order(self):
+        for order in self.orders.all():
+            return order.created
+
     # Список транскрибций
     @property
     def transcriptions(self):

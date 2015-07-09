@@ -31,6 +31,11 @@ from piece import Piece
 
 from transcription import Transcription
 
+from speaker import Speaker
+
+from export import Export
+
+
 class Logs(models.Model):
 
     """

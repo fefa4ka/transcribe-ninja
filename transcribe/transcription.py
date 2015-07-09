@@ -11,6 +11,8 @@ from speaker import Speaker
 
 from piece import Piece
 
+from libs.RemoteTypograf import RemoteTypograf
+
 
 class Transcription(models.Model):
 
@@ -49,6 +51,19 @@ class Transcription(models.Model):
     @property
     def end_at(self):
         return self.start_at + len(self.text) * self.piece.letters_per_sec
+
+    @property
+    def text_pretty(self):
+        # Правим типографику
+        rt = RemoteTypograf()
+        rt.noEntities()
+        rt.p(0)
+        rt.br(0)
+        rt.nobr(0)
+        text = rt.prettyText(self.text)
+        text = rt.processText(text.encode('utf-8'))
+
+        return text.decode('utf-8')
 
     @property
     def name(self):
