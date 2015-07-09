@@ -98,7 +98,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     # 'django.core.context_processors.request',
     'social_auth.context_processors.social_auth_by_name_backends',
 )
-TEMPLATE_DIRS = (os.path.join(BASE_DIR, "admin/templates/"),)
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "admin/templates/"),
+    os.path.join(BASE_DIR, "api/account/templates/"),
+)
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
