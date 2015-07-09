@@ -19,6 +19,8 @@ from core.extra import *
 
 from pydub import AudioSegment
 
+from speaker import Speaker
+
 
 class Record(AudioFile, Trash):
 
