@@ -20,9 +20,11 @@ angular.module( 'transcribe-ninja.order', [
             end_at: record.duration
         });
 
+        callback();
+        
         $modalInstance.dismiss();
 
-        callback();
+
     };
 
 }])
