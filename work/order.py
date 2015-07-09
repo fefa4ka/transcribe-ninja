@@ -64,6 +64,9 @@ class Order(Trash):
         """
             Создаём очередь на распознание
         """
+
+        from queue import Queue
+
         def make_queue_element(order, as_record, piece, work_type, priority):
             transcribe_object_id = ContentType.objects.get_for_model(Queue).id
             transcribe_price = Price.objects.filter(
