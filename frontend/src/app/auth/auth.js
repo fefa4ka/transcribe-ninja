@@ -38,6 +38,8 @@ angular.module( 'transcribe-ninja.auth', [
                     window.clearInterval(interval);
                     
                     api.account.get({}, function (data) {
+                        $modalInstance.dismiss();
+                        
                         $rootScope.currentUser = data;
                         // Если есть коллбэк
                         if(angular.isUndefined($scope.authCallback) === false) {
