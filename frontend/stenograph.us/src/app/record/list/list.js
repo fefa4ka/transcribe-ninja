@@ -20,7 +20,7 @@ angular.module( 'transcribe-ninja.record.list', [
   });
 }])
 
-.controller( 'RecordListCtrl', ["$scope", "$translate", "$modal", "$log", "$interval", "api", function RecordCtrl( $scope, $translate, $modal, $log, $interval, api ) {
+.controller( 'RecordListCtrl', ["$scope", "$translate", "$modal", "$log", "api", function RecordCtrl( $scope, $translate, $modal, $log, api ) {
   $translate.use("ru");
 
   $scope.records = api.record.list();

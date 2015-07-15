@@ -19,7 +19,7 @@ angular.module( 'transcribe-ninja.record', [
   });
 }])
 
-.controller( 'RecordCtrl', ["$scope", "$translate", "$modal", "$stateParams", "$interval", "api", function RecordCtrl($scope, $translate, $modal, $stateParams, $interval, api) {
+.controller( 'RecordCtrl', ["$scope", "$translate", "$modal", "$stateParams", "api", function RecordCtrl($scope, $translate, $modal, $stateParams, api) {
   $translate.use("ru");
 
   $scope.order = function (record) {
