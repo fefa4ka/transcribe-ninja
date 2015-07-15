@@ -3,6 +3,7 @@
 from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 import core.async_jobs
 
@@ -73,7 +74,7 @@ class OrderViewSet(mixins.ListModelMixin,
 
         return Response(
             errors,
-            status=status.HTTP_400_BAD_REQUEST)
+            status=HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
         """
