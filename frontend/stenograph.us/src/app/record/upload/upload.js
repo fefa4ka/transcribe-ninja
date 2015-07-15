@@ -154,7 +154,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 
     console.log($modalInstance, $scope.modal);
     $modalInstance.dismiss();
-    $modalInstance.close();
+    $scope.modal.dismiss();
 
     $state.go('record-list', { });
   };
@@ -162,7 +162,7 @@ angular.module( 'transcribe-ninja.record.upload', [
   uploader.onCompleteAll = function() {
     console.log($modalInstance, $scope.modal);
       $modalInstance.dismiss()
-      $modalInstance.close();
+      $scope.modal.dismiss();
       uploader.clearQueue();
   };
 
