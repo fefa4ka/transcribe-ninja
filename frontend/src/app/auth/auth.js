@@ -2,8 +2,24 @@ angular.module( 'transcribe-ninja.auth', [
   'ui.router'
 ])
 
-.config(function config( $stateProvider ) {
-
+.config(["$stateProvider", function config( $stateProvider ) {
+  $stateProvider.state( 'auth-complete', {
+    url: '/auth-complete',
+    views: {
+      "main": {
+        controller: 'SocialAuthCompleteCtrl',
+        templateUrl: 'auth/auth.complete.tpl.html'
+      }
+    },
+    data: { 
+      pageTitle: 'Вход',
+      requireLogin: false
+    }
+  });
+}])
+.controller( 'SocialAuthCompleteCtrl', function AuthModalCtrl( $scope ) {
+    console.log('close');
+    window.close();
 })
 
 .controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
@@ -11,6 +27,22 @@ angular.module( 'transcribe-ninja.auth', [
     $scope.logining = false;
     $scope.alerts = [];
     $scope.new_user = 1;
+
+    $scope.popup = function (url) {
+        var params = "width=650, height=450, menubar=no,location=no,resizable=no,scrollbars=no,status=no",
+            auth_win = window.open(url, "Social Auth", params);
+
+        var interval = window.setInterval(function() {
+            try {
+                if (auth_win == null || auth_win.closed) {
+                    window.clearInterval(interval);
+                    api.account.get();
+                }
+            }
+            catch (e) {
+            }
+        }, 1000);
+    };
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
