@@ -36,7 +36,14 @@ angular.module( 'transcribe-ninja.auth', [
             try {
                 if (auth_win == null || auth_win.closed) {
                     window.clearInterval(interval);
-                    api.account.get();
+                    
+                    api.account.get({}, function (data) {
+                        $rootScope.currentUser = data;
+                        // Если есть коллбэк
+                        if(angular.isUndefined($scope.authCallback) === false) {
+                            $scope.authCallback();
+                        }
+                    });  
                 }
             }
             catch (e) {
