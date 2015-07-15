@@ -121,19 +121,13 @@ angular.module( 'transcribe-ninja.record.upload', [
     $scope.modal = $modalInstance;
   };
 
-  uploader.playerInit = function () {
-    console.log('player init', $scope);
-    // $scope.wavesurfer.on('ready', function() {
-    //   console.log('wavesurfer load', $scope.wavesurfer);
-    // });
-  };
 
-  uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-      console.info('onWhenAddingFileFailed', item, filter, options);
-  };
+
+  // uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+  //     console.info('onWhenAddingFileFailed', item, filter, options);
+  // };
 
   uploader.onAfterAddingFile = function(fileItem) {
-      console.info('onAfterAddingFile', fileItem);
 
       fileItem.formData.push({
           title: fileItem.file.name.replace(/\.[^/.]+$/, ""),
@@ -152,19 +146,15 @@ angular.module( 'transcribe-ninja.record.upload', [
   uploader.onSuccessItem = function(item, response, status, headers) {
     uploader.clearQueue();
 
-    console.log($modalInstance, $scope.modal);
     $modalInstance.dismiss();
     $scope.modal.dismiss();
 
     $state.go('record-list', { });
+
+    $scope.$parent.records = api.record.list();
   };
 
-  uploader.onCompleteAll = function() {
-    console.log($modalInstance, $scope.modal);
-      $modalInstance.dismiss()
-      $scope.modal.dismiss();
-      uploader.clearQueue();
-  };
+
 
 }])
 

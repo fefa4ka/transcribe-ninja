@@ -23,14 +23,6 @@ angular.module( 'transcribe-ninja.record.list', [
 .controller( 'RecordListCtrl', ["$scope", "$translate", "$modal", "$log", "$interval", "api", function RecordCtrl( $scope, $translate, $modal, $log, $interval, api ) {
   $translate.use("ru");
 
-  $interval(function () {
-     api.record.list().
-      $promise.
-        then(function (data) {
-          $scope.records = data;
-        });
-  }, 5000);
-
   $scope.records = api.record.list();
 
   $scope.floor = Math.floor;

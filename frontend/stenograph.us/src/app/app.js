@@ -74,14 +74,6 @@ angular.module( 'transcribe-ninja', [
 
   $translate.use("ru");
 
-  $interval(function () {
-    api.account.get().
-      $promise.
-        then(function (data) {
-          $rootScope.currentUser = data;
-        });
-  }, 60000);
-
   api.account.get().
     $promise.
     then(function (data) {
