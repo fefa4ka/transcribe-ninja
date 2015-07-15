@@ -8,6 +8,7 @@ angular.module( 'transcribe-ninja.order', [
 
 .controller( 'OrderModalCtrl', ["$scope", "$modalInstance", "record", "callback", "api", function OrderModalCtrl( $scope, $modalInstance, record, callback, api ) {
     $scope.record = record;
+    $scope.callback = callback;
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
@@ -20,7 +21,10 @@ angular.module( 'transcribe-ninja.order', [
             end_at: record.duration
         });
 
-        callback();
+        // Если есть коллбэк
+        if(angular.isUndefined($scope.callback) === false) {
+            $scope.callback();
+        }
         
         $modalInstance.dismiss('cancel');
 

@@ -58,7 +58,9 @@ angular.module( 'transcribe-ninja.record.list', [
           return record;
         },
         callback: function () {
-          $scope.records = api.record.list();
+          return function () {
+            $scope.records = api.record.list();
+          };
         }
       }
     });
