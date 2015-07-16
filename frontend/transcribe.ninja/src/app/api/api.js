@@ -19,6 +19,10 @@ angular.module( 'transcribe-ninja.api', [
         url: "/api/auth/register/",
         method: 'POST'
       },
+      password_reset: {
+        url: "/api/auth/password/reset/",
+        method: 'POST'
+      },
       login: { 
         method: 'POST', 
         transformRequest: add_auth_header

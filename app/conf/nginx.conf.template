@@ -7,8 +7,14 @@ upstream django_stenograph_us {
 }
 
 server {
+    listen       80;
+    server_name  www.transcribe.ninja;
+    return       301 http://transcribe.ninja$request_uri;
+}
+
+server {
     listen      80;
-    server_name     www.transcribe.ninja transcribe.ninja;
+    server_name     transcribe.ninja;
     charset     utf-8;
 
     client_max_body_size 1024M;  
@@ -29,8 +35,14 @@ server {
 }
 
 server {
+    listen       80;
+    server_name  www.stenograph.us stenographus.ru wwww.stenographus.ru;
+    return       301 http://stenograph.us$request_uri;
+}
+
+server {
     listen      80;
-    server_name     www.stenographus.ru stenographus.ru;
+    server_name     stenograph.us;
     charset     utf-8;
 
     client_max_body_size 1024M;  
