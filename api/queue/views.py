@@ -131,15 +131,20 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         return Transcription.objects.filter(queue__owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        if 'queue' in request.data:
+            queue_id = request.data['queue']
+        elif len(request.data) > 0:
+            queue_id = request.data[0]['queue']
+
         # Каждая транскрипция связанна с каким-то заказом, либо
         queue = Queue.objects.get(
-            id=request.data[0]['queue'], owner=request.user)
+            id=queue_id, owner=request.user)
 
         if queue.completed:
             return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
 
         # Если плохая запись
-        if request.data[0]['queue'] == queue.id and request.data[0]['poor'] == 1:
+        if queue_id == queue.id and 'poor' in request.data:
             queue.poored += 1
             queue.save()
 

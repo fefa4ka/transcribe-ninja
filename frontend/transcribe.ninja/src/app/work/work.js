@@ -572,10 +572,10 @@ angular.module( 'transcribe-ninja.work', [
 
   $scope.poorRecord = function () {
     // Отравляем данные на сервер
-    api.transcription.create([{
+    api.transcription.create({
         queue: $scope.queue.id,
         poor: 1
-      }],  
+      },  
       function () {
         // Загружаем новую задачу.
         // Сервер вернёт
