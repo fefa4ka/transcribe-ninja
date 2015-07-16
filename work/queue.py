@@ -81,6 +81,7 @@ class Queue(AudioFile):
 
     locked = models.DateTimeField(null=True)
     skipped = models.IntegerField(default=0)
+    poored = models.IntegerField(default=0)
 
     owner = models.ForeignKey('auth.User',
                               blank=True,

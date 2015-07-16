@@ -138,6 +138,15 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         if queue.completed:
             return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
 
+        # Если плохая запись
+        if request.data[0]['queue'] == queue.id and request.data[0]['poor'] == 1:
+            queue.poored += 1
+            queue.save()
+
+            return Response({'done': 'ok'}, status=HTTP_201_CREATED)
+
+
+
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)
             if not serializer.is_valid():

@@ -555,6 +555,7 @@ angular.module( 'transcribe-ninja.work', [
         });
       }
     }
+    
     // Отравляем данные на сервер
     api.transcription.create(transcriptions, function () {
       // Загружаем новую задачу
@@ -567,6 +568,19 @@ angular.module( 'transcribe-ninja.work', [
     } else {
       yaCounter27735045.reachGoal('check_transcribe');
     }
+  };
+
+  $scope.poorRecord = function () {
+    // Отравляем данные на сервер
+    api.transcription.create([{
+        queue: $scope.queue.id,
+        poor: 1
+      }],  
+      function () {
+        // Загружаем новую задачу.
+        // Сервер вернёт
+        $scope.loadQueue();
+    });
   };
 
   $scope.workLength = function () {
