@@ -50,7 +50,7 @@ class Account(models.Model):
     site = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return self.user.username
+        return "%d: %s" % (self.id, self.user.username)
 
     @property
     def work_length(self):

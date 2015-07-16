@@ -15,6 +15,8 @@ from datetime import datetime
 
 import numpy as np
 
+from diff_match_patch import diff_match_patch
+
 
 class Queue(AudioFile):
 
@@ -269,8 +271,6 @@ class Queue(AudioFile):
         return transcriptions
 
     def _diff_result(self, original_transcription, transcription, diff_type=[1,-1]):
-        from diff_match_patch import diff_match_patch
-
         d = diff_match_patch()
 
         # Сколько заработали на нём
