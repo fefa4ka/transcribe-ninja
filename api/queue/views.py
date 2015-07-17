@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from django.conf import settings
+
 from django.shortcuts import get_object_or_404
 
 from rest_framework.response import Response
@@ -146,11 +148,18 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         # Если плохая запись
         if queue_id == queue.id and 'poor' in request.data:
             queue.poored += 1
+
+            # Если многие посчитали, что запись плохая,
+            # помечаем, как выполненную
+            if queue.poored > settings.SPEECH_POOR_LIMIT:
+                queue.completed = datetime.now()
+                queue.update_work_metrics()
+
             queue.save()
 
+            core.async_jobs.update_near.delay(queue)
+
             return Response({'done': 'ok'}, status=HTTP_201_CREATED)
-
-
 
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)

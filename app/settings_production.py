@@ -287,5 +287,8 @@ SPEECH_SPEED = 22
 # чтобы посчтитать скорость произоншения
 SPEECH_SPEED_MIN_DURATION = 120
 
+# После скольки раз считать запись неразборчивой
+SPEECH_POOR_LIMIT = 3
+
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
