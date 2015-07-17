@@ -77,7 +77,7 @@ class Account(models.Model):
         user_balance = 0
 
         if settings.DOMAIN == "transcribe.ninja":
-            object_ids = [queue_object_id]
+            object_ids = [queue_object_id, account_object_id]
         else:
             object_ids = [order_object_id, account_object_id]
 
