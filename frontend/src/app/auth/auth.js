@@ -71,7 +71,7 @@ angular.module( 'transcribe-ninja.auth', [
 
         $scope.password_reset_success = 1;
 
-        yaCounter27735045.reachGoal('password-reset');
+        yaCounter27735045.reachGoal('password_reset');
     };
 
     $scope.authLogin = function() {
@@ -99,7 +99,7 @@ angular.module( 'transcribe-ninja.auth', [
                 $scope.alerts = [{ type: 'danger', msg: 'Неправильный логин или пароль' }];
 
                  // Ya.Metrica
-                yaCounter27735045.reachGoal('login-fail');
+                yaCounter27735045.reachGoal('login_fail');
             });
         };
 
@@ -119,7 +119,7 @@ angular.module( 'transcribe-ninja.auth', [
                 $scope.alerts = [{ type: 'danger', msg: 'Такой адрес уже зарегистрирован' }];
 
                 // Ya.Metrica
-                yaCounter27735045.reachGoal('registration-fail');
+                yaCounter27735045.reachGoal('registration_fail');
             });
             
         } else {

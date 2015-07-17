@@ -581,6 +581,8 @@ angular.module( 'transcribe-ninja.work', [
         // Сервер вернёт
         $scope.loadQueue();
     });
+
+    yaCounter27735045.reachGoal('poor_queue');
   };
 
   $scope.workLength = function () {
@@ -651,7 +653,7 @@ angular.module( 'transcribe-ninja.work', [
     // Если курсор в самом начале, и предыдущая пустая, то ничего не делаем
 
     // Если разделяем существующую транскрипцию
-    if(typeof $input.data('index') != "undefined" && typeof enter !== undefined) {
+    if(typeof $input.data('index') != "undefined" && typeof enter !== "undefined") {
       // Ищем кусок с нужным айди
       for(index in $scope.queue.pieces) {
         piece = $scope.queue.pieces[index];
@@ -692,7 +694,7 @@ angular.module( 'transcribe-ninja.work', [
       piece = $scope.queue.pieces[$scope.queue.pieces.length-1];
       index = (piece.transcriptions && piece.transcriptions.length) || 0;
 
-      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart === 0 || typeof enter === undefined) {
+      if($input[0].selectionStart == $input.val().length || $input[0].selectionStart === 0 || typeof enter === "undefined") {
         piece.transcriptions.push({
           piece: piece.id,
           text: transcription.text,
