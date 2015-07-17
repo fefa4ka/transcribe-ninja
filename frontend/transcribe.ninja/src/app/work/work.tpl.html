@@ -59,7 +59,7 @@
 
         </ul>
 
-        <ul class="queue-transcriptions" ng-show="queue.work_type == 0">
+        <ul class="queue-transcriptions" ng-hide="queue.work_type == 1 || queue.saving">
             <li class="row">
                 <div class="speakers-block col-md-1" ng-mouseover="newTranscription.speakerHover = 1" ng-mouseleave="newTranscription.speakerHover = 0">
                         <div class="speakers" ng-show="newTranscription.speakerHover" >

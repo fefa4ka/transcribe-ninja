@@ -539,6 +539,8 @@ angular.module( 'transcribe-ninja.work', [
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
 
+    $scope.queue.saving = true;
+
     // Готовим данные
     for(var p_index in $scope.queue.pieces) {
       var piece = $scope.queue.pieces[p_index];
@@ -560,6 +562,10 @@ angular.module( 'transcribe-ninja.work', [
     api.transcription.create(transcriptions, function () {
       // Загружаем новую задачу
       $scope.loadQueue();
+    }, function () {
+      $scope.loadQueue();
+      yaCounter27735045.reachGoal('transcription_save_error');
+
     });
 
     // Ya.Metrica
