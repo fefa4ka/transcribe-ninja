@@ -57,7 +57,12 @@ class Order(Trash):
         return Payment.objects.filter(content_type_id=object_id, object_id__in=queue_ids).aggregate(total=Sum('total'))["total"]
 
     def completed_percentage(self, work_type=0):
-        return (self.queue.filter(completed__isnull=False, work_type=work_type).count() / float(self.queue.filter(work_type=work_type).count())) * 100
+        total_queue_count = self.queue.filter(work_type=work_type).count()
+
+        if total_queue_count:
+            return (self.queue.filter(completed__isnull=False, work_type=work_type).count() / float(total_queue_count)) * 100
+        else:
+            return 0
 
     # Logic
     def make_queue(self):
