@@ -30,7 +30,7 @@ def record_prepare(record):
     record_analys.delay(record)
 
 
-@job('analys', timeout=4600)
+@job('analys', timeout=18000)
 def record_analys(record):
     """
         Очередь на диаризацию
