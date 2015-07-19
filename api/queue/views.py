@@ -11,7 +11,8 @@ from rest_framework import viewsets
 
 import core.async_jobs
 
-from work.models import Queue
+from work.models import Order, Queue
+from transcribe.models import Record
 
 from serializers import *
 
@@ -53,14 +54,22 @@ class QueueViewSet(viewsets.ViewSet,
 
     def get_queue(self):
         # Если слепой, выдаём задачи на транскрибирование
+        last_record_ids = Record.objects.filter(progress=3).order_by('created').values_list('id', flat=True).distinct()[:settings.RECORDS_ONAIR]
+        last_order_ids = Order.objects.filter(record__in=list(last_record_ids)).values_list('id', flat=True).distinct()
+        print last_record_ids
+        print last_order_ids
+
+
         if self.request.user.account.blind:
             queues = Queue.objects.filter(work_type=0,
                                           priority__in=[1,2],
                                           locked__isnull=True,
+                                          order_id__in=list(last_order_ids),
                                           completed__isnull=True).order_by('?')[:10]
         else:
             queues = Queue.objects.filter(priority__in=[1,2],
                                           locked__isnull=True,
+                                          order_id__in=list(last_order_ids),
                                           completed__isnull=True).order_by('?')[:10]
 
         for q in queues:

@@ -292,6 +292,9 @@ SPEECH_SPEED_MIN_DURATION = 120
 # После скольки раз считать запись неразборчивой
 SPEECH_POOR_LIMIT = 3
 
+# Одновременно распознаётся
+RECORDS_ONAIR = 2
+
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
 
