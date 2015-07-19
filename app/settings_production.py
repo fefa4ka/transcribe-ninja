@@ -28,7 +28,7 @@ EMAIL_USE_TLS = True
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 PROD = True
 
 TEMPLATE_DEBUG = True
