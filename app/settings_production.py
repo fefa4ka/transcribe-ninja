@@ -101,6 +101,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, "wpadmin/templates/"),
     os.path.join(BASE_DIR, "admin/templates/"),
     os.path.join(BASE_DIR, "api/account/templates/"),
 )
@@ -311,4 +312,3 @@ WPADMIN = {
         'custom_style': STATIC_URL + 'wpadmin/css/themes/light.css',
     }
 }
-
