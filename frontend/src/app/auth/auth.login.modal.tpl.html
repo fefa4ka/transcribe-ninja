@@ -44,7 +44,7 @@
     </div>
 
     <div class="modal-footer">
-        <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{ alert.msg }}</alert>
+        <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
         <input type="submit" ng-hide="logining || password_reset" class="btn btn-primary" ng-value="new_user == 1 ? 'Зарегистрировать и войти' : 'Войти'" alt="Войти" tabindex="9">
         <a ng-show="password_reset && password_reset_success === 0" ng-click="passwordReset()" class="btn btn-primary" alt="Восстановить пароль" tabindex="10">Восстановить пароль</a>
 

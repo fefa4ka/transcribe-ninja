@@ -1,0 +1,72 @@
+<form ng-submit="takeMoney()" ui-keypress="{13:'takeMoney()'}">
+<div ng-tabs>  
+    <div class="modal-header">
+        <h3 class="modal-title text-line">Оплата вашей работы</h3>
+    </div>
+
+    <div class="modal-body">
+
+
+            <ul class="list-unstyled list-inline tabs-menu">
+                <li ng-tab-head="active">
+                    <h5><a href="#" ng-click="$event.preventDefault()">На телефон</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()">На карту</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()">QIWI Кошелёк</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()">Яндекс.Деньги</a></h5>
+                </li>
+            </ul>
+            
+            <p>Мы перечислим вам <strong>{{ amount | number : 2 }} ₽ в течении суток</strong></p>
+
+            <div ng-tab-body class="tab-body">
+                 <div class="form-group">
+                    <input tabindex="4" ng-model="$parent.phone" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Номер телефона" alt="Номер телефона" class="form-control">
+                </div>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                 <div class="form-group">
+                    <input tabindex="4" ng-model="$parent.card" required mask="9999 9999 9999 9999" clean="true"
+                           type="text" placeholder="Номер карты" alt="Номер карты" class="form-control">
+                </div>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                 <div class="form-group">
+                    <input tabindex="4" ng-model="$parent.qiwi" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Номер телефона QIWI Кошелька" alt="Номер телефона QIWI Кошелька" class="form-control">
+                </div>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                 <div class="form-group">
+                    <input tabindex="4" ng-model="$parent.yandex" required mask="9999999999999999" clean="true"
+                           type="text" placeholder="Номер кошелька Яндекс.Денег" alt="Номер кошелька Яндекс.Денег" class="form-control">
+                </div>
+            </div>
+
+        </div>
+            
+           
+
+
+
+    <div class="modal-footer">
+        <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
+
+        <a ng-click="cancel()" class="btn btn-default pull-left" alt="Закрыть" tabindex="10">Закрыть</a>
+        <a ng-click="takeMoney(tabs.index)" class="btn btn-primary pull-right" alt="Получить деньги" tabindex="10">Получить деньги</a>
+
+    </div>
+    </div>
+</form>

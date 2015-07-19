@@ -194,6 +194,9 @@ class Record(AudioFile, Trash):
         voice = Voiceid(
             db, audio_file_path)
 
+        # Разрезаем на части
+        # Для каждой части делаем сегменты
+
         # Распознаём говорящих
         voice.extract_speakers()
 

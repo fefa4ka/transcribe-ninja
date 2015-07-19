@@ -1,12 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
-from transcribe.models import *
-from work.models import *
+from work.models import Queue
 
 
-class HistorySerializer(serializers.ModelSerializer):
+class HistorySerializer(ModelSerializer):
 
     class Meta:
         model = Queue

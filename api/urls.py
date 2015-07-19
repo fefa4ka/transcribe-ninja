@@ -24,6 +24,7 @@ if settings.DOMAIN == "stenograph.us":
 elif settings.DOMAIN == "transcribe.ninja":
     router.register(r'queue', views.QueueViewSet, "")
     router.register(r'transcriptions', views.TranscriptionViewSet)
+    router.register(r'payments', views.PaymentViewSet, "")
 
     urlpatterns += (
         url(r'^api/statistics/$',

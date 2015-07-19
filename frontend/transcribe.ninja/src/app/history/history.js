@@ -1,6 +1,8 @@
 angular.module( 'transcribe-ninja.history', [
   'transcribe-ninja.history.detail',
+  'transcribe-ninja.history.payment',
   'ui.router',
+  'tabs',
   'diff-match-patch'
 ])
 
@@ -20,7 +22,7 @@ angular.module( 'transcribe-ninja.history', [
   });
 }])
 
-.controller( 'HistoryCtrl', ["$scope", "api", "$translate", "$modal", "$rootScope", function HistoryCtrl( $scope, api, $translate, $modal, $rootScope) {
+.controller( 'HistoryCtrl', ["$scope", "$rootScope", "api", "$translate", "$modal", function HistoryCtrl( $scope, $rootScope, api, $translate, $modal) {
   $translate.use("ru");
   
   function getDateBefore(days) {
@@ -39,8 +41,30 @@ angular.module( 'transcribe-ninja.history', [
   $scope.checkedQueues = api.history.list({ checked: true, min_mistakes: 1 });
   // $scope.checkedQueues = api.history.list({ checked: true });
 
-  $scope.statistics = [api.statistics.get({ 'after_date': getDateBefore(1) }), api.statistics.get({ 'after_date': getDateBefore(7) }), api.statistics.get({ 'after_date': getDateBefore(31) }), api.statistics.get()];
-  $scope.statisticsDescription = ['За сегодня', 'За эту неделю', 'За последний месяц', 'За всё время'];
+  $scope.statistics = [
+    api.statistics.get({ 'after_date': getDateBefore(1) }), 
+    api.statistics.get({ 'after_date': getDateBefore(7) }), 
+    api.statistics.get({ 'after_date': getDateBefore(31) }), 
+    api.statistics.get()
+  ];
+
+  $scope.total_checked = $scope.statistics[$scope.statistics.length - 1];
+
+  $scope.payments = api.payment.list();
+
+  $scope.paymentsPageChanged = function() {
+    api.payment.list({ page: $scope.paymentsPage }).
+      $promise.then(function(data) {
+        $scope.payments.results = data.results;
+      });
+  };
+
+  $scope.statisticsDescription = [
+    'За сегодня', 
+    'За эту неделю', 
+    'За последний месяц', 
+    'За всё время'
+  ];
   
   $scope.uncheckedStatistics = api.statistics.get({ 'unchecked': true });
 
@@ -58,6 +82,31 @@ angular.module( 'transcribe-ninja.history', [
       });
   };
 
+ $scope.takeMoney = function (amount) {
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'history/payment/history.payment.tpl.html',
+      controller: 'PaymentModalCtrl',
+      windowClass: 'payment-bill',
+      resolve: {
+        amount: function () {
+          return amount;
+        },
+        callback: function () {
+          return function () {
+            api.account.get().
+              $promise.
+                then(function (data) {
+                  $rootScope.currentUser = data;
+                });
+
+            $scope.payments = api.payment.list();
+          };
+        }
+      }
+    });
+  };
+  
 
   $scope.queueDetail = function (queue) {
     $modalInstance = $modal.open(

@@ -95,9 +95,22 @@ class Account(models.Model):
         """
             Балансы по разным типам платежей
         """
-        balances = self.user.user_payments.values('content_type_id').annotate(total=Sum('total'))
+        balances = self.user.payments.values('content_type_id').annotate(total=Sum('total'))
 
         return balances
+
+    @property
+    def checked_balance(self):
+        from .models import Queue
+        account_object_id = ContentType.objects.get_for_model(Account).id
+        queue_object_id = ContentType.objects.get_for_model(Queue).id
+
+        balance = self.user.payments.filter(content_type_id=account_object_id).aggregate(total=Sum('total'))
+
+        checked_ids = self.queues(unchecked=False).values('id').distinct()
+        checked_total = self.user.payments.filter(content_type_id=queue_object_id, object_id__in=checked_ids).aggregate(total=Sum('total'))
+
+        return checked_total['total'] + balance['total']
 
     def calculate_work(self, unchecked=False, after_date=None):
         """
@@ -162,11 +175,13 @@ class Price(models.Model):
     WORK_TYPE_EDIT = 1
     WORK_TYPE_LISTENING = 2
     WORK_TYPE_TRANSCRIBE_SPEECHKIT = 3
+    WORK_TYPE_PAYMENT = 4
     WORK_TYPE_CHOICES = (
         (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
         (WORK_TYPE_LISTENING, 'Read and check transcription'),
         (WORK_TYPE_EDIT, 'Transcription edit'),
-        (WORK_TYPE_TRANSCRIBE_SPEECHKIT, 'Transcribe by SpeechKit')
+        (WORK_TYPE_TRANSCRIBE_SPEECHKIT, 'Transcribe by SpeechKit'),
+        (WORK_TYPE_PAYMENT, 'Payment'),
     )
     work_type = models.IntegerField(
         choices=WORK_TYPE_CHOICES,

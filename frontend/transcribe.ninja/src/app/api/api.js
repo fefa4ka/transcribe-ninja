@@ -65,6 +65,17 @@ angular.module( 'transcribe-ninja.api', [
       }
     }),
 
+    payment: $resource('/api/payments/', {}, {
+      list: {
+        method: 'GET',
+        isArray: false
+      },
+      create: {
+        method: 'POST',
+        isArray: false
+      }
+    }),
+
     transcription: $resource('/api/transcriptions/:transcriptionId', { transcriptionId: '@id' }, {
       list: {
         method: 'GET'

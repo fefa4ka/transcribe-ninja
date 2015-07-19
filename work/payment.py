@@ -33,10 +33,12 @@ class Payment(models.Model):
     price = models.ForeignKey(Price)
     total = models.FloatField()
 
+    comment = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
     status = models.IntegerField(default=0)
 
     created = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey('auth.User', related_name='user_payments')
+    owner = models.ForeignKey('auth.User', related_name='payments')
 
     def __unicode__(self):
         return "Payment for %s: %s" % (self.content_object.__class__.__name__, self.content_object)

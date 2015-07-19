@@ -26,6 +26,7 @@ def create_username_field():
 
 
 class UserSerializer(serializers.ModelSerializer):
+    checked_balance = serializers.ReadOnlyField(source='account.checked_balance')
     balance = serializers.ReadOnlyField(source='account.balance')
     work_length = serializers.ReadOnlyField(source='account.work_length')
 
@@ -35,11 +36,16 @@ class UserSerializer(serializers.ModelSerializer):
             User._meta.pk.name,
             User.USERNAME_FIELD,
             "balance",
+            "checked_balance",
             "work_length",
         )
         read_only_fields = (
             User.USERNAME_FIELD,
         )
+
+
+class UserDetailSerializer(UserSerializer):
+    checked_balance = serializers.ReadOnlyField(source='account.checked_balance')
 
 
 class AbstractUserRegistrationSerializer(serializers.ModelSerializer):

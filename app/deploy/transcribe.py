@@ -61,9 +61,6 @@ class TranscribeNinjaSystem(Node):
             cors_cfg.add_rule('GET', '*')
             bucket.set_cors(cors_cfg)
 
-        def migrate(self):
-            self.run_management_command('migrate')
-
         def update(self):
             self.checkout()
             self.pull()
@@ -159,9 +156,12 @@ class TranscribeNinjaSystem(Node):
 
         self.update_hosts()
 
+        self.Engine.migrate()
+
         self.Frontend.restart()
 
         self.Engine.restart()
+
 
     def frontend_deploy(self):
         self.Application.update()

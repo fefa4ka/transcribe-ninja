@@ -88,7 +88,9 @@ module.exports = {
       'vendor/angular-elastic/elastic.js',
       'vendor/jquery-highlighttextarea/jquery.highlighttextarea.js',
       'vendor/google-diff-match-patch/diff_match_patch_uncompressed.js',
-      'vendor/angular-diff-match-patch/angular-diff-match-patch.js'
+      'vendor/angular-diff-match-patch/angular-diff-match-patch.js',
+      'vendor/angular-mask/dist/ngMask.js',
+      // 'vendor/angular-bootstrap/'
       // 'vendor/jquery/dist/jquery.js',
       // 'vendor/wavesurfer.js/build/wavesurfer.min.js',
 
@@ -96,7 +98,7 @@ module.exports = {
       
     ],
     css: [
-      'vendor/jquery-highlighttextarea/jquery.highlighttextarea.css'
+    // 'vendor/jquery-highlighttextarea/jquery.highlighttextarea.css'
     ],
     assets: [
     ]
