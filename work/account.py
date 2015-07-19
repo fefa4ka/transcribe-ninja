@@ -110,7 +110,7 @@ class Account(models.Model):
         checked_ids = self.queues(unchecked=False).values('id').distinct()
         checked_total = self.user.payments.filter(content_type_id=queue_object_id, object_id__in=checked_ids).aggregate(total=Sum('total'))
 
-        return checked_total['total'] + balance['total']
+        return (checked_total['total'] or 0) + (balance['total'] or 0)
 
     def calculate_work(self, unchecked=False, after_date=None):
         """
