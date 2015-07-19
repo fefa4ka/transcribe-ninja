@@ -197,13 +197,14 @@ class Record(AudioFile, Trash):
         db = GMMVoiceDB(settings.VOICEID_DB_PATH)
 
         while self.duration > position:
-            end_at = position + settings.DIARIZATION_PART_SIZE\
-                if self.duration > position + settings.DIARIZATION_PART_SIZE\
-                else self.duration
+            if self.duration > position + settings.DIARIZATION_PART_SIZE:
+                end_at = position + settings.DIARIZATION_PART_SIZE
+            else:
+                end_at = self.duration
 
             audio_file_path = self.cut_to_file(
                 as_record=mp3_audio_file,
-                file_name='record/%d.wav' % position,
+                file_name='record/diarization/%d.wav' % position,
                 start_at=position,
                 end_at=end_at,
                 offset=0
@@ -235,7 +236,6 @@ class Record(AudioFile, Trash):
 
                 # Сохраняем все куски, где этот собеседник участвовал
                 for segment in cluster.get_segments():
-                    print segment.get_start()
                     piece = Piece(record=self,
                                   start_at=(position + segment.get_start() / 100.0),
                                   end_at=(position + segment.get_end() / 100.0),
