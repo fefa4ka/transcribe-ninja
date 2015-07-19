@@ -188,42 +188,67 @@ class Record(AudioFile, Trash):
             return
 
         # Загружаем ролик
-        audio_file_path = settings.MEDIA_ROOT + self.audio_file_format('wav')
+        mp3_audio_file = AudioSegment.from_mp3(
+            settings.MEDIA_ROOT +
+            self.audio_file_format("mp3")
+        )
+        position = 0
 
         db = GMMVoiceDB(settings.VOICEID_DB_PATH)
-        voice = Voiceid(
-            db, audio_file_path)
 
-        # Разрезаем на части
-        # Для каждой части делаем сегменты
+        while self.duration > position:
+            end_at = position + settings.DIARIZATION_PART_SIZE\
+                if self.duration > position + settings.DIARIZATION_PART_SIZE\
+                else self.duration
 
-        # Распознаём говорящих
-        voice.extract_speakers()
+            audio_file_path = self.cut_to_file(
+                as_record=mp3_audio_file,
+                file_name='record/%d.wav' % position,
+                start_at=position,
+                end_at=end_at,
+                offset=0
+            )
 
-        # Сохраняем информацию о каждом говоряещм
-        for c in voice.get_clusters():
-            cluster = voice.get_cluster(c)
+            print settings.MEDIA_ROOT + audio_file_path
+            voice = Voiceid(
+                db, settings.MEDIA_ROOT + audio_file_path)
 
-            # Каждый кластер - отдельный собеседник
-            # Сохраняем информацию о собеседнике. Название и пол
-            speaker = Speaker(
-                name=cluster.get_name(), gender=cluster.get_gender())
-            speaker.save()
+            # Разрезаем на части
+            # Для каждой части делаем сегменты
+            # Задача выбрать собеседников
 
-            # Сохраняем все куски, где этот собеседник участвовал
-            for segment in cluster.get_segments():
-                print segment.get_start()
-                piece = Piece(record=self,
-                              start_at=segment.get_start() / 100.0,
-                              end_at=segment.get_end() / 100.0,
-                              duration=segment.get_duration() / 100.0,
-                              speaker=speaker)
-                piece.save()
+            # Распознаём говорящих
+            voice.extract_speakers()
 
-        # Удаляем все файлы
-        shutil.rmtree(
-            os.path.dirname(audio_file_path),
-            ignore_errors=True)
+            # Сохраняем информацию о каждом говоряещм
+            for c in voice.get_clusters():
+                cluster = voice.get_cluster(c)
+
+                # Каждый кластер - отдельный собеседник
+                # Сохраняем информацию о собеседнике. Название и пол
+                speaker = Speaker(
+                    name=cluster.get_name(), gender=cluster.get_gender())
+
+                speaker.save()
+
+                voice.update_db()
+
+                # Сохраняем все куски, где этот собеседник участвовал
+                for segment in cluster.get_segments():
+                    print segment.get_start()
+                    piece = Piece(record=self,
+                                  start_at=(position + segment.get_start() / 100.0),
+                                  end_at=(position + segment.get_end() / 100.0),
+                                  duration=segment.get_duration() / 100.0,
+                                  speaker=speaker)
+                    piece.save()
+
+                # Удаляем все файлы
+                shutil.rmtree(
+                    os.path.dirname(audio_file_path),
+                    ignore_errors=True)
+
+            position = end_at
 
     def recognize(self):
         """

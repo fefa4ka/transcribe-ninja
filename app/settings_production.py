@@ -294,6 +294,9 @@ SPEECH_POOR_LIMIT = 3
 # Одновременно распознаётся
 RECORDS_ONAIR = 2
 
+# На какие куски делить запись при диаризации
+DIARIZATION_PART_SIZE = 600
+
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
 
