@@ -39,6 +39,8 @@ angular.module( 'transcribe-ninja.history', [
 
   $scope.uncheckedQueues = api.history.list({ unchecked: true });
   $scope.checkedQueues = api.history.list({ checked: true, min_mistakes: 1 });
+  $scope.uncheckedQueuePage = 1;
+  $scope.checkedQueuePage = 1;
   // $scope.checkedQueues = api.history.list({ checked: true });
 
   $scope.statistics = [
@@ -76,7 +78,7 @@ angular.module( 'transcribe-ninja.history', [
   };
 
   $scope.checkedPageChanged = function() {
-    api.history.list({ checked: true, page: $scope.uncheckedQueuePage }).
+    api.history.list({ checked: true, page: $scope.checkedQueuePage }).
       $promise.then(function(data) {
         $scope.checkedQueues.results = data.results;
       });

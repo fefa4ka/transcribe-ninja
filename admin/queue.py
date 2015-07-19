@@ -30,7 +30,7 @@ class QueueAdmin(ModelAdmin):
         }),
         ('Work and payment information', {
             'classes': ('collapse',),
-            'fields': ('total_price', 'price', 'work_type', 'work_length', 'mistakes_length', 'priority')
+            'fields': ('total_price', 'price', 'work_type', 'work_length', 'mistakes_length', 'priority', 'poored')
         }),
         ('Worker', {
             'classes': ('collapse',),

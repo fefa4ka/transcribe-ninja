@@ -76,7 +76,7 @@ INSTALLED_APPS = (
 
     # Web
     'frontend',
-    'social_auth'
+    'social_auth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -101,7 +101,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "wpadmin/templates/"),
     os.path.join(BASE_DIR, "api/account/templates/"),
 )
 

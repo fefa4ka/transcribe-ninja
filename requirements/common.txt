@@ -18,4 +18,4 @@ djoser
 diff-match-patch
 newrelic
 xlsxwriter
-wpadmin
+django-wpadmin

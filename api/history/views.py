@@ -47,7 +47,7 @@ class HistoryViewSet(ListAPIView):
     def get_queryset(self):
         user = self.request.user
         if 'checked' in self.request.QUERY_PARAMS:
-            return user.account.queues(unchecked=False).order_by('-checked')
+            return user.account.queues(unchecked=False).filter(mistakes_length__gt=0).order_by('-checked')
 
         if 'unchecked' in self.request.QUERY_PARAMS:
             return user.account.queues(unchecked=True).order_by('-completed')
