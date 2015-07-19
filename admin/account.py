@@ -94,12 +94,12 @@ class UserAdmin(UserAdmin):
         account_object_id = ContentType.objects.get_for_model(Account).id
 
         if settings.DOMAIN == "transcribe.ninja":
-            object_id = queue_object_id
+            object_ids = [queue_object_id, account_object_id]
         else:
-            object_id = order_object_id
+            object_ids = [order_object_id, account_object_id]
 
         for balance in instance.account.balances:
-            if balance['content_type_id'] == object_id:
+            if balance['content_type_id'] in object_ids:
                 return balance["total"] or 0
 
         return 0

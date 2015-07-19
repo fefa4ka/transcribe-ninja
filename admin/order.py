@@ -1,12 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 from django.contrib.admin import ModelAdmin
+from django.contrib.contenttypes.models import ContentType
+from django.db.models import Sum
 
 from work.models import Payment, Order, Queue
 
 from site import admin_site
 
-class OrderAdmin(admin.ModelAdmin):
+
+class OrderAdmin(ModelAdmin):
     list_display = ('record', 'owner', 'duration', 'length', 'total', 'spent_money', 'spent_money_yandex', 'spent_money_transcribe', 'spent_money_check', 'transcribe_completed', 'check_completed')
     fieldsets = (
         (None, {
@@ -17,7 +20,6 @@ class OrderAdmin(admin.ModelAdmin):
         }),
     )
 
-    inlines = [QueueInline]
 
     def has_add_permission(self, request):
         return False
@@ -52,3 +54,6 @@ class OrderAdmin(admin.ModelAdmin):
 
     def check_completed(self, instance):
         return round(instance.completed_percentage(work_type=1))
+
+admin_site.register(Order, OrderAdmin)
+

@@ -5,6 +5,7 @@ from account import *
 from record import *
 from payment import *
 from queue import *
+from price import *
 # from order import *
 
 

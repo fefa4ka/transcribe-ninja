@@ -12,6 +12,6 @@ class StenographAdminSite(AdminSite):
     site_header = ugettext_lazy('Stenograph.us')
 
     # Text to put at the top of the admin index page.
-    index_title = ugettext_lazy('Need more minerals')
+    index_title = ugettext_lazy('Divide and conquer')
 
 admin_site = StenographAdminSite()

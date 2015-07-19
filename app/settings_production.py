@@ -52,7 +52,8 @@ UUID = '12345A781234567B1234567812345678'
 
 # Application definition
 INSTALLED_APPS = (
-    'bootstrap_admin',
+    # 'bootstrap_admin',
+    'wpadmin',
     'django.contrib.admin',
     'django_rq_dashboard',
 
@@ -274,6 +275,7 @@ PIECE_ROOT = os.path.join(MEDIA_ROOT, "piece/")
 
 TEMP_DIR = os.path.join(BASE_DIR, "temp/")
 
+STATIC_URL = '/static/'
 
 #
 # Record
@@ -292,3 +294,21 @@ SPEECH_POOR_LIMIT = 3
 
 # Diarization
 VOICEID_DB_PATH = 'transcribe/voiceid'
+
+
+# ADMIN
+WPADMIN = {
+    'admin': {
+        'admin_site': 'admin.site.admin_site',
+        'title': 'Divide and conquer',
+        'menu': {
+            'top': 'admin.menu.TopMenu',
+            'left': 'wpadmin.menu.menus.BasicLeftMenu',
+        },
+        'dashboard': {
+            'breadcrumbs': True,
+        },
+        'custom_style': STATIC_URL + 'wpadmin/css/themes/light.css',
+    }
+}
+
