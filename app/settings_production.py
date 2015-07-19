@@ -28,7 +28,7 @@ EMAIL_USE_TLS = True
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 PROD = True
 
 TEMPLATE_DEBUG = True
@@ -102,7 +102,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, "wpadmin/templates/"),
-    os.path.join(BASE_DIR, "admin/templates/"),
     os.path.join(BASE_DIR, "api/account/templates/"),
 )
 
