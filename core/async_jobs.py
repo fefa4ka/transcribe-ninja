@@ -9,7 +9,7 @@ from work.models import *
 
 # Очереди для записей
 
-@job('prepare')
+@job('prepare', timeout=3600)
 def record_prepare(record):
     """
         Очередь на подготовку
