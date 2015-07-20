@@ -95,6 +95,8 @@
         
         
         <section class="controls col-md-offset-1">
+            <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
+            
             <ul class="list-unstyled pull-left">
                 <li>
                     <button class="skip btn btn-default btn-xs" 

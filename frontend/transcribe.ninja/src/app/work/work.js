@@ -410,6 +410,10 @@ angular.module( 'transcribe-ninja.work', [
   // });
   
   $scope.playerInit = function () {
+    $scope.wavesurfer.on('finish', function() {
+      $scope.play_finished = true;
+    });
+
     $scope.wavesurfer.on('ready', function() {
         // Выделяем кусок, который нужно распознать
 
@@ -472,6 +476,8 @@ angular.module( 'transcribe-ninja.work', [
   $scope.loadQueue = function (skip) {  
     $scope.queue = {};
     $scope.originalTranscriptions = [];
+    $scope.play_finished = false;
+    $scope.alerts = [];
 
     // Считаем в метрику
     if(skip === true) {
@@ -543,6 +549,11 @@ angular.module( 'transcribe-ninja.work', [
   $scope.saveTranscription = function () {
     var transcriptions = [];
 
+    if($scope.queue.work_type == 1 && $scope.play_finished === false) {
+      $scope.alerts = [{ type: 'warning', msg: 'Вы должны прослушать запись до конца и проверить, есть ли в тексте ошибки' }];
+
+      return;
+    }
     // Добавляем в модель данные из формы
     $scope.applyTranscriptionChange($('#new-transcription'));
 
