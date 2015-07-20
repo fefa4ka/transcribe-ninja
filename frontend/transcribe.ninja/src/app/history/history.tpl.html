@@ -39,7 +39,7 @@
                         </td>
                     </tr>
                 </table>
-                <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="uncheckedPageChanged()"></pagination>
+                <pagination ng-show="uncheckedQueues.count > 10" total-items="uncheckedQueues.count" ng-model="$parent.uncheckedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="uncheckedPageChanged()"></pagination>
         </div>
 
         <div ng-tab-body class="tab-body">
@@ -72,7 +72,7 @@
                     </table>
                 </div>
 
-                <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
+                <pagination ng-show="checkedQueues.count > 10" total-items="checkedQueues.count" ng-model="$parent.checkedQueuePage" max-size="10" previous-text="&lsaquo;" next-text="&rsaquo;" ng-change="checkedPageChanged()"></pagination>
         </div>
     </div>
        
@@ -116,6 +116,7 @@
             </div>
         </div>
         
+        <p class="desc" ng-show="(currentUser.balance - currentUser.checked_balance > 0) && currentUser.checked_balance <=1">Мы ещё не проверили ваши {{ uncheckedStatistics.work_length }} символов, когда проверим вы сможете получить за них <strong>{{ currentUser.balance - currentUser.checked_balance | number : 2 }} ₽</strong?</p>
 
 
         <div class="payments-history" ng-show="payments.count > 0">
