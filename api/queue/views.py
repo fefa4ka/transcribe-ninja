@@ -52,13 +52,10 @@ class QueueViewSet(viewsets.ViewSet,
 
         return Response(serializer.data)
 
-    def get_queue(self):
+    def get_queue(self, records_onair=settings.RECORDS_ONAIR):
         # Если слепой, выдаём задачи на транскрибирование
-        last_record_ids = Record.objects.filter(progress=3).order_by('created').values_list('id', flat=True).distinct()[:settings.RECORDS_ONAIR]
+        last_record_ids = Record.objects.filter(progress=3).order_by('created').values_list('id', flat=True).distinct()[:records_onair]
         last_order_ids = Order.objects.filter(record__in=list(last_record_ids)).values_list('id', flat=True).distinct()
-        print last_record_ids
-        print last_order_ids
-
 
         if self.request.user.account.blind:
             queues = Queue.objects.filter(work_type=0,
@@ -95,7 +92,10 @@ class QueueViewSet(viewsets.ViewSet,
 
                 return q
 
-        return None
+        if records_onair == Record.objects.filter(progress=3).count():
+            return None
+        else:
+            return self.get_queryset(records_onair + 1)
 
     def unlock_queue(self):
         """
