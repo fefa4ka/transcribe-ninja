@@ -81,7 +81,8 @@ angular.module( 'transcribe-ninja.work', [
   $scope.suggests_check = [
     'Соединяйте разорванные предложения',
     'Текст распознаёт робот, поэтому там может оказаться бред, просто сотрите и напечатайте правильно',
-    'Расставляйте знаки препинания'
+    'Расставляйте знаки препинания',
+    'Если в стенограмме есть текст, которого нет в записи — не стирайте его. Это часть из соседнего куска'
   ];
 
   // $scope.suggestStippet = function() {
@@ -641,8 +642,7 @@ angular.module( 'transcribe-ninja.work', [
     }
   };
 
-
-
+ 
   // Добавить данные в модель
   $scope.applyTranscriptionChange = function ($input, enter) {
     var text = $input.val(),

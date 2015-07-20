@@ -23,8 +23,11 @@
     </ul>
 </div>
 
+
 <div class="transcription row">
     <div class="col-xs-9">
+        <p class=" col-md-offset-1" ng-show="queue.work_type == 1 && originalTranscriptions.length > 0">Если в стенограмме есть текст, которого нет в записи — <strong>не стирайте его</strong>. Это часть из соседнего куска.</p>
+
         <p class="offset-top col-md-offset-1" ng-show="queue.work_type && queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
 
         <ul class="queue-transcriptions" ng-repeat="piece in queue.pieces">
@@ -96,7 +99,7 @@
                 <li>
                     <button class="skip btn btn-default btn-xs" 
                     ng-click="loadQueue(true)" tabindex="5">Пропустить задачу</button>
-                </li>
+            </li>
                 <li ng-show="queue.work_type == 0 || originalTranscriptions.length == 0"><p class="desc">Можете пропустить задачу просто так<br/>или если запись пустая или речь неразборчивая, пометьте это</p></li>
                 <li ng-show="queue.work_type == 0 || originalTranscriptions.length == 0"><a class="btn btn-warning btn-xs" ng-click="poorRecord()" tabindex="6">Запись неразборчивая</a></li>     
             </ul>
