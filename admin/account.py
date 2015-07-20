@@ -75,6 +75,7 @@ class UserAdmin(UserAdmin):
     list_display = (
         'username',
         'balance',
+        'checked_balance',
         'work_length',
         'mistakes_part',
         'transcribe_count',
@@ -89,20 +90,26 @@ class UserAdmin(UserAdmin):
     inlines = (AccountInline,)
 
     def balance(self, instance):
-        queue_object_id = ContentType.objects.get_for_model(Queue).id
-        order_object_id = ContentType.objects.get_for_model(Order).id
-        account_object_id = ContentType.objects.get_for_model(Account).id
+        return instance.account.balance
 
-        if settings.DOMAIN == "transcribe.ninja":
-            object_ids = [queue_object_id, account_object_id]
-        else:
-            object_ids = [order_object_id, account_object_id]
+    def checked_balance(self, instance):
+        return instance.account.checked_balance
+        
+    # def balance(self, instance):
+    #     queue_object_id = ContentType.objects.get_for_model(Queue).id
+    #     order_object_id = ContentType.objects.get_for_model(Order).id
+    #     account_object_id = ContentType.objects.get_for_model(Account).id
 
-        for balance in instance.account.balances:
-            if balance['content_type_id'] in object_ids:
-                return balance["total"] or 0
+    #     if settings.DOMAIN == "transcribe.ninja":
+    #         object_ids = [queue_object_id, account_object_id]
+    #     else:
+    #         object_ids = [order_object_id, account_object_id]
 
-        return 0
+    #     for balance in instance.account.balances:
+    #         if balance['content_type_id'] in object_ids:
+    #             return balance["total"] or 0
+
+    #     return 0
 
     def work_length(self, instance):
         return instance.queue.all().aggregate(lenght=Sum('work_length'))["lenght"] or 0
