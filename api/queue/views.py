@@ -72,7 +72,7 @@ class QueueViewSet(viewsets.ViewSet,
 
         # Если мало задач, то расширяемся
         if len(queues) < 10 and records_count > records_onair:
-            return self.get_queryset(records_onair + 1)
+            return self.get_queue(records_onair + 1)
 
         for q in queues:
             # Если над какой-то из частей работал этот пользователь - ищем
