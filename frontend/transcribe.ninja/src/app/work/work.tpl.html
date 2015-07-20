@@ -10,6 +10,7 @@
     <p class="desc">
         За проверку заработаете <strong>{{ queue.total_price * 100 | number : 0 }} копеек</strong>, плюс <strong>1 копейка</strong> за каждое исправление.
     </p>
+    <p class="desc" ng-show="queue.work_type == 1 && originalTranscriptions.length > 0">Исправляйте только ошибки и дописывайте недостающий текст.<br/>Если в стенограмме есть текст, которого нет в записи — <strong>не стирайте его</strong>. Это часть из соседнего куска.</p>
 
 </div>
 
@@ -26,7 +27,6 @@
 
 <div class="transcription row">
     <div class="col-xs-9">
-        <p class=" col-md-offset-1" ng-show="queue.work_type == 1 && originalTranscriptions.length > 0">Если в стенограмме есть текст, которого нет в записи — <strong>не стирайте его</strong>. Это часть из соседнего куска.</p>
 
         <p class="offset-top col-md-offset-1" ng-show="queue.work_type && queue.offset_parts[0]">...{{ queue.offset_parts[0] }}</p>
 
