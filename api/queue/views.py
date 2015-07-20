@@ -54,6 +54,7 @@ class QueueViewSet(viewsets.ViewSet,
 
     def get_queue(self, records_onair=settings.RECORDS_ONAIR):
         # Если слепой, выдаём задачи на транскрибирование
+        records_count = Record.objects.filter(progress=3).count()
         last_record_ids = Record.objects.filter(progress=3).order_by('created').values_list('id', flat=True).distinct()[:records_onair]
         last_order_ids = Order.objects.filter(record__in=list(last_record_ids)).values_list('id', flat=True).distinct()
 
@@ -62,12 +63,16 @@ class QueueViewSet(viewsets.ViewSet,
                                           priority__in=[1,2],
                                           locked__isnull=True,
                                           order_id__in=list(last_order_ids),
-                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:20]
+                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:50]
         else:
             queues = Queue.objects.filter(priority__in=[1,2],
                                           locked__isnull=True,
                                           order_id__in=list(last_order_ids),
-                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:20]
+                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:50]
+
+        # Если мало задач, то расширяемся
+        if len(queues) < 10 and records_count > records_onair:
+            return self.get_queryset(records_onair + 1)
 
         for q in queues:
             # Если над какой-то из частей работал этот пользователь - ищем
@@ -92,7 +97,7 @@ class QueueViewSet(viewsets.ViewSet,
 
                 return q
 
-        if records_onair == Record.objects.filter(progress=3).count():
+        if records_onair == records_count 
             return None
         else:
             return self.get_queue(records_onair + 1)
