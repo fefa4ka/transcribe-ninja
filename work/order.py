@@ -72,32 +72,34 @@ class Order(Trash):
 
         from queue import Queue
 
-        def make_queue_element(order, as_record, piece, work_type, priority):
-            transcribe_object_id = ContentType.objects.get_for_model(Queue).id
-            transcribe_price = Price.objects.filter(
-                content_type_id=transcribe_object_id,
-                work_type=Price.WORK_TYPE_TRANSCRIBE,
-                default=1)[0]
-
-            check_object_id = ContentType.objects.get_for_model(Queue).id
-            check_price = Price.objects.filter(
-                content_type_id=check_object_id,
-                work_type=Price.WORK_TYPE_EDIT,
-                default=1)[0]
-
-            # work_type = 0 - транскрибция
-            # work_type = 1 - вычитка
-            price = transcribe_price if not work_type else check_price
-
-            queue = Queue(order=self,
+        def make_queue_element(order, as_record, piece, work_type, price, priority):
+            try:
+                Queue.get(order=self,
+                          piece=piece,
+                          price=price,
+                          work_type=work_type)
+            except:
+                queue = Queue(order=self,
                           piece=piece,
                           price=price,
                           work_type=work_type,
                           priority=priority)
 
-            queue.save()
+                queue.save()
 
-            queue.audio_file_make(as_record=as_record)
+                queue.audio_file_make(as_record=as_record)
+
+        transcribe_object_id = ContentType.objects.get_for_model(Queue).id
+        transcribe_price = Price.objects.filter(
+            content_type_id=transcribe_object_id,
+            work_type=Price.WORK_TYPE_TRANSCRIBE,
+            default=1)[0]
+
+        check_object_id = ContentType.objects.get_for_model(Queue).id
+        check_price = Price.objects.filter(
+            content_type_id=check_object_id,
+            work_type=Price.WORK_TYPE_EDIT,
+            default=1)[0]
 
         # Загружаем mp3 файл записи
         mp3_file_path = settings.MEDIA_ROOT + \
@@ -106,22 +108,23 @@ class Order(Trash):
         # Загружаем эмпэтришку, черезе AudioSegment для нарезки
         record = AudioSegment.from_mp3(mp3_file_path)
 
-        # Если очередь уже существует, то не даём создавать
-        if self.queue.count() > 0:
-            # print "Queue for Order already exist. \n Try to flush_queue before make a new."
-            raise LookupError("Queue for Order already exist. \n Try to flush_queue before make a new.")
-
         pieces = self.record.pieces.all().order_by('start_at')
 
         for index, piece in enumerate(pieces):
+            # Если очередь уже существует, то не даём создавать
+            if piece.queue.count() == 2:
+                continue
+
             # Очередь на транскрибацию
             # Нечётные части приоритетные.
             # Для того, чтобы транскрибция начиналась с первого куска.
             priority = 0 if index % 2 else 1
+
             make_queue_element(self,
                                as_record=record,
                                piece=piece,
                                work_type=0,
+                               price=transcribe_price,
                                priority=priority)
 
             # Очередь на вычитку
@@ -129,6 +132,7 @@ class Order(Trash):
                                as_record=record,
                                piece=piece,
                                work_type=1,
+                               price=check_price,
                                priority=False)
 
     def flush_queue(self):

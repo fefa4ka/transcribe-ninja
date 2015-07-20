@@ -40,6 +40,23 @@ def analys(modeladmin, request, queryset):
         core.async_jobs.record_analys.delay(record)
 
 
+def prepare(modeladmin, request, queryset):
+    """
+        Режем на куски, если не порезано
+    """
+    for record in queryset.all():
+        core.async_jobs.record_prepare.delay(record)
+
+
+def make_queue(modeladmin, request, queryset):
+    """
+        Режем на куски, если не порезано
+    """
+    for record in queryset.all():
+        for order in record.orders.all():
+            core.async_jobs.make_queue.delay(order)
+
+
 class RecordAdmin(ModelAdmin):
     list_display = ('title', 'duration', 'total_price', 'spent_money', 'progress', 'completed', 'work_length', 'owner')
 
@@ -68,7 +85,7 @@ class RecordAdmin(ModelAdmin):
 
     search_fields = ['title', 'owner__username']
 
-    actions = [analys]
+    actions = [prepare, analys, make_queue]
 
     inlines = [OrderInline]
 

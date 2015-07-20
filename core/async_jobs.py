@@ -69,7 +69,7 @@ def record_analys(record):
 
 # Очереди для очереди
 
-@job('queue', timeout=1200)
+@job('queue', timeout=3600)
 def make_queue(order):
     """
         Очередь на создание очереди
@@ -86,7 +86,7 @@ def make_queue(order):
         order.make_queue()
         # Распознаём
         # TODO: Запускать отдельной очередью
-        order.record.recognize()
+        # order.record.recognize()
     else:
         order.record.progress = Record.PROGRESS_ORDERED
 
