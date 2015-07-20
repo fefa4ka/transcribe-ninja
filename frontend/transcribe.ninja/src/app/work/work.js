@@ -503,6 +503,12 @@ angular.module( 'transcribe-ninja.work', [
         $scope.wavesurfer.clearRegions();
         $scope.wavesurfer.load($scope.queue.audio_file);
 
+        if($scope.queue.pieces.length == 0) {
+          yaCounter27735045.reachGoal('queue_empty');
+        } else {
+          yaCounter27735045.reachGoal('queue_loaded');
+        }
+
         // Оригинальная транскрипция
         for(var p_index in $scope.queue.pieces) {
           var piece = $scope.queue.pieces[p_index];
