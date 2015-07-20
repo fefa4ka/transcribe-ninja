@@ -65,12 +65,12 @@ class QueueViewSet(viewsets.ViewSet,
                                           priority__in=[1,2],
                                           locked__isnull=True,
                                           order_id__in=list(last_order_ids),
-                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:10]
+                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:20]
         else:
             queues = Queue.objects.filter(priority__in=[1,2],
                                           locked__isnull=True,
                                           order_id__in=list(last_order_ids),
-                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:10]
+                                          completed__isnull=True).exclude(owner=self.request.user).order_by('?')[:20]
 
         for q in queues:
             # Если над какой-то из частей работал этот пользователь - ищем
