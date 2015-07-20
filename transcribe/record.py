@@ -182,10 +182,29 @@ class Record(AudioFile, Trash):
         from speaker import Speaker
         from piece import Piece
 
+        position = 0
+
+        record_path = os.path.join(
+            settings.MEDIA_ROOT,
+            str(self.id))
+
+        voiceid_path = os.path.join(
+            record_path,
+            'record/diarization/voiceid'
+        )
+
+        if not os.path.exists(voiceid_path):
+            os.makedirs(voiceid_path)
 
         # Проверяем, есть ли уже куски
         if self.pieces.count() > 0:
-            return
+            last_piece = self.pieces.order_by('-end_at')[0]
+
+            if last_piece.end_at + 5 > self.duration:
+                shutil.rmtree(record_path, ignore_errors=True)
+                return
+            else:
+                position = last_piece.end_at
 
         # Загружаем ролик
         mp3_audio_file = AudioSegment.from_mp3(
@@ -193,9 +212,7 @@ class Record(AudioFile, Trash):
             self.audio_file_format("mp3")
         )
 
-        position = 0
-
-        db = GMMVoiceDB(settings.VOICEID_DB_PATH)
+        db = GMMVoiceDB(voiceid_path)
 
         while self.duration > position:
             if self.duration > position + settings.DIARIZATION_PART_SIZE:
@@ -211,14 +228,12 @@ class Record(AudioFile, Trash):
                 offset=0
             )
 
-            print settings.MEDIA_ROOT + audio_file_path
             voice = Voiceid(
                 db, settings.MEDIA_ROOT + audio_file_path)
 
             # Разрезаем на части
             # Для каждой части делаем сегменты
             # Задача выбрать собеседников
-
 
             # Распознаём говорящих
             voice.extract_speakers()
@@ -246,12 +261,10 @@ class Record(AudioFile, Trash):
                                   speaker=speaker)
                     piece.save()
 
-                # Удаляем все файлы
-                shutil.rmtree(
-                    os.path.dirname(audio_file_path),
-                    ignore_errors=True)
-
             position = end_at
+
+        # Удаляем все файлы
+        shutil.rmtree(record_path, ignore_errors=True)
 
     def recognize(self):
         """
