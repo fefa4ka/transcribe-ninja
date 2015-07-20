@@ -95,7 +95,7 @@ class QueueViewSet(viewsets.ViewSet,
         if records_onair == Record.objects.filter(progress=3).count():
             return None
         else:
-            return self.get_queryset(records_onair + 1)
+            return self.get_queue(records_onair + 1)
 
     def unlock_queue(self):
         """
