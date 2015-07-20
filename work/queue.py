@@ -17,6 +17,7 @@ import numpy as np
 
 from diff_match_patch import diff_match_patch
 
+from django.utils import timezone
 
 class Queue(AudioFile):
 
@@ -300,7 +301,7 @@ class Queue(AudioFile):
                 if not queue.completed:
                     return
 
-        self.checked = datetime.now()
+        self.checked = timezone.now()
 
         self.save()
 
