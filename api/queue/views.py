@@ -18,7 +18,7 @@ from serializers import *
 
 from api.permissions import *
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class QueueViewSet(viewsets.ViewSet,
@@ -97,7 +97,7 @@ class QueueViewSet(viewsets.ViewSet,
 
                 return q
 
-        if records_onair == records_count 
+        if records_onair == records_count:
             return None
         else:
             return self.get_queue(records_onair + 1)
@@ -108,10 +108,16 @@ class QueueViewSet(viewsets.ViewSet,
             Помечаем её как пропущенную, чтобы потом считать сложные
             и не востребованные куски
         """
+        from itertools import chain
+
         queue = Queue.objects.filter(
             owner=self.request.user, completed__isnull=True)
+        lastHourDateTime = datetime.today() - timedelta(hours = 1)
+        queues_old = Queue.objects.filter(locked__lt=lastHourDateTime, completed__isnull=True)
 
-        for q in queue:
+        queues = list(chain(queue, queues_old))
+
+        for q in queues:
             q.locked = None
             q.owner = None
             q.skipped += 1
