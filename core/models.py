@@ -4,7 +4,6 @@
 from django.conf import settings
 
 from django.db import models
-from django.contrib.auth.models import User
 
 from core.extra import *
 from core.utils import *
@@ -16,7 +15,7 @@ from decimal import Decimal
 
 from pydub import AudioSegment
 
-from datetime import datetime
+from django.utils import timezone
 
 
 # class Feedback(models.Model):
@@ -59,7 +58,7 @@ class Trash(models.Model):
 
     def delete(self, trash=True):
         if not self.trashed_at and trash:
-            self.trashed_at = datetime.now()
+            self.trashed_at = timezone.now()
             self.save()
         else:
             super(SomeModel, self).delete()
@@ -207,7 +206,6 @@ class AudioFile(models.Model):
             # Вырезаем кусок и сохраняем
             piece = as_record[start_at:end_at]
             piece.export(settings.MEDIA_ROOT + audio_file_path)
-
 
         # Выдаём нужный формат
         if extension == "wav":

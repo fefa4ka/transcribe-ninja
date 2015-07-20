@@ -20,6 +20,8 @@ from api.permissions import *
 
 from datetime import datetime, timedelta
 
+from django.utils import timezone
+
 
 class QueueViewSet(viewsets.ViewSet,
                    viewsets.GenericViewSet):
@@ -91,7 +93,7 @@ class QueueViewSet(viewsets.ViewSet,
             # Если всё ок, берём очередь в работу
             if q:
                 # Блокируем очередь за пользователем
-                q.locked = datetime.now()
+                q.locked = timezone.now()
                 q.owner = self.request.user
                 q.save()
 
@@ -172,7 +174,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
             # Если многие посчитали, что запись плохая,
             # помечаем, как выполненную
             if queue.poored > settings.SPEECH_POOR_LIMIT:
-                queue.completed = datetime.now()
+                queue.completed = timezone.now()
                 queue.update_work_metrics()
 
             queue.save()
@@ -195,7 +197,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
                 serializer.save()
 
         # Помечаем очередь как прочитанную
-        queue.completed = datetime.now()
+        queue.completed = timezone.now()
         queue.update_work_metrics()
 
         # TODO: Удалить аудиофайл

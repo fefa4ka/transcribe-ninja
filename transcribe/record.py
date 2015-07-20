@@ -192,6 +192,7 @@ class Record(AudioFile, Trash):
             settings.MEDIA_ROOT +
             self.audio_file_format("mp3")
         )
+
         position = 0
 
         db = GMMVoiceDB(settings.VOICEID_DB_PATH)
@@ -218,6 +219,7 @@ class Record(AudioFile, Trash):
             # Для каждой части делаем сегменты
             # Задача выбрать собеседников
 
+
             # Распознаём говорящих
             voice.extract_speakers()
 
@@ -232,6 +234,7 @@ class Record(AudioFile, Trash):
 
                 speaker.save()
 
+                cluster.set_speaker(cluster.get_name())
                 voice.update_db()
 
                 # Сохраняем все куски, где этот собеседник участвовал

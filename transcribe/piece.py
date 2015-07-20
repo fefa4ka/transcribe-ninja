@@ -10,7 +10,7 @@ import urllib2
 
 from xml.dom.minidom import parseString as XMLParse
 
-from datetime import datetime
+from django.utils import timezone
 
 import numpy as np
 
@@ -129,7 +129,7 @@ class Piece(models.Model):
             return
 
         transcribe_queue.owner = User.objects.get(username="speech_bot")
-        transcribe_queue.locked = datetime.now()
+        transcribe_queue.locked = timezone.now()
 
         transcribe_queue.save()
 
@@ -171,7 +171,7 @@ class Piece(models.Model):
 
         transcription.save()
 
-        transcribe_queue.completed = datetime.now()
+        transcribe_queue.completed = timezone.now()
         transcribe_queue.save()
 
         transcribe_queue.update_priority()
@@ -198,7 +198,7 @@ class Piece(models.Model):
 
             transcription.save()
 
-            transcribe_queue.completed = datetime.now()
+            transcribe_queue.completed = timezone.now()
             transcribe_queue.save()
 
             transcribe_queue.update_priority()
