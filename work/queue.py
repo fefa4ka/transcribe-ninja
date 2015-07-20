@@ -259,7 +259,7 @@ class Queue(AudioFile):
             elif version == 0:
                 queue = self
             elif version == 1:
-                queue = Queue.objects.filter(id__in=queue_ids, completed__gt=self.completed).order_by('completed')
+                queue = Queue.objects.filter(id__in=queue_ids, completed__gt=self.completed).order_by('-completed')
                 if len(queue) > 0:
                     queue = queue[0]
                 else:
