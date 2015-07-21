@@ -214,13 +214,17 @@ class Record(AudioFile, Trash):
 
         db = GMMVoiceDB(voiceid_path)
 
+        print "Start diarization"
+
         while self.duration > position:
             if self.duration > position + settings.DIARIZATION_PART_SIZE:
                 end_at = position + settings.DIARIZATION_PART_SIZE
             else:
                 end_at = self.duration
 
+            print "Create file from %d sec to %d" % (position, end_at)
             audio_file_path = self.cut_to_file(
+
                 as_record=mp3_audio_file,
                 file_name='record/diarization/%d.wav' % position,
                 start_at=position,
@@ -236,8 +240,10 @@ class Record(AudioFile, Trash):
             # Задача выбрать собеседников
 
             # Распознаём говорящих
+            print "Extract spearkers"
             voice.extract_speakers()
 
+            print "Save pieces"
             # Сохраняем информацию о каждом говоряещм
             for c in voice.get_clusters():
                 cluster = voice.get_cluster(c)
@@ -261,8 +267,11 @@ class Record(AudioFile, Trash):
                                   speaker=speaker)
                     piece.save()
 
+                    print "Save piece %d to %d" % ((position + segment.get_start() / 100.0), (position + segment.get_end() / 100.0))
+
             position = end_at
 
+        print "Finished"
         # Удаляем все файлы
         shutil.rmtree(record_path, ignore_errors=True)
 
