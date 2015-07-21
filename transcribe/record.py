@@ -255,8 +255,8 @@ class Record(AudioFile, Trash):
 
                 speaker.save()
 
-                cluster.set_speaker(cluster.get_name())
-                voice.update_db()
+                # cluster.set_speaker(cluster.get_name())
+                # voice.update_db()
 
                 # Сохраняем все куски, где этот собеседник участвовал
                 for segment in cluster.get_segments():
