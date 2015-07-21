@@ -35,10 +35,11 @@
             </div>
 
             <div ng-tab-body class="tab-body">
-                 <div class="form-group">
+                <div class="form-group">
                     <input tabindex="4" ng-model="$parent.card" required mask="9999 9999 9999 9999" clean="true"
                            type="text" placeholder="Номер карты" alt="Номер карты" class="form-control">
                 </div>
+                <p ng-show="amount < 500">К сожалению, мы можем перечислить на карту платежи от 500 ₽</p>
             </div>
 
             <div ng-tab-body class="tab-body">
@@ -65,7 +66,7 @@
         <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
 
         <a ng-click="cancel()" class="btn btn-default pull-left" alt="Закрыть" tabindex="10">Закрыть</a>
-        <a ng-click="takeMoney(tabs.index)" class="btn btn-primary pull-right" alt="Получить деньги" tabindex="10">Получить деньги</a>
+        <a ng-click="takeMoney(tabs.index)" class="btn btn-primary pull-right" alt="Получить деньги" tabindex="10" ng-disabled="amount < 500 && tabs.index == 2">Получить деньги</a>
 
     </div>
     </div>
