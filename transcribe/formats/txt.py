@@ -25,13 +25,8 @@ class ExportTXT:
                     time.gmtime(transcription.start_at)
                 )
 
-                # TODO: Локализация
-                speaker_gender, speaker_index = u"Женщина" if transcription.speaker_code[0] == "F"\
-                                                else u"Мужчина",\
-                                                transcription.speaker_code[1]
-
                 text = [
-                    u"%s %s" % (speaker_gender, speaker_index),
+                    transcription.export_name,
                     transcription.text_pretty
                 ]
 

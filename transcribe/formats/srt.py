@@ -29,20 +29,10 @@ class ExportSRT:
                     time.gmtime(transcription.end_at)
                 )
 
-                # TODO: Локализация
-                speaker_gender, speaker_index = u"Женщина" if transcription.speaker_code[0] == "F"\
-                                                else u"Мужчина",\
-                                                transcription.speaker_code[1]
-
-                text = [
-                    u"%s %s" % (speaker_gender, speaker_index),
-                    transcription.text_pretty
-                ]
-
                 record = [
                     str(index),
                     u"%s --> %s" % (start_at, end_at),
-                    u": ".join(text)
+                    transcription.text_pretty
                 ]
 
                 srt_file.write("\n".join(record) + "\n\n")
