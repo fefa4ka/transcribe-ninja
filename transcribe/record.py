@@ -207,10 +207,10 @@ class Record(AudioFile, Trash):
                 position = last_piece.end_at
 
         # Загружаем ролик
-        mp3_audio_file = AudioSegment.from_mp3(
-            settings.MEDIA_ROOT +
-            self.audio_file_format("mp3")
-        )
+        # mp3_audio_file = AudioSegment.from_mp3(
+        #     settings.MEDIA_ROOT +
+        #     self.audio_file_format("mp3")
+        # )
 
         db = GMMVoiceDB(voiceid_path)
 
@@ -224,8 +224,7 @@ class Record(AudioFile, Trash):
 
             print "Create file from %d sec to %d" % (position, end_at)
             audio_file_path = self.cut_to_file(
-
-                as_record=mp3_audio_file,
+                as_record=True,
                 file_name='record/diarization/%d.wav' % position,
                 start_at=position,
                 end_at=end_at,

@@ -168,6 +168,7 @@ class AudioFile(models.Model):
                 self.audio_file_format("mp3")
             )
 
+
         # Файл записи
         if extension == "mp3":
             audio_file_path = final_file_path = os.path.join(
@@ -204,8 +205,15 @@ class AudioFile(models.Model):
                 end_at = (end_at + offset) * 1000
 
             # Вырезаем кусок и сохраняем
-            piece = as_record[start_at:end_at]
-            piece.export(settings.MEDIA_ROOT + audio_file_path)
+            # piece = as_record[start_at:end_at]
+            # piece.export(settings.MEDIA_ROOT + audio_file_path)
+            subprocess.call(
+                ['ffmpeg', '-i',
+                 settings.MEDIA_ROOT + audio_file_path,
+                 '-vcodec', 'copy',
+                 '-ss', start_at,
+                 '-t', end_at - start_at,
+                 settings.MEDIA_ROOT + final_file_path])
 
         # Выдаём нужный формат
         if extension == "wav":
