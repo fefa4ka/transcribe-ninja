@@ -68,8 +68,7 @@ def record_analys(record):
 
 
 # Очереди для очереди
-
-@job('queue', timeout=3600)
+@job('prepare', timeout=3600)
 def make_queue(order):
     """
         Очередь на создание очереди
@@ -105,5 +104,30 @@ def update_near(queue):
         queue - экземпляр класса очереди Queue
 
     """
+    record = queue.order.record
+
     queue.update_priority()
     queue.update_payments()
+
+    # Если вся задача выполнена, помечаем её как проверенную
+
+    for order in record.orders.all():
+        if order.queue.filter(completed__isnull=True).count() == 0:
+            record.status = 4
+            record.save()
+            export_transcription.delay(record)
+
+
+@job('prepare', timeout=3600)
+def export_transcription(record):
+    """
+        Экспортируем транскрибцию в разные форматы
+
+        record - экземпляр класса записи Record
+    """
+    formats = ['xls', 'srt', 'txt']
+
+    for ext in formats:
+        export = Export(record_id=record.id, file_format=ext)
+        export.generate_file()
+        export.save()

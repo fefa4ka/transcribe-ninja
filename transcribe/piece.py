@@ -128,6 +128,8 @@ class Piece(models.Model):
     def previous_check_transcription_queue(self):
         if self.previous:
             return self.previous.check_transcription_queue
+        else:
+            return self
 
     def recognize(self, as_record=None):
         """
