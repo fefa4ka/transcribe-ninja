@@ -106,8 +106,9 @@ class Order(Trash):
             self.record.audio_file_format("mp3")
 
         # Загружаем эмпэтришку, черезе AudioSegment для нарезки
-        record = AudioSegment.from_mp3(mp3_file_path)
-
+        # record = AudioSegment.from_mp3(mp3_file_path)
+        record = True
+        
         pieces = self.record.pieces.all().order_by('start_at')
 
         for index, piece in enumerate(pieces):
