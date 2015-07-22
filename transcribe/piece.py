@@ -48,6 +48,8 @@ class Piece(models.Model):
 
     @property
     def transcriptions(self):
+        from .models import Transcription
+        from work.models import Queue
         # Смотрим какие очереди выполненны
         # последними и от них выдаём транскрибцию.
         queues = [self.transcribe_queue, self.check_transcription_queue, self.previous_check_transcription_queue]
