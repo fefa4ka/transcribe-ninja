@@ -209,11 +209,11 @@ class AudioFile(models.Model):
             # piece.export(settings.MEDIA_ROOT + audio_file_path)
         subprocess.call(
             ['ffmpeg', '-i',
-             settings.MEDIA_ROOT + audio_file_path,
+             settings.MEDIA_ROOT + self.audio_file_format("mp3"),
              '-vcodec', 'copy',
              '-ss', str(start_at),
              '-t', str((end_at - start_at)),
-             settings.MEDIA_ROOT + final_file_path])
+             settings.MEDIA_ROOT + audio_file_path])
 
         # Выдаём нужный формат
         if extension == "wav":
