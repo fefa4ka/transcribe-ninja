@@ -50,25 +50,29 @@ class Piece(models.Model):
     def transcriptions(self):
         # Смотрим какие очереди выполненны
         # последними и от них выдаём транскрибцию.
-        if self.previous:
-            previous_check_queue = self.previous.check_transcription_queue
+        queues = [self.transcribe_queue, self.check_transcription_queue, self.previous_check_transcription_queue]
+        queues_ids = [q.id for q in queues]
 
-        if self.previous and previous_check_queue.completed\
-            and self.check_transcription_queue.completed\
-            and previous_check_queue.completed > self.check_transcription_queue.completed:
-            queue_id = previous_check_queue.id
-        else:
-            # По умолчанию показывать только последнии трансприпции
-            # Отдавать транскрипции,
-            # время выполнении очереди у которой последний.
-            if self.check_transcription_queue.completed:
-                queue_id = self.check_transcription_queue.id
-            else:
-                queue_id = self.transcribe_queue.id
+        last_queue = Queue.objects.filter(id__in=queues_ids, completed__isnull=False).order_by('-completed')[:1]
+        # if self.previous:
+        #     previous_check_queue = self.previous.check_transcription_queue
 
-        if queue_id:
+        # if self.previous and previous_check_queue.completed\
+        #     and self.check_transcription_queue.completed\
+        #     and previous_check_queue.completed > self.check_transcription_queue.completed:
+        #     queue_id = previous_check_queue.id
+        # else:
+        #     # По умолчанию показывать только последнии трансприпции
+        #     # Отдавать транскрипции,
+        #     # время выполнении очереди у которой последний.
+        #     if self.check_transcription_queue.completed:
+        #         queue_id = self.check_transcription_queue.id
+        #     else:
+        #         queue_id = self.transcribe_queue.id
+
+        if len(last_queue) > 0:
             return self.all_transcriptions.\
-                filter(queue_id=queue_id).order_by('index')
+                filter(queue_id=last_queue[0]).order_by('index')
         else:
             return Transcription.objects.none()
 
@@ -117,6 +121,11 @@ class Piece(models.Model):
     @property
     def check_transcription_queue(self):
         return self.queue.filter(work_type=1)[0]
+
+    @property
+    def previous_check_transcription_queue(self):
+        if self.previous:
+            return self.previous.check_transcription_queue
 
     def recognize(self, as_record=None):
         """

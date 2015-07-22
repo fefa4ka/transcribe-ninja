@@ -12,6 +12,7 @@ from site import admin_site
 class TranscriptionInline(TabularInline):
     model = Transcription
     extra = 0
+    exclude = ['speaker']
 
 
 class QueueAdmin(ModelAdmin):
