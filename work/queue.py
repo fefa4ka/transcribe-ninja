@@ -230,6 +230,43 @@ class Queue(AudioFile):
 
         return letters_count
 
+    def _get_queue(self, version=0):
+        # version - версия очереди, где расшифровывали этот кусок что было -1, что есть 0, что стало 1
+
+        # Нужны транскрибции этой очереди, предыдущая, следующая для этих кусков
+        if not self.completed:
+            return []
+
+        for piece in self.pieces:
+            queues = [piece.transcribe_queue, piece.check_transcription_queue, piece.previous_check_transcription_queue]
+
+        for piece in self.pieces:
+            # Определяем очереди, которые участвовали в проверке
+            # Это очереди этого куска и очередь на проверку предыдущего.
+            queue_ids = list(Queue.objects.\
+                filter(piece_id=piece.id, completed__isnull=False).\
+                values_list('id', flat=True).distinct())
+
+            if piece.previous and piece.previous.check_transcription_queue.completed:
+                queue_ids.append(piece.previous.check_transcription_queue.id)
+
+            # Если версия предыдущая, берём первую транскрибцию из очереди младше
+            if version == -1:
+                queue = Queue.objects.filter(id__in=queue_ids, completed__lt=self.completed).order_by('-completed')
+                if len(queue) > 0:
+                    queue = queue[0]
+                else:
+                    continue
+
+            elif version == 0:
+                queue = self
+            elif version == 1:
+                queue = Queue.objects.filter(id__in=queue_ids, completed__gt=self.completed).order_by('-completed')
+                if len(queue) > 0:
+                    queue = queue[0]
+                else:
+                    queue = self
+
     def _get_trancriptions(self, version=0):
         # version - версия транскрибции. что было -1, что есть 0, что стало 1
 
@@ -251,7 +288,7 @@ class Queue(AudioFile):
 
             # Если версия предыдущая, берём первую транскрибцию из очереди младше
             if version == -1:
-                queue = Queue.objects.filter(id__in=queue_ids, completed__lt=self.completed).order_by('-completed')
+                queue = Queue.objects.filter(id__in=queue_ids, completed__lt=self.completed).order_by('completed')
                 if len(queue) > 0:
                     queue = queue[0]
                 else:
