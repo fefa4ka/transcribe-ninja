@@ -77,7 +77,7 @@ def make_queue(order):
         order - экземпляр класса заказа Order
     """
     # Пока не диаризируется, не создавать очередь
-    if order.record.progress > Record.PROGRESS_DIARIZED:
+    if order.record.progress >= Record.PROGRESS_DIARIZED:
         order.record.progress = Record.PROGRESS_INWORK
         order.record.save()
 
