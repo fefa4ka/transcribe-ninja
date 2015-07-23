@@ -68,7 +68,7 @@ def record_analys(record):
 
 
 # Очереди для очереди
-@job('prepare', timeout=3600)
+@job('prepare', timeout=18000)
 def make_queue(order):
     """
         Очередь на создание очереди
