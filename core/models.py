@@ -188,7 +188,7 @@ class AudioFile(models.Model):
                 start_at,
                 end_at])
 
-        return sorted(splitted, lambda x: x[1])
+        return sorted(splitted, key=lambda x: x[1])
 
     def _split_to_parts(self, length):
         splitted_path = os.path.join(
