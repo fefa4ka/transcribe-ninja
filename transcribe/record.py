@@ -230,7 +230,7 @@ class Record(AudioFile, Trash):
             # Куски изначально в mp3, нужно конвертнуть иили нет
 
             voice = Voiceid(
-                db, settings.MEDIA_ROOT + audio_file_path)
+                db, audio_file_path)
 
             # Разрезаем на части
             # Для каждой части делаем сегменты
