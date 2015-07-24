@@ -439,7 +439,9 @@ def create_queue_payment(sender, instance, created, raw, using, update_fields, *
     try:
         type_id = ContentType.objects.get_for_model(type(instance)).id
         payment = Payment.objects.get(content_type_id=type_id, object_id=instance.id)
+
         return
+
     except Payment.DoesNotExist:
         pass
 

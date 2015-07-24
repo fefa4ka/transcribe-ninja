@@ -22,6 +22,12 @@ from datetime import datetime, timedelta
 
 from django.utils import timezone
 
+import logging
+
+import rq
+
+logger = logging.getLogger(__name__)
+
 
 class QueueViewSet(viewsets.ViewSet,
                    viewsets.GenericViewSet):
@@ -160,11 +166,19 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         elif len(request.data) > 0:
             queue_id = request.data[0]['queue']
 
+        if not queue_id:
+            logger.error("Not queue_id provided %s" % (request))
+
+            return Response({'error': 'Queue id not provided'}, status=HTTP_400_BAD_REQUEST)
+
+
         # Каждая транскрипция связанна с каким-то заказом, либо
         queue = Queue.objects.get(
             id=queue_id, owner=request.user)
 
         if queue.completed:
+            logger.error("Queue %d already completed in %s. Completed by %s, send by %s" % (queue.id, queue.completed, queue.owner, request.user))
+
             return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
 
         # Если плохая запись
@@ -181,14 +195,20 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
             core.async_jobs.update_near.delay(queue)
 
+            logger.debug("Queue %d is poored." % (queue.id))
+
             return Response({'done': 'ok'}, status=HTTP_201_CREATED)
 
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)
             if not serializer.is_valid():
+                logger.error("Transcription for queue %d send with errors: %s" % (queue.id, serializer.errors))
+
                 return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
             if data['queue'] != queue.id:
+                logger.error("Sended transcription for queue %d, but locked queue %d" % (data['queue'], queue.id))
+
                 return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
 
         for data in request.data:
@@ -205,6 +225,12 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
 
         # Отправляем на асинхронный пересчёт зависимых кусков
         # Меняем приоритет у других кусков и перерасчёт бабла
-        core.async_jobs.update_near.delay(queue)
+        try:
+            core.async_jobs.update_near.delay(queue)
+        except rq.connections.NoRedisConnectionException:
+            logger.error("Can't connect to Redis, when send results of queue %d" % (queue.id))
+
+
+        logger.debug("Transcription for queue %d saved." % (queue.id))
 
         return Response({'done': 'ok'}, status=HTTP_201_CREATED)

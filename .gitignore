@@ -10,3 +10,4 @@ temp/*
 *.mp3
 *.conf
 *.pem
+*.log

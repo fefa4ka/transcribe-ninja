@@ -45,11 +45,44 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 
 if not PROD and DEBUG:
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
+        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN),
     )
 else:
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
     )
 
-STATIC_URL = '/static/'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'transcribe_ninja.log',
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['file'],
+            'propagate': True,
+            'level': 'WARNING',
+        },
+        'api': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+        },
+    }
+}
