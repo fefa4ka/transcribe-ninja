@@ -47,6 +47,14 @@ def prepare(modeladmin, request, queryset):
     for record in queryset.all():
         core.async_jobs.record_prepare.delay(record)
 
+def export_transcription(modeladmin, request, queryset):
+    """
+        Режем на куски, если не порезано
+    """
+    for record in queryset.all():
+        core.async_jobs.export_transcription.delay(record)
+
+
 
 def make_queue(modeladmin, request, queryset):
     """
@@ -60,6 +68,7 @@ def make_queue(modeladmin, request, queryset):
 class RecordAdmin(ModelAdmin):
     list_display = ('title', 'duration', 'total_price', 'spent_money', 'progress', 'completed', 'work_length', 'owner')
 
+    list_filter = ('progress',)
     form = RecordForm
 
     fieldsets = (
@@ -85,7 +94,7 @@ class RecordAdmin(ModelAdmin):
 
     search_fields = ['title', 'owner__username']
 
-    actions = [prepare, analys, make_queue]
+    actions = [prepare, analys, make_queue, export_transcription]
 
     inlines = [OrderInline]
 

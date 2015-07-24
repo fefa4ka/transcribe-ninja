@@ -9,15 +9,15 @@ class TopMenu(Menu):
 
     def init_with_context(self, context):
         self.children += [
-            items.AppList(
-                title='Records',
-                icon='fa-tasks',
-                models=('transcribe.record.Record',),
+            items.ModelList(
+                title='Humanity',
+                icon='fa-money',
+                models=('django.contrib.auth.*', 'work.payment.Payment',),
             ),
             items.ModelList(
-                title='Payments',
-                icon='fa-money',
-                models=('work.payment.*',),
+                title='Process',
+                icon='fa-tasks',
+                models=('transcribe.record.Record', 'work.queue.Queue'),
             ),
 
         ]

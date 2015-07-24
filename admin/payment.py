@@ -98,4 +98,5 @@ class SalaryAdmin(ModelAdmin):
             request.META['QUERY_STRING'] = request.GET.urlencode()
         return super(SalaryAdmin,self).changelist_view(request, extra_context=extra_context)
 
+
 admin_site.register(Payment, SalaryAdmin)
