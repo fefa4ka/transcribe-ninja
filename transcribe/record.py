@@ -218,7 +218,7 @@ class Record(AudioFile, Trash):
 
         for part in self.parts:
             audio_file_path = part[0]
-
+            
             position = part[1]
             # Конец куска через определённое время,
             # или если последний кусок — конец записи
