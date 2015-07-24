@@ -198,7 +198,7 @@ class Record(AudioFile, Trash):
 
         # Проверяем, есть ли уже куски
         if self.pieces.count() > 0:
-            last_piece = self.pieces.order_by('-end_at')[0]
+            last_piece = self.pieces.order_by('end_at')[0]
 
             if last_piece.end_at + 5 > self.duration:
                 shutil.rmtree(record_path, ignore_errors=True)
@@ -218,7 +218,10 @@ class Record(AudioFile, Trash):
 
         for part in self.parts:
             audio_file_path = part[0]
-            
+
+            if position > part[1]:
+                continue
+
             position = part[1]
             # Конец куска через определённое время,
             # или если последний кусок — конец записи
