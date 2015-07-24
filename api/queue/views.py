@@ -161,6 +161,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         return Transcription.objects.filter(queue__owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
+        queue_id = 0
         if 'queue' in request.data:
             queue_id = request.data['queue']
         elif len(request.data) > 0:
