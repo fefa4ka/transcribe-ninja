@@ -273,8 +273,10 @@ class Record(AudioFile, Trash):
 
                 speaker.save()
 
-                # cluster.set_speaker(cluster.get_name())
-                # voice.update_db()
+                # Если запись не больше двух часов, то распознаём собеседников на всю запись
+                if self.duration < 8000:
+                    cluster.set_speaker(cluster.get_name())
+                    voice.update_db()
 
                 # Сохраняем все куски, где этот собеседник участвовал
                 for segment in cluster.get_segments():
