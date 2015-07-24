@@ -181,7 +181,14 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 360,
     },
     # Split audio
-    'queue': {
+    'make_queue': {
+        'HOST': HOSTS['REDIS'],
+        'PORT': 6379,
+        'DB': 0,
+        'PASSWORD': '',
+        'DEFAULT_TIMEOUT': 360,
+    },
+    'update_queue': {
         'HOST': HOSTS['REDIS'],
         'PORT': 6379,
         'DB': 0,
