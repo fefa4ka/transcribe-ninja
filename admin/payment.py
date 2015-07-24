@@ -87,4 +87,15 @@ class SalaryAdmin(ModelAdmin):
 
         return qs.filter(content_type_id=account_object_id)
 
+    def changelist_view(self, request, extra_context=None):
+        # referer = request.META.get('HTTP_REFERER', '')
+        # showall = request.META['PATH_INFO'] in referer and not request.GET.has_key('status')
+        # if not showall and not request.GET.has_key('param_name_here'):
+        if not request.GET.has_key('status__exact'):
+            q = request.GET.copy()
+            q['status__exact'] = '0'
+            request.GET = q
+            request.META['QUERY_STRING'] = request.GET.urlencode()
+        return super(SalaryAdmin,self).changelist_view(request, extra_context=extra_context)
+
 admin_site.register(Payment, SalaryAdmin)
