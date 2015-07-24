@@ -198,7 +198,7 @@ class Record(AudioFile, Trash):
 
         # Проверяем, есть ли уже куски
         if self.pieces.count() > 0:
-            last_piece = self.pieces.order_by('end_at')[0]
+            last_piece = self.pieces.order_by('-end_at')[0]
 
             if last_piece.end_at + 5 > self.duration:
                 shutil.rmtree(record_path, ignore_errors=True)
