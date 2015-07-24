@@ -222,8 +222,8 @@ class Record(AudioFile, Trash):
             position = part[1]
             # Конец куска через определённое время,
             # или если последний кусок — конец записи
-            if self.duration > position + settings.DIARIZATION_PART_SIZE:
-                end_at = position + settings.DIARIZATION_PART_SIZE
+            if self.duration > position + settings.DIARIZATION_PART_SIZE * 60:
+                end_at = position + settings.DIARIZATION_PART_SIZE * 60
             else:
                 end_at = self.duration
 
@@ -233,7 +233,7 @@ class Record(AudioFile, Trash):
                 record_path,
                 'diarization')
             audio_file_path = self.cut_to_file(
-                os.path.join(diarization_path, str(position) + ".wav"),
+                os.path.join('diarization', str(position) + ".wav"),
                 start_at=position, end_at=end_at)
 
             voice = Voiceid(
