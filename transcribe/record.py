@@ -229,7 +229,12 @@ class Record(AudioFile, Trash):
 
             # Куски изначально в mp3, нужно конвертнуть иили нет
             file_name, extension = os.path.splitext(audio_file_path)
-            audio_file_path = self.cut_to_file(position + ".wav", start_at=position, end_at=end_at)
+            diarization_path = os.path.join(
+                record_path,
+                'diarization')
+            audio_file_path = self.cut_to_file(
+                os.path.join(diarization_path, str(position) + ".wav"),
+                start_at=position, end_at=end_at)
 
             voice = Voiceid(
                 db, audio_file_path)
