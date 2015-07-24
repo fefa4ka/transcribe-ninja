@@ -228,6 +228,8 @@ class Record(AudioFile, Trash):
                 end_at = self.duration
 
             # Куски изначально в mp3, нужно конвертнуть иили нет
+            file_name, extension = os.path.splitext(audio_file_path)
+            audio_file_path = self.__ffmpeg_decode(audio_file_path, file_name + ".wav" )
 
             voice = Voiceid(
                 db, audio_file_path)
