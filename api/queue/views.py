@@ -203,7 +203,7 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         for data in request.data:
             serializer = TranscriptionQueueSerializer(data=data)
             if not serializer.is_valid():
-                logger.error("Transcription for queue %d send with errors: %s" % (queue.id, serializer.errors))
+                logger.error("Transcription for queue %d send with errors: %s\n%s" % (queue.id, serializer.errors, request))
 
                 return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
