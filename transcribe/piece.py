@@ -131,7 +131,7 @@ class Piece(models.Model):
         else:
             return self
 
-    def recognize(self, as_record=None):
+    def recognize(self):
         """
             Распознаём через бота Google Speech API
         """
@@ -152,7 +152,6 @@ class Piece(models.Model):
             file_name=upload_piece_path(self, extension="wav"),
             start_at=self.start_at,
             end_at=self.end_at,
-            as_record=as_record,
             offset=0,
             channels=1
         )

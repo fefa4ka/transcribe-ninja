@@ -35,7 +35,7 @@ class Payment(models.Model):
 
     comment = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
-    status = models.IntegerField(default=0)
+    status = models.BooleanField(default=0)
 
     created = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey('auth.User', related_name='payments')

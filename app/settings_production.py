@@ -295,7 +295,7 @@ SPEECH_POOR_LIMIT = 3
 RECORDS_ONAIR = 2
 
 # На какие куски делить запись при диаризации
-DIARIZATION_PART_SIZE = 600
+DIARIZATION_PART_SIZE = 10.00
 
 # ADMIN
 WPADMIN = {

@@ -68,7 +68,7 @@ def record_analys(record):
 
 
 # Очереди для очереди
-@job('prepare', timeout=18000)
+@job('make_queue', timeout=18000)
 def make_queue(order):
     """
         Очередь на создание очереди
@@ -92,7 +92,7 @@ def make_queue(order):
     order.record.save()
 
 
-@job('queue')
+@job('update_queue')
 def update_near(queue):
     """
         Результат работы каждого зависит от того,

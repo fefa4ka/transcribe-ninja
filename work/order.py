@@ -72,7 +72,7 @@ class Order(Trash):
 
         from queue import Queue
 
-        def make_queue_element(order, as_record, piece, work_type, price, priority):
+        def make_queue_element(order, piece, work_type, price, priority):
             try:
                 Queue.get(order=self,
                           piece=piece,
@@ -87,7 +87,7 @@ class Order(Trash):
 
                 queue.save()
 
-                queue.audio_file_make(as_record=as_record)
+                queue.audio_file_make()
 
         transcribe_object_id = ContentType.objects.get_for_model(Queue).id
         transcribe_price = Price.objects.filter(
@@ -105,10 +105,6 @@ class Order(Trash):
         mp3_file_path = settings.MEDIA_ROOT + \
             self.record.audio_file_format("mp3")
 
-        # Загружаем эмпэтришку, черезе AudioSegment для нарезки
-        # record = AudioSegment.from_mp3(mp3_file_path)
-        record = True
-        
         pieces = self.record.pieces.all().order_by('start_at')
 
         for index, piece in enumerate(pieces):
@@ -122,7 +118,6 @@ class Order(Trash):
             priority = 0 if index % 2 else 1
 
             make_queue_element(self,
-                               as_record=record,
                                piece=piece,
                                work_type=0,
                                price=transcribe_price,
@@ -130,7 +125,6 @@ class Order(Trash):
 
             # Очередь на вычитку
             make_queue_element(self,
-                               as_record=record,
                                piece=piece,
                                work_type=1,
                                price=check_price,

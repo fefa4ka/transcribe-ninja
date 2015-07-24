@@ -216,20 +216,18 @@ class Record(AudioFile, Trash):
 
         print "Start diarization"
 
-        while self.duration > position:
+        for part in self.parts:
+            audio_file_path = part[0]
+
+            position = part[1]
+            # Конец куска через определённое время,
+            # или если последний кусок — конец записи
             if self.duration > position + settings.DIARIZATION_PART_SIZE:
                 end_at = position + settings.DIARIZATION_PART_SIZE
             else:
                 end_at = self.duration
 
-            print "Create file from %d sec to %d" % (position, end_at)
-            audio_file_path = self.cut_to_file(
-                as_record=True,
-                file_name='record/diarization/%d.wav' % position,
-                start_at=position,
-                end_at=end_at,
-                offset=0
-            )
+            # Куски изначально в mp3, нужно конвертнуть иили нет
 
             voice = Voiceid(
                 db, settings.MEDIA_ROOT + audio_file_path)
@@ -268,8 +266,6 @@ class Record(AudioFile, Trash):
 
                     print "Save piece %d to %d" % ((position + segment.get_start() / 100.0), (position + segment.get_end() / 100.0))
 
-            position = end_at
-
         print "Finished"
         # Удаляем все файлы
         shutil.rmtree(record_path, ignore_errors=True)
@@ -278,10 +274,6 @@ class Record(AudioFile, Trash):
         """
             Распознаём записи
         """
-        as_record = AudioSegment.from_mp3(
-            settings.MEDIA_ROOT +
-            self.audio_file_format("mp3")
-        )
 
         for piece in self.pieces.all():
-            piece.recognize(as_record=as_record)
+            piece.recognize()

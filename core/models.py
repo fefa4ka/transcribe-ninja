@@ -153,7 +153,57 @@ class AudioFile(models.Model):
 
         return total
 
-    def cut_to_file(self, file_name, start_at, end_at, as_record=None, offset=0, channels=2):
+    @property
+    def parts(self):
+        splitted_path = os.path.join(
+            settings.MEDIA_ROOT,
+            os.path.dirname(self.audio_file_format("mp3")),
+            'split')
+
+        # Если нет папки создаём и делим на части
+        if not os.path.exists(splitted_path):
+            os.makedirs(splitted_path)
+            self._split_to_parts(settings.DIARIZATION_PART_SIZE)
+
+        # Если есть, надеемся, что там все файлы
+        files = os.listdir(splitted_path)
+
+        splitted = []
+        # Создаём массив из файлов и тайминга
+        for mp3_name in files:
+            name_start_at, end_at_ext = mp3_name.split('__')
+            name, start_at_min, start_at_sec = name_start_at.split('_')
+            end_at, ext = end_at_ext.split('.')
+
+            try:
+                end_at_min, end_at_sec = end_at.split('_')
+            except:
+                end_at_min, end_at_sec, total = end_at.split('_')
+
+            start_at = int(start_at_min[0:-1]) * 60 + int(start_at_sec[0:-1])
+            end_at = int(end_at_min[0:-1]) * 60 + int(end_at_sec[0:-1])
+
+            splitted.append([
+                os.path.join(splitted_path, mp3_name),
+                start_at,
+                end_at])
+
+        return splitted
+
+    def _split_to_parts(self, length):
+        splitted_path = os.path.join(
+            settings.MEDIA_ROOT,
+            os.path.dirname(self.audio_file_format("mp3")),
+            'split')
+
+        subprocess.call(
+            ['mp3splt', '-f',
+             '-t', str(length),
+             '-a',
+             '-d', splitted_path,
+             settings.MEDIA_ROOT + self.audio_file_format("mp3")])
+
+    def cut_to_file(self, file_name, start_at, end_at, offset=0, channels=2):
         """
             Создаёт вырезанный кусок в mp3
 
@@ -162,12 +212,7 @@ class AudioFile(models.Model):
         """
         original_file_name, extension = os.path.splitext(file_name)
 
-        if not as_record:
-            as_record = AudioSegment.from_mp3(
-                settings.MEDIA_ROOT +
-                self.audio_file_format("mp3")
-            )
-
+        parts = self.parts
 
         # Файл записи
         if extension == "mp3":
@@ -204,16 +249,35 @@ class AudioFile(models.Model):
             else:
                 end_at = (end_at + offset)
 
-            # Вырезаем кусок и сохраняем
-            # piece = as_record[start_at:end_at]
-            # piece.export(settings.MEDIA_ROOT + audio_file_path)
-        subprocess.call(
-            ['ffmpeg', '-i',
-             settings.MEDIA_ROOT + self.audio_file_format("mp3"),
-             '-vcodec', 'copy',
-             '-ss', str(start_at),
-             '-t', str((end_at - start_at)),
-             settings.MEDIA_ROOT + audio_file_path])
+        # Опредеяем в какой части находится нужный кусок и оттуда вырезаем
+        for part in parts:
+            mp3_file = part[0]
+            part_start_at = part[1]
+            part_end_at = part[2]
+
+            # Т.к. диаризируются эти же куски, большинство
+            # частей окажется в них
+            if start_at >= part_start_at and part_end_at >= end_at:
+                print "Part %d-%d.  Queue %d-%d" % (part_start_at, part_end_at, start_at, end_at)
+
+                subprocess.call(
+                    ['ffmpeg', '-i',
+                     mp3_file,
+                     '-vcodec', 'copy',
+                     '-ss', str(start_at - part_start_at),
+                     '-t', str((end_at - start_at)),
+                     settings.MEDIA_ROOT + audio_file_path])
+
+        # Но может склеится два куска и они окажутся в разных записях,
+        # на этот случай вырезаем из одного куска (это долго, если часть в конце а запись большая)
+        if not os.path.exists(settings.MEDIA_ROOT + audio_file_path):
+            subprocess.call(
+                ['ffmpeg', '-i',
+                 settings.MEDIA_ROOT + self.audio_file_format("mp3"),
+                 '-vcodec', 'copy',
+                 '-ss', str(start_at),
+                 '-t', str((end_at - start_at)),
+                 settings.MEDIA_ROOT + audio_file_path])
 
         # Выдаём нужный формат
         if extension == "wav":
