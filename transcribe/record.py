@@ -231,13 +231,24 @@ class Record(AudioFile, Trash):
             file_name, extension = os.path.splitext(audio_file_path)
             diarization_path = os.path.join(
                 record_path,
-                'diarization')
-            audio_file_path = self.cut_to_file(
-                os.path.join('diarization', str(position) + ".wav"),
-                start_at=position, end_at=end_at)
+                'record/diarization')
+            wav_audio_file_path = os.path.join(diarization_path, str(position) + ".wav")
+
+            subprocess.call(
+                ['ffmpeg', '-i',
+                 audio_file_path,
+                 '-ac', "2",
+                 '-acodec', 'pcm_s16le',
+                 '-ar', '16000',
+                 wav_audio_file_path])
+
+            print wav_audio_file_path
+            # audio_file_path = self.cut_to_file(
+            #     os.path.join('diarization', str(position) + ".wav"),
+            #     start_at=position, end_at=end_at)
 
             voice = Voiceid(
-                db, audio_file_path)
+                db, wav_audio_file_path)
 
             # Разрезаем на части
             # Для каждой части делаем сегменты
