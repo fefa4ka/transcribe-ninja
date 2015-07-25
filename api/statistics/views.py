@@ -3,12 +3,16 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from django.db.models import Sum
 # from core.models import *
 
 # from api.serializers import *
 from api.permissions import *
 # from api.authentication import *
-from work.models import Queue
+from work.models import Queue, Payment
+
+from django.contrib.contenttypes.models import ContentType
+
 
 class StatisticsView(APIView):
     permission_classes = (permissions.IsAuthenticated,
@@ -27,6 +31,8 @@ class StatisticsView(APIView):
         }
         queues = None
 
+        queue_object_id = ContentType.objects.get_for_model(Queue).id
+
         try:
             if 'unchecked' in self.request.QUERY_PARAMS:
                 queues = account.queues(unchecked=True, after_date=after_date).order_by('-completed')
@@ -41,23 +47,22 @@ class StatisticsView(APIView):
                     queues = request.user.queue.filter(completed__isnull=False)
 
                 checked_queues = account.queues(unchecked=False, after_date=after_date).order_by('-checked')
-                for queue in checked_queues:
-                    statistics["checked_length"] += queue.work_length - queue.mistakes_length
 
-            for queue in queues:
-                statistics["work_length"] += queue.work_length
-                statistics["mistakes_length"] += queue.mistakes_length
+                checked_queues_statistic = checked_queues.aggregate(work=Sum('work_length'), mistakes=Sum('mistakes_length'))
 
-                if 'checked' in self.request.QUERY_PARAMS:
-                    statistics["checked_length"] += queue.work_length - queue.mistakes_length
+                statistics["checked_length"] = checked_queues_statistic['work'] - checked_queues_statistic['mistakes']
 
-                # if queue.work_type == Queue.TRANSCRIBE:
-                #     statistics["duration_transcribe"] += queue.duration
-                # elif queue.work_type == Queue.EDIT:
-                #     statistics["duration_check"] += queue.duration
+            queues_statistic = queues.aggregate(work=Sum('work_length'), mistakes=Sum('mistakes_length'))
 
-                statistics["total_price"] += queue.payment.total
+            statistics["work_length"] = queues_statistic['work']
+            statistics["mistakes_length"] = queues_statistic['mistakes']
+            if 'checked' in self.request.QUERY_PARAMS:
+                statistics["checked_length"] = queues_statistic['work'] - queues_statistic['mistakes']
 
+            queues_ids = queues.values_list('id', flat=True).distinct()
+            payments = Payment.objects.filter(content_type_id=queue_object_id, object_id__in=queues_ids).aggregate(total=Sum('total'))
+
+            statistics['total_price'] = payments['total']
             return Response(statistics)
         except:
             return Response({"success": False})
