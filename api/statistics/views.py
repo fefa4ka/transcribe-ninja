@@ -51,12 +51,12 @@ class StatisticsView(APIView):
                 if 'checked' in self.request.QUERY_PARAMS:
                     statistics["checked_length"] += queue.work_length - queue.mistakes_length
 
-                if queue.work_type == Queue.TRANSCRIBE:
-                    statistics["duration_transcribe"] += queue.duration
-                elif queue.work_type == Queue.EDIT:
-                    statistics["duration_check"] += queue.duration
+                # if queue.work_type == Queue.TRANSCRIBE:
+                #     statistics["duration_transcribe"] += queue.duration
+                # elif queue.work_type == Queue.EDIT:
+                #     statistics["duration_check"] += queue.duration
 
-                statistics["total_price"] += queue.total_price
+                statistics["total_price"] += queue.payment.total
 
             return Response(statistics)
         except:

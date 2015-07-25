@@ -166,6 +166,17 @@ class Queue(AudioFile):
         return (previous_part, next_part)
 
     @property
+    def payment(self):
+        queue_object_id = ContentType.objects.get_for_model(type(self)).id
+
+        payments = Payment.objects.filter(content_type_id=queue_object_id, object_id=self.id)
+
+        if len(payments) > 0:
+            return payments[0]
+        else:
+            return 0
+
+    @property
     def total_price(self):
         duration = self.end_at - self.start_at
         # TODO: загружать цену за прослушивание автоматически
