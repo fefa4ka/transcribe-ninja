@@ -25,7 +25,7 @@ class AccountInline(StackedInline):
 
         for queue in instance.user.queue.\
                         filter(completed__isnull=False, work_type__exact=work_type):
-            spent = (queue.completed - queue.locked).total_seconds()
+            spent = (queue.completed - queue.locked).total_seconds() or 1.0
             durations.append(queue.duration)
             time_spent.append(spent)
 
