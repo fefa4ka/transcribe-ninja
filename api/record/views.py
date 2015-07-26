@@ -17,6 +17,10 @@ from serializers import *
 
 from api.permissions import *
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class RecordViewSet(mixins.ListModelMixin,
                     mixins.DestroyModelMixin,
@@ -52,6 +56,8 @@ class RecordViewSet(mixins.ListModelMixin,
 
             return Response(serializer.data)
 
+        logger.error("Record tried to create with errors: %s\n%s" % (serializer.errors, request.__dict__))
+        
         # Если плохие данные, выдаём ошибку
         return Response(
             serializer.errors,

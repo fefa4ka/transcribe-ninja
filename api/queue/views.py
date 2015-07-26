@@ -54,6 +54,11 @@ class QueueViewSet(viewsets.ViewSet,
         # Берём задачу, связанную с кусками,
         # над который текущий пользователь не работал
         queue = self.get_queue()
+
+        if not q:
+            logger.error("Can't find task for %s" % (request.user))
+
+
         serializer = QueueSerializer(
             queue,
             context={'request': request})
@@ -161,77 +166,81 @@ class TranscriptionViewSet(viewsets.ModelViewSet):
         return Transcription.objects.filter(queue__owner=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        queue_id = 0
-        if 'queue' in request.data:
-            queue_id = request.data['queue']
-        elif len(request.data) > 0:
-            queue_id = request.data[0]['queue']
+        try:
+            queue_id = 0
+            if 'queue' in request.data:
+                queue_id = request.data['queue']
+            elif len(request.data) > 0:
+                queue_id = request.data[0]['queue']
 
-        if not queue_id:
-            logger.error("Not queue_id provided %s" % (request))
+            if not queue_id:
+                logger.error("Not queue_id provided %s" % (request))
 
-            return Response({'error': 'Queue id not provided'}, status=HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Queue id not provided'}, status=HTTP_400_BAD_REQUEST)
 
 
-        # Каждая транскрипция связанна с каким-то заказом, либо
-        queue = Queue.objects.get(
-            id=queue_id, owner=request.user)
+            # Каждая транскрипция связанна с каким-то заказом, либо
+            queue = Queue.objects.get(
+                id=queue_id, owner=request.user)
 
-        if queue.completed:
-            logger.error("Queue %d already completed in %s. Completed by %s, send by %s" % (queue.id, queue.completed, queue.owner, request.user))
+            if queue.completed:
+                logger.error("Queue %d already completed in %s. Completed by %s, send by %s" % (queue.id, queue.completed, queue.owner, request.user))
 
-            return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
+                return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
 
-        # Если плохая запись
-        if queue_id == queue.id and 'poor' in request.data:
-            queue.poored += 1
+            # Если плохая запись
+            if queue_id == queue.id and 'poor' in request.data:
+                queue.poored += 1
 
-            # Если многие посчитали, что запись плохая,
-            # помечаем, как выполненную
-            if queue.poored > settings.SPEECH_POOR_LIMIT:
-                queue.completed = timezone.now()
-                queue.update_work_metrics()
+                # Если многие посчитали, что запись плохая,
+                # помечаем, как выполненную
+                if queue.poored > settings.SPEECH_POOR_LIMIT:
+                    queue.completed = timezone.now()
+                    queue.update_work_metrics()
 
+                queue.save()
+
+                core.async_jobs.update_near.delay(queue)
+
+                logger.debug("Queue %d is poored." % (queue.id))
+
+                return Response({'done': 'ok'}, status=HTTP_201_CREATED)
+
+            for data in request.data:
+                serializer = TranscriptionQueueSerializer(data=data)
+                if not serializer.is_valid():
+                    logger.error("Transcription for queue %d send with errors: %s\n%s" % (queue.id, serializer.errors, request.__dict__))
+
+                    return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+                if data['queue'] != queue.id:
+                    logger.error("Sended transcription for queue %d, but locked queue %d" % (data['queue'], queue.id))
+
+                    return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
+
+            for data in request.data:
+                serializer = TranscriptionQueueSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
+
+            # Помечаем очередь как прочитанную
+            queue.completed = timezone.now()
+            queue.update_work_metrics()
+
+            # TODO: Удалить аудиофайл
             queue.save()
 
-            core.async_jobs.update_near.delay(queue)
+            # Отправляем на асинхронный пересчёт зависимых кусков
+            # Меняем приоритет у других кусков и перерасчёт бабла
+            try:
+                core.async_jobs.update_near.delay(queue)
+            except rq.connections.NoRedisConnectionException:
+                logger.error("Can't connect to Redis, when send results of queue %d" % (queue.id))
 
-            logger.debug("Queue %d is poored." % (queue.id))
+
+            logger.debug("Transcription for queue %d saved." % (queue.id))
 
             return Response({'done': 'ok'}, status=HTTP_201_CREATED)
-
-        for data in request.data:
-            serializer = TranscriptionQueueSerializer(data=data)
-            if not serializer.is_valid():
-                logger.error("Transcription for queue %d send with errors: %s\n%s" % (queue.id, serializer.errors, request))
-
-                return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-            if data['queue'] != queue.id:
-                logger.error("Sended transcription for queue %d, but locked queue %d" % (data['queue'], queue.id))
-
-                return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
-
-        for data in request.data:
-            serializer = TranscriptionQueueSerializer(data=data)
-            if serializer.is_valid():
-                serializer.save()
-
-        # Помечаем очередь как прочитанную
-        queue.completed = timezone.now()
-        queue.update_work_metrics()
-
-        # TODO: Удалить аудиофайл
-        queue.save()
-
-        # Отправляем на асинхронный пересчёт зависимых кусков
-        # Меняем приоритет у других кусков и перерасчёт бабла
-        try:
-            core.async_jobs.update_near.delay(queue)
-        except rq.connections.NoRedisConnectionException:
-            logger.error("Can't connect to Redis, when send results of queue %d" % (queue.id))
-
-
-        logger.debug("Transcription for queue %d saved." % (queue.id))
-
-        return Response({'done': 'ok'}, status=HTTP_201_CREATED)
+        except:
+            logger.error("Houston, we have a problem. Queue %d and user %s\n%s" % (queue.id, request.user. request.__dict__))
+            return Response({'error': 'Houston, we have a problem'}, status=HTTP_400_BAD_REQUEST)

@@ -12,6 +12,7 @@ from serializers import *
 from api.permissions import *
 
 
+
 class OrderViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
                    mixins.DestroyModelMixin,
@@ -67,6 +68,8 @@ class OrderViewSet(mixins.ListModelMixin,
                     errors = [{'balance': 'Not enought money.'}]
 
             else:
+                logger.error("Order for record %d tried to create with wrong time. Duration: %f\n%s" % (obj.record.id, duration, request.__dict__))
+
                 errors = [{'end_at': 'End_at should be greater that start_at'}]
 
         else:

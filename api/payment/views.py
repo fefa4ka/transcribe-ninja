@@ -19,10 +19,9 @@ from work.models import Account, Payment, Order, Queue, Price
 from rest_framework import mixins
 from rest_framework.viewsets import GenericViewSet
 
-# from core.models import *
+import logging
 
-# from api.serializers import *
-# from api.authentication import *
+logger = logging.getLogger(__name__)
 
 
 class PaymentFilter(FilterSet):
@@ -75,6 +74,8 @@ class PaymentViewSet(mixins.ListModelMixin,
 
             return Response(serializer.data)
         else:
+            logger.error("Payment tried to create with errors: %s\n%s" % (serializer.errors, request.__dict__))
+
             errors = serializer.errors
 
         return Response(
