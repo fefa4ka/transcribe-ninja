@@ -55,7 +55,7 @@ class QueueViewSet(viewsets.ViewSet,
         # над который текущий пользователь не работал
         queue = self.get_queue()
 
-        if not q:
+        if not queue:
             logger.error("Can't find task for %s" % (request.user))
 
 
