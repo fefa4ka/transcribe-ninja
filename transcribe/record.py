@@ -99,25 +99,14 @@ class Record(AudioFile, Trash):
         """
             Какой процент записи распознан
         """
-        # Узнаём длинну частей, которые нужно стенографировать
-        duration = np.sum([p.duration for p
-                           in self.pieces.all().order_by('start_at')])
+        amount = 0
+        completed = 0
+        for order in self.orders.all():
+            amount += order.queue.all().count()
+            completed += order.queue.filter(completed__isnull=False).count()
 
-        # Сколько секунд уже стенографировали
-        # completed_duration = np.sum(
-        #     [t['duration'] for t in self.transcriptions(empty=False)])
-        from django.db.models import Count
-
-        completed_pieces = self.pieces\
-            .annotate(transcriptions_count=Count('all_transcriptions'))\
-            .filter(transcriptions_count__gt=0)
-
-        completed_duration = np.sum(
-            [piece.end_at - piece.start_at for piece in completed_pieces])
-
-        # Если у нас есть все данные, считаем сколько процентов готово
-        if duration > 0 and completed_duration > 0:
-            return int((100 / duration) * completed_duration)
+        if completed > 0:
+            return int(float(completed) / amount * 100)
         else:
             return 0
 
