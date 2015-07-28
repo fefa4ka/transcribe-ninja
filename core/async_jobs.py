@@ -7,6 +7,8 @@ from transcribe.models import *
 
 from work.models import *
 
+from django.db.models import Q
+
 # Очереди для записей
 
 @job('prepare', timeout=3600)
@@ -116,6 +118,30 @@ def update_near(queue):
             record.status = 4
             record.save()
             export_transcription.delay(record)
+
+
+@job('update_queue')
+def flush_user_work(user):
+    """
+        Удаляем всю работу пользователя и выставляем её на проверку
+    """
+    # Пробегаемся по очередям и удаляем: транскрибции, платежи, сбрасываем время выполнения, проверки и блокировку.
+
+    queues = user.queue
+    empty_queues = queues.filter(Q(work_length=0) | Q(checked__isnull=True))
+
+    for queue in empty_queues:
+        queue.transcriptions.all().delete()
+        queue.payment.delete()
+
+        queue.completed = None
+        queue.checked = None
+        queue.locked = None
+        queue.owner_id = None
+        queue.save()
+
+        update_near.delay(queue)
+
 
 
 @job('prepare', timeout=3600)

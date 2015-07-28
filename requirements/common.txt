@@ -19,3 +19,4 @@ diff-match-patch
 newrelic
 xlsxwriter
 django-wpadmin
+python-docx

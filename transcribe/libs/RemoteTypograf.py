@@ -3,16 +3,16 @@
 """
     remotetypograf.py
     python-implementation of ArtLebedevStudio.RemoteTypograf class (web-service client)
-    
+
     Copyright (c) Art. Lebedev Studio | http://www.artlebedev.ru/
 
     Typograf homepage: http://typograf.artlebedev.ru/
     Web-service address: http://typograf.artlebedev.ru/webservices/typograf.asmx
     WSDL-description: http://typograf.artlebedev.ru/webservices/typograf.asmx?WSDL
-    
+
     Default charset: UTF-8
 
-    Python version 
+    Python version
     Author: Sergey Lavrinenko (s.lavrinenko@gmail.com)
     Version: 1.0 (2007-05-18) based on script by Andrew Shitov (ash@design.ru)
 
@@ -26,6 +26,9 @@
 
 import socket
 
+import re
+
+
 class RemoteTypograf:
 
     _entityType = 4
@@ -37,22 +40,17 @@ class RemoteTypograf:
     def __init__(self, encoding='UTF-8'):
         self._encoding = encoding
 
-
     def htmlEntities(self):
         self._entityType = 1
-
 
     def xmlEntities(self):
         self._entityType = 2
 
-
     def mixedEntities(self):
         self._entityType = 4
 
-
     def noEntities(self):
         self._entityType = 3
-
 
     def br(self, value):
         if value:
@@ -60,14 +58,12 @@ class RemoteTypograf:
         else:
             self._useBr = 0
 
-    
     def p(self, value):
         if value:
             self._useP = 1
         else:
             self._useP = 0
 
-    
     def nobr(self, value):
         if value:
             self._maxNobr = value
@@ -78,29 +74,27 @@ class RemoteTypograf:
         # Если запятая в конце, то прибавляем следующий кусок
         # Ставим точку, если ничего не стоит
         text = text.strip()
-
-        if text[-1] not in [',', '.', '!', '?']:
-            text += '.'
-
-        # если запятая. ставим точку
-        if text[-1] == ",":
-            text = text[0:len(text) - 1] + "."
+        # Удаляем лишние пробелы
+        text = " ".join(text.split())
+        # Удаляем лишние точки, оставляем только троеточия и точки
+        text = re.sub(r'\.\.+', '.', text).replace('.', '.')
+        # Ставим пробел после знаков препинания
+        text = re.sub('(?<=[\.,!?:;\)])(?=[a-zA-Z])', ' ', text)
 
         # Каждое предложение начинается с большой буквы
-        # После . , ! ? ... ставим пробел и начинаем с большой буквы
-        text = self.capitalizedSentence(text, '...')
-        text = text.replace('...', '[3dot]')
+        # После . , ! ? ставим пробел и начинаем с большой буквы
         text = self.capitalizedSentence(text, '.')
         text = self.capitalizedSentence(text, '!')
         text = self.capitalizedSentence(text, '?')
-        text = text.replace('[3dot]', '...')
+
+        if text[-1] not in [".", "!", "?"] or text[-1] == ",":
+            text += "."
 
         return text
 
     def capitalizedSentence(self, text, split_symbol):
-        capitalized_text = u""
-        # Заменяем троеточия
         sentences = text.split(split_symbol)
+        capitalized_sentences = []
 
         if len(sentences) < 2:
             return text
@@ -112,18 +106,20 @@ class RemoteTypograf:
                 continue
 
             if len(sentence) == 1:
+                # сокращения
                 if split_symbol == ".":
-                    capitalized_text += sentence
+                    capitalized_sentences.append(sentence)
                     continue
+                # Слово из одной буквы
                 else:
                     sentence = sentence[0].capitalize()
 
             if len(sentence) > 1:
                 sentence = sentence[0].capitalize() + sentence[1:len(sentence)]
 
-            capitalized_text += sentence + u"%s " % split_symbol
+            capitalized_sentences.append(sentence)
 
-        return capitalized_text
+        return ("%s " % split_symbol).join(capitalized_sentences)
 
     def processText(self, text):
 

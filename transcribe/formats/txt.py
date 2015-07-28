@@ -19,6 +19,9 @@ class ExportTXT:
         txt_file_path = os.path.join(settings.TEMP_DIR, "%s.txt" % file_name)
 
         with codecs.open(txt_file_path, 'w+', 'utf-8') as txt_file:
+            txt_file.write(u'Стенограмма записи «%s»' % self.record.title)
+            txt_file.write(u'\n\nРасшифровал Стеня Графов\nСтенограф.ус\nhttp://stenograph.us\n\n')
+
             for index, transcription in enumerate(transcriptions):
                 start_at = time.strftime(
                     u"%H:%M:%S",

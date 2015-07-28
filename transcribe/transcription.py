@@ -85,8 +85,8 @@ class Transcription(models.Model):
         females = 0
         males = 0
 
-        speaker_gender = u"Женщина" if self.speaker_code[0] == "F"\
-                                    else u"Мужчина"
+        speaker_gender = u"Женский" if self.speaker_code[0] == "F"\
+                                    else u"Мужской"
 
         # Проверяем, есть ли говорящий в транскрибции в часто встречаемых собседениках всей записи
         for speaker_stat in speakers_in_record:
@@ -113,11 +113,11 @@ class Transcription(models.Model):
                     speaker_index = females if speaker.gender == "F"\
                                             else males
 
-                    return u"Основной собеседник %s %d" % (speaker_gender, speaker_index)
+                    return u"%s %d" % (speaker_gender, speaker_index)
                 else:
-                    return u"Неизвестный собеседник %s" % (speaker_gender)
+                    return u"%s голос" % (speaker_gender)
             else:
-                return u"Неизвестный собеседник %s" % (speaker_gender)
+                return u"%s голос" % (speaker_gender)
         # Проверяем сколько мужчин
         # print speaker
         # # Если нет имени

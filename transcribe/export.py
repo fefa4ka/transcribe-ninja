@@ -14,7 +14,7 @@ from transcribe.models import Record
 
 import formats
 
-class Export(models.Model, formats.ExportSRT, formats.ExportTXT, formats.ExportXLS):
+class Export(models.Model, formats.ExportSRT, formats.ExportTXT, formats.ExportXLS, formats.ExportDOC):
     record = models.ForeignKey(Record, related_name='exports')
     export_file = models.FileField(
         max_length=255,
