@@ -151,7 +151,7 @@ def export_transcription(record):
 
         record - экземпляр класса записи Record
     """
-    formats = ['xls', 'srt', 'txt']
+    formats = ['doc', 'xls', 'srt', 'txt']
 
     for ext in formats:
         export = Export(record_id=record.id, file_format=ext)
