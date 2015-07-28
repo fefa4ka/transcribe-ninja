@@ -50,6 +50,9 @@ class TranscribeNinjaSystem(Node):
 
             self.config_bucket()
 
+        def clang(self):
+            self.hosts.run('export C_INCLUDE_PATH=/usr/local/Cellar/libxml2/2.9.2/include/libxml2:$C_INCLUDE_PATH')
+
         def config_bucket(self):
             from boto.s3.cors import CORSConfiguration
             connection = self._aws_connect('s3')
