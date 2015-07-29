@@ -11,7 +11,7 @@ import django.db.models.signals as signals
 
 from django.conf import settings
 
-from django_mailbox.models import Message
+# from django_mailbox.models import Message
 
 from price import Price
 
@@ -129,9 +129,9 @@ class Account(models.Model):
         else:
             return self.price
 
-    @property
-    def emails(self):
-        return Message.objects.filter(from_header__icontains=self.user.email)
+    # @property
+    # def emails(self):
+    #     return Message.objects.filter(from_header__icontains=self.user.email)
 
     @property
     def checked_balance(self):
