@@ -99,6 +99,9 @@ class Record(AudioFile, Trash):
         """
             Какой процент записи распознан
         """
+        if self.progress == 4:
+            return 100
+
         amount = 0
         completed = 0
         for order in self.orders.all():
