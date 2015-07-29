@@ -10,7 +10,7 @@ from django.conf import settings
 from core.models import Trash
 from transcribe.models import Record
 
-from account import Price
+from price import Price
 from payment import Payment
 
 from pydub import AudioSegment
@@ -33,6 +33,9 @@ class Order(Trash):
     record = models.ForeignKey(Record, related_name='orders')
     start_at = models.FloatField()
     end_at = models.FloatField()
+
+    editing = models.BooleanField()
+    speedup = models.BooleanField()
 
     price = models.ForeignKey(Price)
 
@@ -141,13 +144,19 @@ def create_order_payment(sender, instance, created, **kwargs):
     owner = instance.owner
 
     object_id = ContentType.objects.get_for_model(type(instance)).id
-    price = Price.objects.filter(content_type_id=object_id, default=1)[0]
+    transcribe_price = Price.objects.\
+        get(content_type_id=object_id, work_type=Price.WORK_TYPE_TRANSCRIBE, default=1)
+    editing_price = Price.objects.\
+        get(content_type_id=object_id, work_type=Price.WORK_TYPE_EDITING, default=1)
+    speedup_price = Price.objects.\
+        get(content_type_id=object_id, work_type=Price.WORK_TYPE_SPEEDUP, default=1)
+
     duration = instance.end_at - instance.start_at
-    total = price.price * duration / 60
+    total = (transcribe_price.price + instance.speedup * speedup_price.price + instance.editing * editing_price.price) * duration / 60
 
     payment = Payment(
         content_object=instance,
-        price=price,
+        price=transcribe_price,
         total=total,
         owner=owner)
 

@@ -11,6 +11,10 @@ import django.db.models.signals as signals
 
 from django.conf import settings
 
+from django_mailbox.models import Message
+
+from price import Price
+
 
 class Account(models.Model):
     """
@@ -48,6 +52,8 @@ class Account(models.Model):
     blind = models.BooleanField(default=0)
     rating = models.FloatField(default=0)
     site = models.CharField(max_length=50)
+
+    price = models.ForeignKey(Price)
 
     def __unicode__(self):
         return "%d: %s" % (self.id, self.user.username)
@@ -100,6 +106,34 @@ class Account(models.Model):
         return balances
 
     @property
+    def actual_price(self):
+        """
+            Актуальная цена
+        """
+        from .models import Queue, Order
+
+        queue_type_id = ContentType.objects.get_for_model(Queue).id
+        order_type_id = ContentType.objects.get_for_model(Order).id
+
+        # Аккаунты одни для всех, а прайс один на аккаунт
+        # поэтому если прайс не на тот тип объекта стоит, выдаём прайс дефолтный
+        if settings.DOMAIN == "transcribe.ninja":
+            type_id = queue_type_id
+        else:
+            type_id = order_type_id
+
+        if not self.price or self.price.content_type_id != type_id:
+            price = Price.objects.filter(content_type_id=type_id, default=1)[0]
+
+            return price
+        else:
+            return self.price
+
+    @property
+    def emails(self):
+        return Message.objects.filter(from_header__icontains=self.user.email)
+
+    @property
     def checked_balance(self):
         from .models import Queue
         account_object_id = ContentType.objects.get_for_model(Account).id
@@ -145,58 +179,7 @@ class Account(models.Model):
             return self.user.queue.filter(completed__isnull=False, checked__isnull=unchecked, completed__gt=after_date)
 
 
-class Price(models.Model):
-
-    """
-        Цена за разные работы.
-        Цена определяется: типом данных, типом работ.
-
-        Тип данных: Order, Piece, Transcription и любой другой
-        title       - название
-        work_type   - тип работы,
-                      возможно, сделать единицу измерения: мин, символ, штуки
-
-        price       - цена. В основном это цена за единицу чего-то.
-                      За минуту разспознавание, за символ в транскрибции,
-                      за исправленный символ, за прослушку записи
-
-        default     - возможно, будут плавающие цены,
-                      для разных пользователей.
-                      Пока везде выбираются цены по умолчанию
-
-    """
-    # Цена определяется: типом данных, типом работы
-    content_type = models.ForeignKey(ContentType)
-
-    title = models.CharField(max_length=255)
-    work_type = models.IntegerField(default=0)
-
-    WORK_TYPE_TRANSCRIBE = 0
-    WORK_TYPE_EDIT = 1
-    WORK_TYPE_LISTENING = 2
-    WORK_TYPE_TRANSCRIBE_SPEECHKIT = 3
-    WORK_TYPE_PAYMENT = 4
-    WORK_TYPE_CHOICES = (
-        (WORK_TYPE_TRANSCRIBE, 'Transcribe audio piece'),
-        (WORK_TYPE_LISTENING, 'Read and check transcription'),
-        (WORK_TYPE_EDIT, 'Transcription edit'),
-        (WORK_TYPE_TRANSCRIBE_SPEECHKIT, 'Transcribe by SpeechKit'),
-        (WORK_TYPE_PAYMENT, 'Payment'),
-    )
-    work_type = models.IntegerField(
-        choices=WORK_TYPE_CHOICES,
-        default=WORK_TYPE_TRANSCRIBE
-    )
-
-    price = models.FloatField()
-
-    default = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        return self.title
-
-
-def create_account(sender, instance, **kwargs):
+def post_account_save(sender, instance, **kwargs):
     """
         Создание учётки, если она не создана
     """
@@ -208,5 +191,18 @@ def create_account(sender, instance, **kwargs):
         instance.account.save()
 
 
+# def pre_user_save(sender, instance, *args, **kwargs):
+    # pass
+    # if instance.active != User.objects.get(id=instance.id).active:
+        # TO DO: Слать сообщение
+        # send_mail(
+        #     subject='Active changed: %s -> %s' % (instance.username, instance.active),
+        #     message='Guess who changed active status??',
+        #     from_email=settings.SERVER_EMAIL,
+        #     recipient_list=[p[1] for p in settings.MANAGERS],
+        # )
+
+# signals.pre_save.connect(pre_user_save, sender=User, dispatch_uid='pre_user_save')
+
 # После сохранении User, создаём Account, если ещё не создан
-signals.post_save.connect(create_account, sender=User)
+signals.post_save.connect(post_account_save, sender=User)

@@ -1,5 +1,6 @@
 angular.module( 'transcribe-ninja.order', [
-  'ui.router'
+  'ui.router',
+  'ui.checkbox'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
@@ -18,7 +19,9 @@ angular.module( 'transcribe-ninja.order', [
         api.order.create({
             record: record.id,
             start_at: 0,
-            end_at: record.duration
+            end_at: record.duration,
+            editing: $scope.editing,
+            speedup: $scope.speedup
         });
 
         // Если есть коллбэк

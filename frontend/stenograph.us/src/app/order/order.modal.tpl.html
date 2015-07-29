@@ -42,14 +42,38 @@
                     Бесплатно
                 </label>
             </li>
+            <li>
+                <label>
+                    <checkbox
+                        ng-model="speedup"
+                        ng-true-value="1"
+                        ng-false-value="0"
+                    ></checkbox> Час за час <small>– получите в тот же день</small>
+                </label>
+                <label class="price pull-right" ng-show="speedup == 1">
+                    5 ₽ / минута
+                </label>
+            </li>
+            <li>
+                <label>
+                    <checkbox
+                        ng-model="editing"
+                        ng-true-value="1"
+                        ng-false-value="0"
+                    ></checkbox> Редактура <small>– приведём текст в порядок</small>
+                </label>
+                <label class="price pull-right" ng-show="editing == 1">
+                    5 ₽ / минута
+                </label>
+            </li>
         </ul>
         <p class="total-price pull-right">
-            Итого: {{ record.duration / 60 * 15 | number: 0 }} ₷
+            Итого: {{ record.duration / 60 * (15 + editing * 5 + speedup * 5) | number: 0 }} ₽
         </p>
         </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="cancel()">Отмена</button>
-        <input type="submit" class="btn btn-primary" ng-disabled="Data.user.balance >= record.duration / 60 * 15" ng-click="order(record)" value="Оплатить">
+        <input type="submit" class="btn btn-primary" ng-disabled="Data.user.balance >= record.duration / 60 * (15 + pretty * 5 + fast * 5)" ng-click="order(record)" value="Оплатить">
     </div>
 </form>

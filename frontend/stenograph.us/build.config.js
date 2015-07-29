@@ -75,11 +75,16 @@ module.exports = {
       'vendor/angular-audio/app/angular.audio.js',
       'vendor/jquery/dist/jquery.js',
       'vendor/angular-mask/dist/ngMask.js',
+      'vendor/angular-bootstrap-checkbox/angular-bootstrap-checkbox.js'
 
     ],
     css: [
     ],
     assets: [
+      'vendor/bootstrap/fonts/glyphicons-halflings-regular.eot',
+      'vendor/bootstrap/fonts/glyphicons-halflings-regular.ttf',
+      'vendor/bootstrap/fonts/glyphicons-halflings-regular.woff',
+      'vendor/bootstrap/fonts/glyphicons-halflings-regular.svg'
     ]
   },
 };

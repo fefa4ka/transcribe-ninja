@@ -15,7 +15,7 @@
     "angular-audio": "1.7.0",
     "jquery": "~1.9",
     "angular-mask": "3.0.12",
-    "ngmap": "1.10.0"
+    "angular-bootstrap-checkbox": "0.3.1"
   },
   "dependencies": {}
 }

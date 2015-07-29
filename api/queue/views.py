@@ -68,7 +68,9 @@ class QueueViewSet(viewsets.ViewSet,
     def get_queue(self, records_onair=settings.RECORDS_ONAIR):
         # Если слепой, выдаём задачи на транскрибирование
         records_count = Record.objects.filter(progress=3).count()
-        last_record_ids = Record.objects.filter(progress=3).order_by('id').values_list('id', flat=True).distinct()[:records_onair]
+        last_record_ids = Record.objects.filter(progress=3, orders__speedup=1).order_by('id').values_list('id', flat=True).distinct()[:records_onair]
+        if last_record_ids.count() == 0:
+            last_record_ids = Record.objects.filter(progress=3).order_by('id').values_list('id', flat=True).distinct()[:records_onair]
         last_order_ids = Order.objects.filter(record__in=list(last_record_ids)).values_list('id', flat=True).distinct()
 
         if self.request.user.account.blind:

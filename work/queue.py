@@ -8,7 +8,7 @@ from django.conf import settings
 
 from core.models import *
 from transcribe.models import *
-from account import Price
+from price import Price
 from order import Order
 from payment import Payment
 from datetime import datetime

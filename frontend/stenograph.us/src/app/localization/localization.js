@@ -325,7 +325,7 @@ angular.module( 'transcribe-ninja.localization', [
         case (seconds < minute) === false:
             return format(seconds, "second");
         case (seconds < hour) === false:
-            return format(Math.floor(seconds / minute), "minute");
+            return format(Math.ceil(seconds / minute), "minute");
         case (seconds < day) === false:
             return format(Math.floor(seconds / hour), "hour");
         case (seconds < week) === false:

@@ -11,4 +11,4 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = (
             "id", "record",
-            "start_at", "end_at")
+            "start_at", "end_at", "editing", "speedup")

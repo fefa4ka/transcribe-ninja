@@ -9,7 +9,9 @@ from transcribe.models import *
 
 from core.models import *
 
-from account import Account, Price
+from account import Account
+
+from price import Price
 
 from order import Order
 
