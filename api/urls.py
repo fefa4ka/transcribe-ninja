@@ -24,16 +24,17 @@ if settings.DOMAIN == "stenograph.us":
 elif settings.DOMAIN == "transcribe.ninja":
     router.register(r'queue', views.QueueViewSet, "")
     router.register(r'transcriptions', views.TranscriptionViewSet)
-    router.register(r'payments', views.PaymentViewSet, "")
 
     urlpatterns += (
         url(r'^api/statistics/$',
             views.StatisticsView.as_view()),
         url(r'^api/history/$',
             views.HistoryViewSet.as_view()),
+
+        # url(r'^api/payments/yandex-money/', include('yandex_money.urls')),
     )
 
-
+router.register(r'payments', views.PaymentViewSet, "")
 
 
 # The API URLs are now determined automatically by the router.
