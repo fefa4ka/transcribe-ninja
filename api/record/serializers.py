@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from rest_framework import serializers
 
-from transcribe.models import Record, Piece, Transcription
+from transcribe.models import Record, Piece, Transcription, Export
 
 
 class TranscriptionSerializer(serializers.ModelSerializer):
@@ -30,14 +30,23 @@ class PieceSerializer(serializers.ModelSerializer):
             "transcriptions")
 
 
+class ExportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Export
+        fields = (
+            "export_file", "file_format")
+
+
 class RecordSerializer(serializers.ModelSerializer):
+    exports = ExportSerializer(many=True)
+
     class Meta:
         model = Record
         fields = (
             "id",
             "title", "audio_file",
             "duration", "speakers",
-            "completed", "progress", "order")
+            "completed", "progress", "order", "exports")
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):

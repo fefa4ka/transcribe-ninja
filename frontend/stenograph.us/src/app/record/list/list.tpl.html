@@ -59,12 +59,24 @@
             </li>
         </ul>
     </section>
-    <section class="finished col-sm-4" ng-show="(records | filter : { completed_percentage: '100' }).length > 0">
+    <section class="finished col-sm-4" ng-show="(records | filter : { progress: '4' }).length > 0">
         <h4>Готовые записи</h4>
-        <ul>
-            <li ng-repeat="record in records | filter : { completed_percentage: '100' }">
-                <a href="{{ record.url }}">{{ record.title }}</a>
-                <span>{{ record.duration }}</span>
+        <ul class="list-unstyled">
+            <li ng-repeat="record in records | filter : { progress: '4' }" class="record">
+                <h6>{{ record.title }}
+                    <nobr>
+                        <small ng-hide="record.duration < 3600">{{ record.duration | humanSeconds }}</small><small>&nbsp;{{ record.duration / 3600 > 1 ? ((record.duration / 3600) - floor(record.duration/3600)) * 3600 : record.duration | humanSeconds }}</small>
+                    </nobr>
+                </h6>
+                <span ng-repeat="export in record.exports">
+                    <a href="{{ export.export_file }}" download="{{ record.title }}.doc" class="btn btn-default btn-xs" ng-show="export.file_format == 'doc'">
+                        <i class="fa fa-file-word-o fa-xs"></i> Word</a>
+                    <a href="{{ export.export_file }}" download="{{ record.title }}.xls" class="btn btn-default btn-xs" ng-show="export.file_format == 'xls'">
+                        <i class="fa fa-file-excel-o fa-xs"></i> Excel</a>
+                    <a href="{{ export.export_file }}" download="{{ record.title }}.srt" class="btn btn-default btn-xs" ng-show="export.file_format == 'srt'">
+                        <i class="fa fa-comments-o fa-xs"></i> Субтитры</a>
+                </span>
+                
             </li>
         </ul>
     </section>
