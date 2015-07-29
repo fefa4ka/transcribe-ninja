@@ -48,6 +48,7 @@
                         ng-model="speedup"
                         ng-true-value="1"
                         ng-false-value="0"
+                        ng-click="yaCounter30919251.reachGoal('order-speedup')"
                     ></checkbox> Час за час <small>– получите в тот же день</small>
                 </label>
                 <label class="price pull-right" ng-show="speedup == 1">
@@ -60,6 +61,7 @@
                         ng-model="editing"
                         ng-true-value="1"
                         ng-false-value="0"
+                        ng-change="yaCounter30919251.reachGoal('order-editing')"
                     ></checkbox> Редактура <small>– приведём текст в порядок</small>
                 </label>
                 <label class="price pull-right" ng-show="editing == 1">

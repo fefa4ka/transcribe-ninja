@@ -41,6 +41,8 @@ angular.module( 'transcribe-ninja.record.list', [
   };
 
   $scope.order = function (record) {
+    yaCounter30919251.reachGoal('order-open');
+
     $modalInstance = $modal.open(
     {
       templateUrl: 'order/order.modal.tpl.html',

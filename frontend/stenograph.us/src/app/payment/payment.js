@@ -38,7 +38,8 @@ angular.module( 'transcribe-ninja.payment', [
                 break;
         }
 
-    
+        yaCounter30919251.reachGoal('payment-send');
+
         api.payment.create({
             comment: comment,
             destination: destination

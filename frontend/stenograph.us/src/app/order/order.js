@@ -17,6 +17,8 @@ angular.module( 'transcribe-ninja.order', [
     };
 
     $scope.order = function (record) {
+        yaCounter30919251.reachGoal('order-pay');
+
         api.order.create({
             record: record.id,
             start_at: 0,

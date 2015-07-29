@@ -67,6 +67,8 @@ angular.module( 'transcribe-ninja.record.upload', [
   $scope.modal = {};
 
   $scope.open = function(){
+    yaCounter30919251.reachGoal('upload-open');
+
     $modalInstance = $modal.open({
       templateUrl: 'record/upload/upload.list.tpl.html',
       windowClass: 'upload-modal',
@@ -79,6 +81,8 @@ angular.module( 'transcribe-ninja.record.upload', [
 
 
         $scope.startUpload = function () {
+          yaCounter30919251.reachGoal('upload-started');
+
           $scope.uploader.queue[0].formData[0].duration = $scope.sound.duration;
 
           // Если не залогинен логинимся
@@ -152,6 +156,8 @@ angular.module( 'transcribe-ninja.record.upload', [
     $state.go('record-list', { });
 
     $scope.$parent.records = api.record.list();
+
+    yaCounter30919251.reachGoal('upload-finished');
   };
 
 

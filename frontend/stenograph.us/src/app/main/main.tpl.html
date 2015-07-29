@@ -5,7 +5,7 @@
         <h1 class="slogan">– Расшифровка звука в текст<br/><strong>час записи за час</strong></h1>
         <ul class="nav nav-pills">
             <li class="upload-button">
-                <span class="btn btn-primary btn-file"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
+                <span class="btn btn-primary btn-file" ng-click="yaCounter30919251.reachGoal('upload-main')"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
             </li>
             <li>
                 <a ui-sref="record-list">Ваши записи<span class="badge" ng-show="currentUser.id && currentUser.records.length > 0">{{ currentUser.records.length }}</span></a>
@@ -30,10 +30,10 @@
             <h6>Калькулятор стоимости</h6>
             <ul class="list-unstyled list-inline">
                 <li>
-                <span class="btn btn-default btn-file btn-xs">Выберите запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span></li>
+                <span class="btn btn-default btn-file btn-xs" ng-click="yaCounter30919251.reachGoal('calculator-record')">Выберите запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span></li>
                 <li>или введите длительность</li>
             </ul>
-            <div class="form"><input type="text" ng-model="calculator_hours" mask="999"> {{ calculator_hours|plural:"час":"часа":"часов" }} = {{ calculator_hours * 15 * 60 }} ₽</div>
+            <div class="form"><input type="text" ng-model="calculator_hours" mask="999" ng-change="yaCounter30919251.reachGoal('calculator')"> {{ calculator_hours|plural:"час":"часа":"часов" }} = {{ calculator_hours * 15 * 60 }} ₽</div>
 
         <div ng-hide="true">
         <h6>Пример стенограммы</h6>
