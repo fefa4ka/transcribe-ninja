@@ -74,6 +74,8 @@ module.exports = {
       'vendor/angular-resource/angular-resource.js',
       'vendor/angular-audio/app/angular.audio.js',
       'vendor/jquery/dist/jquery.js',
+      'vendor/angular-mask/dist/ngMask.js',
+
     ],
     css: [
     ],

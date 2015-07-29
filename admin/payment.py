@@ -58,10 +58,7 @@ from site import admin_site
 
 # admin_site.register(Payment, PaymentAdmin)
 
-class Salary(Payment):
-    pass
-
-class SalaryAdmin(ModelAdmin):
+class PaymentAdmin(ModelAdmin):
     list_display = ('comment','destination', 'total', 'owner', 'status', 'created')
 
     list_filter = ('comment', 'status')
@@ -99,4 +96,4 @@ class SalaryAdmin(ModelAdmin):
         return super(SalaryAdmin,self).changelist_view(request, extra_context=extra_context)
 
 
-admin_site.register(Payment, SalaryAdmin)
+admin_site.register(Payment, PaymentAdmin)

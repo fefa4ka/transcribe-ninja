@@ -1,5 +1,6 @@
 angular.module( 'transcribe-ninja.main', [
-  'ui.router'
+  'ui.router',
+  'ngMask'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
@@ -15,9 +16,11 @@ angular.module( 'transcribe-ninja.main', [
   });
 }])
 
-.controller( 'MainCtrl', ["$scope", "$translate", function MainCtrl( $scope, $translate) {
+.controller( 'MainCtrl', ["$scope", "$translate", "SmartPlurals", function MainCtrl( $scope, $translate, SmartPlurals) {
   $translate.use("ru");
+  var pluralRule = SmartPlurals.getRule('ru');
 
+  $scope.calculator_hours = 1;
 
 }])
 

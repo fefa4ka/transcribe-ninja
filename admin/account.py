@@ -12,11 +12,23 @@ from work.models import Account, Order, Queue, Payment
 from numpy import mean
 from site import admin_site
 
+import core.async_jobs
+
+
+def flush_work(modeladmin, request, queryset):
+    """
+        Режем на куски, если не порезано
+    """
+    for user in queryset.all():
+        core.async_jobs.flush_user_work.delay(user)
+
 
 class AccountInline(StackedInline):
     model = Account
 
     readonly_fields = ('transcribe_speed', 'check_speed')
+
+    actions = [flush_work]
 
     def speed(self, instance, work_type):
         durations = []
