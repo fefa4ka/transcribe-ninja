@@ -78,7 +78,7 @@ class PaymentAdmin(ModelAdmin):
     def get_queryset(self, request):
         from work.models import Account
 
-        qs = super(SalaryAdmin, self).get_queryset(request)
+        qs = super(PaymentAdmin, self).get_queryset(request)
 
         account_object_id = ContentType.objects.get_for_model(Account).id
 
