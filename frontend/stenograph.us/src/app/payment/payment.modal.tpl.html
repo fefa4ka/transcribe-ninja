@@ -1,0 +1,79 @@
+<form ng-submit="payment()" ui-keypress="{13:'payment()'}">
+<div ng-tabs>  
+    <div class="modal-header">
+        <h3 class="modal-title text-line">Оплата стенографирования</h3>
+    </div>
+
+    <div class="modal-body">
+            <ul class="list-unstyled list-inline tabs-menu">
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()"><img src='/static/assets/imgs/payments/sberbank.png'><br/>Оплата по счёту</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()"><img src='/static/assets/imgs/payments/qiwi.png'><br/>QIWI Кошелёк</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()"><img src='/static/assets/imgs/payments/yandex-money.png'><br/>Яндекс.Деньги</a></h5>
+                </li>
+
+                <li ng-tab-head>
+                    <h5><a href="#" ng-click="$event.preventDefault()"><img src='/static/assets/imgs/payments/visa.png'><img src='/static/assets/imgs/payments/mastercard.png'><br/>Другой способ</a></h5>
+                </li>
+            </ul>
+
+            <div ng-tab-body class="tab-body">
+                <p>Мы вышлем вам счёт на почту.</p>
+                <p>Оставьте свой номер телефона для уточнения деталей</p>
+                <div class="form-group">
+                    <input tabindex="1" ng-model="$parent.card" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Укажите номер телефона" alt="Укажите номер телефона" class="form-control">
+                </div>
+
+                <p>Можете <a ui-sref="about" ng-click="cancle()">связаться с нами</a> и мы подберём удобный способ оплаты</p>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                <p>Мы вышлем вам счёт на почту.</p>
+                <p>Оставьте свой номер телефона для уточнения деталей</p>
+                 <div class="form-group">
+                    <input tabindex="2" ng-model="$parent.qiwi" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Укажите номер телефона" alt="Укажите номер телефона" class="form-control">
+                </div>
+                <p>Можете <a ui-sref="about" ng-click="cancle()">связаться с нами</a> и мы подберём удобный способ оплаты</p>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                <p>Мы вышлем вам счёт на почту.</p>
+                <p>Оставьте свой номер телефона для уточнения деталей</p>
+                 <div class="form-group">
+                    <input tabindex="3" ng-model="$parent.yandex" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Укажите номер телефона" alt="Укажите номер телефона" class="form-control">
+                </div>
+                <p>Можете <a ui-sref="about" ng-click="cancle()">связаться с нами</a> и мы подберём удобный способ оплаты</p>
+            </div>
+
+            <div ng-tab-body class="tab-body">
+                <p>Оставьте свой номер телефона, мы подберём удобный для вас способ оплаты</p>
+                 <div class="form-group">
+                    <input tabindex="4" ng-model="$parent.other" required mask="(999) 999-99-99" clean="true"
+                           type="text" placeholder="Укажите номер телефона" alt="Укажите номер телефона" class="form-control">
+                </div>
+            </div>
+
+        </div>
+            
+           
+
+
+
+    <div class="modal-footer">
+        <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
+
+        <a ng-click="cancel()" class="btn btn-default pull-left" alt="Закрыть" tabindex="10">Закрыть</a>
+        <a ng-click="takeMoney(tabs.index)" class="btn btn-primary pull-right" alt="Заказать счёт" tabindex="10">Заказать счёт</a>
+
+    </div>
+    </div>
+</form>

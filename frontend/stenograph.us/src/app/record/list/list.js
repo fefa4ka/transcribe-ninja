@@ -1,5 +1,6 @@
 angular.module( 'transcribe-ninja.record.list', [
   'transcribe-ninja.order',
+  'transcribe-ninja.payment',
   'ui.router',
   'ngAudio'
 ])

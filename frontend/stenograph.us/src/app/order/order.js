@@ -1,13 +1,14 @@
 angular.module( 'transcribe-ninja.order', [
   'ui.router',
-  'ui.checkbox'
+  'ui.checkbox',
+  'tabs'
 ])
 
 .config(["$stateProvider", function config( $stateProvider ) {
 
 }])
 
-.controller( 'OrderModalCtrl', ["$scope", "$modalInstance", "record", "callback", "api", function OrderModalCtrl( $scope, $modalInstance, record, callback, api ) {
+.controller( 'OrderModalCtrl', ["$scope", "$modalInstance", "record", "callback", "api", "$modal", function OrderModalCtrl( $scope, $modalInstance, record, callback, api, $modal ) {
     $scope.record = record;
     $scope.callback = callback;
 
@@ -22,17 +23,46 @@ angular.module( 'transcribe-ninja.order', [
             end_at: record.duration,
             editing: $scope.editing,
             speedup: $scope.speedup
+        }, function () {
+            // Если есть коллбэк
+            if(angular.isUndefined($scope.callback) === false) {
+                $scope.callback();
+            }
+        }, function () {
+            var total = $scope.record.duration / 60 * (15 + $scope.editing * 5 + $scope.speedup * 5);
+            $scope.payment(total);
         });
 
-        // Если есть коллбэк
-        if(angular.isUndefined($scope.callback) === false) {
-            $scope.callback();
-        }
+        
         
         $modalInstance.dismiss('cancel');
 
 
     };
+
+    $scope.payment = function (amount) {
+        $modalInstance = $modal.open(
+        {
+          templateUrl: 'payment/payment.modal.tpl.html',
+          controller: 'PaymentModalCtrl',
+          windowClass: 'payment-bill',
+          resolve: {
+            amount: function () {
+              return amount;
+            },
+            callback: function () {
+              return function () {
+                api.account.get().
+                  $promise.
+                    then(function (data) {
+                      $rootScope.currentUser = data;
+                    });
+              };
+            }
+          }
+        });
+        };
+
 
 }])
 
