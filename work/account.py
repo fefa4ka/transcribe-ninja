@@ -196,8 +196,7 @@ def post_account_save(sender, instance, **kwargs):
             else:
                 type_id = order_type_id
 
-        transcribe_price = Price.objects.\
-            get(content_type_id=type_id, work_type=Price.WORK_TYPE_TRANSCRIBE, default=1)
+        transcribe_price = Price.objects.get(content_type_id=type_id, work_type=Price.WORK_TYPE_TRANSCRIBE, default=1)
 
         instance.account = Account(site=settings.DOMAIN, price=transcribe_price)
         instance.account.save()
