@@ -187,14 +187,14 @@ def post_account_save(sender, instance, **kwargs):
         instance.account
         pass
     except:
-            queue_type_id = ContentType.objects.get_for_model(Queue).id
-            order_type_id = ContentType.objects.get_for_model(Order).id
-            # Аккаунты одни для всех, а прайс один на аккаунт
-            # поэтому если прайс не на тот тип объекта стоит, выдаём прайс дефолтный
-            if settings.DOMAIN == "transcribe.ninja":
-                type_id = queue_type_id
-            else:
-                type_id = order_type_id
+        queue_type_id = ContentType.objects.get_for_model(Queue).id
+        order_type_id = ContentType.objects.get_for_model(Order).id
+        # Аккаунты одни для всех, а прайс один на аккаунт
+        # поэтому если прайс не на тот тип объекта стоит, выдаём прайс дефолтный
+        if settings.DOMAIN == "transcribe.ninja":
+            type_id = queue_type_id
+        else:
+            type_id = order_type_id
 
         transcribe_price = Price.objects.get(content_type_id=type_id, work_type=Price.WORK_TYPE_TRANSCRIBE, default=1)
 
