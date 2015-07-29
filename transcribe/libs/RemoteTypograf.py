@@ -87,7 +87,7 @@ class RemoteTypograf:
         text = self.capitalizedSentence(text, '!')
         text = self.capitalizedSentence(text, '?')
 
-        if text[-1] not in [".", "!", "?"] or text[-1] == ",":
+        if len(text) > 0 and (text[-1] not in [".", "!", "?"] or text[-1] == ","):
             text += "."
 
         return text
