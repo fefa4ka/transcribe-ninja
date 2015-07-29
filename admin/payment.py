@@ -93,7 +93,7 @@ class PaymentAdmin(ModelAdmin):
             q['status__exact'] = '0'
             request.GET = q
             request.META['QUERY_STRING'] = request.GET.urlencode()
-        return super(SalaryAdmin,self).changelist_view(request, extra_context=extra_context)
+        return super(PaymentAdmin,self).changelist_view(request, extra_context=extra_context)
 
 
 admin_site.register(Payment, PaymentAdmin)
