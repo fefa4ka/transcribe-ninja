@@ -183,6 +183,7 @@ def post_account_save(sender, instance, **kwargs):
     """
         Создание учётки, если она не создана
     """
+    from .models import Queue, Order
     try:
         instance.account
         pass
