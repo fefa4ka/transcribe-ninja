@@ -3,7 +3,7 @@
         <h3 class="modal-title">Распознать запись</h3>
     </div>
     <div class="modal-body">
-        <ul class="upload__records">
+        <ul class="upload__records list-unstyled">
             <li ng-repeat="item in uploader.queue">
                 <div class="form-group">
                     <label>Название записи:</label>
@@ -23,7 +23,7 @@
                 </div>
 
                 <p>
-                Вы можете стенографировать запись сами <nobr>или заказать транскрибцию за {{ sound.duration / 60 * 15 | number: 0 }} ₽</nobr>
+                Вы можете заказать стенографирование <strong>за {{ sound.duration / 60 * 15 | number: 0 }} ₽</strong></nobr>
                 </p>
                 
             </li>

@@ -115,7 +115,7 @@ angular.module( 'transcribe-ninja.record.upload', [
           return uploader;
         }
       },
-      size: 'lg'
+      size: 'md'
     });
 
     $scope.modal = $modalInstance;
