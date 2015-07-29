@@ -38,7 +38,6 @@ class ExportSerializer(serializers.ModelSerializer):
 
 
 class RecordSerializer(serializers.ModelSerializer):
-    exports = ExportSerializer(many=True)
 
     class Meta:
         model = Record
@@ -46,17 +45,16 @@ class RecordSerializer(serializers.ModelSerializer):
             "id",
             "title", "audio_file",
             "duration", "speakers",
-            "completed", "progress", "order", "exports")
+            "completed", "progress", "order")
 
 
 class RecordDetailSerializer(serializers.ModelSerializer):
-    transcriptions = TranscriptionSerializer(many=True)
 
+    exports = ExportSerializer(many=True)
     class Meta:
         model = Record
         fields = (
             "id",
             "title", "audio_file",
-            "duration",
-            "completed", "progress",
-            "transcriptions", "order")
+            "duration", "speakers",
+            "completed", "progress", "order", "exports")

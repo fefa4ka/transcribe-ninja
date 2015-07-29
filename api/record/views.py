@@ -31,7 +31,7 @@ class RecordViewSet(mixins.ListModelMixin,
 
     """
     queryset = Record.objects.all()
-    serializer_class = RecordSerializer
+    serializer_class = RecordDetailSerializer
     permission_classes = (permissions.IsAuthenticated,
                           IsOwner,)
 
@@ -57,7 +57,7 @@ class RecordViewSet(mixins.ListModelMixin,
             return Response(serializer.data)
 
         logger.error("Record tried to create with errors: %s\n%s" % (serializer.errors, request.__dict__))
-        
+
         # Если плохие данные, выдаём ошибку
         return Response(
             serializer.errors,
