@@ -1,0 +1,30 @@
+<form ng-submit="sendFeedback()" ui-keypress="{13:'sendFeedback()'}">
+
+<div class="modal-header">
+    <h3 class="modal-title text-line">Обратный звонок</h3>
+</div>
+
+<div class="modal-body">
+        <p>Оставьте свой номер телефона, мы сейчас вам перезвоним</p>
+        <div class="form-group">
+            <input ng-model="$parent.subject" type="hidden" ng-init="$parent.subject='Обратный звонок'">
+
+            <input tabindex="2" ng-model="$parent.phone" required mask="+9 (999) 999-99-99" clean="true"
+                   type="text" placeholder="Укажите номер телефона" alt="Укажите номер телефона" class="form-control">
+        </div>
+
+        
+        
+        <p>Можете <a ui-sref="contacts" ng-click="cancel()">связаться с нами</a> сами</p>
+    </div>
+        
+</div>
+
+<div class="modal-footer">
+    <alert ng-repeat="alert in alerts" type="{{ alert.type }}" close="closeAlert($index)">{{ alert.msg }}</alert>
+
+    <a ng-click="sendFeedback()" class="btn btn-primary pull-right" alt="Заказать обратный звонок" tabindex="10">Заказать обратный звонок</a>
+</div>
+
+    
+</form>

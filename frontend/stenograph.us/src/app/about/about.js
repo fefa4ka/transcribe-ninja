@@ -27,9 +27,20 @@ angular.module( 'transcribe-ninja.about', [
   });
 }])
 
-.controller( 'AboutCtrl', ["$scope", "$translate", function AboutCtrl( $scope, $translate) {
+.controller( 'AboutCtrl', ["$scope", "$translate", "$modal", function AboutCtrl( $scope, $translate, $modal) {
   $translate.use("ru");
 
+
+  $scope.callback = function (record) {
+    yaCounter30919251.reachGoal('callback-open');
+
+    $modalInstance = $modal.open(
+    {
+      templateUrl: 'feedback/callback.modal.tpl.html',
+      controller: 'FeedbackModalCtrl',
+      windowClass: 'feedback-callback'
+    });
+  };
 
 }])
 

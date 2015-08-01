@@ -62,6 +62,17 @@ angular.module( 'transcribe-ninja.api', [
       }
     }),
 
+    feedback: $resource('/api/feedback/', {}, {
+      list: {
+        method: 'GET',
+        isArray: false
+      },
+      create: {
+        method: 'POST',
+        isArray: false
+      }
+    }),
+
     order: $resource('/api/orders/', {}, {
       list: {
         method: 'GET',
