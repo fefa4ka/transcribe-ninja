@@ -35,6 +35,7 @@ elif settings.DOMAIN == "transcribe.ninja":
     )
 
 router.register(r'payments', views.PaymentViewSet, "")
+router.register(r'feedback', views.FeedbackViewSet, "")
 
 
 # The API URLs are now determined automatically by the router.

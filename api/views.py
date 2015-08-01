@@ -7,3 +7,4 @@ from api.payment.views import *
 
 from api.record.views import *
 from api.order.views import *
+from api.feedback.views import *

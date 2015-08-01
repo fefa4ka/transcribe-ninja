@@ -13,33 +13,34 @@ import subprocess
 
 from decimal import Decimal
 
-from pydub import AudioSegment
-
 from django.utils import timezone
 
+from django.contrib.auth.models import User
 
-# class Feedback(models.Model):
-#     """
-#         Обратная связь
 
-#         owner    - пользователь
+class Feedback(models.Model):
+    """
+        Обратная связь
 
-#         email    - почта, если не зареган
+        owner    - пользователь
 
-#         subject - тема
+        email    - почта, если не зареган
 
-#         text    - текст
+        subject - тема
 
-#         created - когда создан
-#     """
+        text    - текст
 
-#     owner = models.OneToOneField(User)
-#     email = models.CharField(max_length=255)
+        created - когда создан
+    """
 
-#     subject = models.CharField(max_length=255, blank=True, null=True)
-#     text = models.TextField()
+    owner = models.ForeignKey(User, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=100, blank=True, null=True)
 
-#     created = models.DateTimeField(auto_now=True)
+    subject = models.CharField(max_length=255, blank=True, null=True)
+    text = models.TextField(blank=True, null=True)
+
+    created = models.DateTimeField(auto_now=True)
 
 
 class Trash(models.Model):
