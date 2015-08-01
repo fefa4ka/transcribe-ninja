@@ -30,13 +30,13 @@
             <h6>Калькулятор стоимости</h6>
             <ul class="list-unstyled list-inline">
                 <li>
-                <span class="btn btn-default btn-file btn-xs" ng-click="yaCounter30919251.reachGoal('calculator-record')">Выберите запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span></li>
+                <span class="btn btn-default btn-file btn-xs">Выберите запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span></li>
                 <li>или введите длительность</li>
             </ul>
             <div class="form"><input type="text" id="calculator" ng-model="calculator_hours" mask="999" ng-click="select_calculator()"> {{ calculator_hours|plural:"час":"часа":"часов" }} = {{ calculator(calculator_hours) | number }} ₽</div>
             
             <p ng-show="calculator_hours > 10">
-                <strong >12 ₽ за минуту</strong> стенографирования,<br/> если у вас больще 10 часов
+                <strong >12 ₽ за минуту</strong> стенографирования,<br/> если у вас больше 10 часов
             </p>
 
             <p>Цена за любое качество и тип записи</p>
