@@ -103,6 +103,7 @@ angular.module( 'transcribe-ninja.auth', [
             });
         };
 
+        
         // Если новый, то регистрируем
         if($scope.new_user == 1) {
             api.auth.register({
