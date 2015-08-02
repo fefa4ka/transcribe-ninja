@@ -35,7 +35,7 @@
                             {{ queue.work_length }} 
                         </td>
                         <td class="length">
-                            {{ queue.total_price | number : 2 }} ₽
+                            {{ queue.total_price | number : 2 }} &#8399;
                         </td>
                     </tr>
                 </table>
@@ -66,7 +66,7 @@
                                 {{ queue.mistakes_length  }}
                             </td>
                             <td class="length checked">
-                                {{ queue.total_price | number : 2 }} ₽
+                                {{ queue.total_price | number : 2 }} &#8399;
                             </td>
                         </tr>
                     </table>
@@ -102,7 +102,7 @@
                     {{ stat.mistakes_length }}
                 </td>
                 <td class="length checked">
-                    {{ stat.total_price | number : 2 }} ₽
+                    {{ stat.total_price | number : 2 }} &#8399;
                 </td>
             </tr>
         </table>
@@ -111,12 +111,12 @@
         <div ng-show="currentUser.checked_balance > 1 ">
             <h4>Платежи <a class="btn btn-xs btn-primary" ng-click="takeMoney(currentUser.checked_balance)">Получить деньги</a></h4>
             <div class="salary">
-                <p class="desc"><strong>Вы можете получить {{ currentUser.checked_balance| number : 0 }} ₽</strong> на телефон, карточку, Яндекс.Деньги или QIWI</p>
-                <p class="desc" ng-show="currentUser.balance - currentUser.checked_balance > 0">Остальные {{ currentUser.balance - currentUser.checked_balance | number : 0 }} ₽ сможете получить, когда мы проверим вашу работу</p>
+                <p class="desc"><strong>Вы можете получить {{ currentUser.checked_balance| number : 0 }} &#8399;</strong> на телефон, карточку, Яндекс.Деньги или QIWI</p>
+                <p class="desc" ng-show="currentUser.balance - currentUser.checked_balance > 0">Остальные {{ currentUser.balance - currentUser.checked_balance | number : 0 }} &#8399; сможете получить, когда мы проверим вашу работу</p>
             </div>
         </div>
         
-        <p class="desc" ng-show="(currentUser.balance - currentUser.checked_balance > 0) && currentUser.checked_balance <=1">Мы ещё не проверили ваши {{ uncheckedStatistics.work_length }} символов, когда проверим вы сможете получить за них <strong>{{ currentUser.balance - currentUser.checked_balance | number : 2 }} ₽</strong?</p>
+        <p class="desc" ng-show="(currentUser.balance - currentUser.checked_balance > 0) && currentUser.checked_balance <=1">Мы ещё не проверили ваши {{ uncheckedStatistics.work_length }} символов, когда проверим вы сможете получить за них <strong>{{ currentUser.balance - currentUser.checked_balance | number : 2 }} &#8399;</strong?</p>
 
 
         <div class="payments-history" ng-show="payments.count > 0">
@@ -134,7 +134,7 @@
                         {{ payment.comment }}
                     </td>
                     <td class="length checked">
-                        {{ payment.total | number : 2 }} ₽
+                        {{ payment.total | number : 2 }} &#8399;
                     </td>
                     <td>
                         {{ payment.created  | date : 'd MMM в HH:mm'   }}

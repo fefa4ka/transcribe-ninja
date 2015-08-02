@@ -25,7 +25,7 @@
                 </li>
             </ul>
             
-            <p>Мы перечислим вам <strong>{{ amount | number : 2 }} ₽ в течении суток</strong></p>
+            <p>Мы перечислим вам <strong>{{ amount | number : 2 }} &#8399; в течении суток</strong></p>
 
             <div ng-tab-body class="tab-body">
                  <div class="form-group">
@@ -39,7 +39,7 @@
                     <input tabindex="4" ng-model="$parent.card" required mask="9999 9999 9999 9999" clean="true"
                            type="text" placeholder="Номер карты" alt="Номер карты" class="form-control">
                 </div>
-                <p ng-show="amount < 500">К сожалению, мы можем перечислить на карту платежи от 500 ₽</p>
+                <p ng-show="amount < 500">К сожалению, мы можем перечислить на карту платежи от 500 &#8399;</p>
             </div>
 
             <div ng-tab-body class="tab-body">

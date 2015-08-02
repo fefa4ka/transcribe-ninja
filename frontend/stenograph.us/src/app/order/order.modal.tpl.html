@@ -12,10 +12,10 @@
         <ul>
             <li>
                 <label class="price">
-                    Стенографирование (15 ₽ / минута)
+                    Стенографирование (15 &#8399; / минута)
                 </label>
                 <label class="price pull-right">
-                    {{ record.duration / 60 * 15 | number: 0 }} ₽
+                    {{ record.duration / 60 * 15 | number: 0 }} &#8399;
                 </label>
             </li>
             <li>
@@ -52,7 +52,7 @@
                     ></checkbox> Час за час <small>– получите в тот же день</small>
                 </label>
                 <label class="price pull-right" ng-show="speedup == 1">
-                    5 ₽ / минута
+                    5 &#8399; / минута
                 </label>
             </li>
             <li>
@@ -65,12 +65,12 @@
                     ></checkbox> Редактура <small>– приведём текст в порядок</small>
                 </label>
                 <label class="price pull-right" ng-show="editing == 1">
-                    5 ₽ / минута
+                    5 &#8399; / минута
                 </label>
             </li>
         </ul>
         <p class="total-price pull-right">
-            Итого: {{ record.duration / 60 * (15 + editing * 5 + speedup * 5) | number: 0 }} ₽
+            Итого: {{ record.duration / 60 * (15 + editing * 5 + speedup * 5) | number: 0 }} &#8399;
         </p>
         </div>
     </div>
