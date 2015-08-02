@@ -37,7 +37,7 @@ angular.module( 'transcribe-ninja.record.upload', [
 //   };
 // })
 
-.controller( 'RecordUploadCtrl', ["$scope", "$translate", "$modal", "FileUploader", "$state", "api", "ngAudio", function RecordUploadCtrl($scope, $translate, $modal, FileUploader, $state, api, ngAudio ) {
+.controller( 'RecordUploadCtrl', ["$scope", "$rootScope", "$translate", "$modal", "FileUploader", "$state", "api", "ngAudio", function RecordUploadCtrl($scope, $rootScope, $translate, $modal, FileUploader, $state, api, ngAudio ) {
   function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -54,7 +54,7 @@ angular.module( 'transcribe-ninja.record.upload', [
     return cookieValue;
   }
 
-  var uploader = $scope.uploader = new FileUploader({
+  var uploader = $rootScope.uploader = $scope.uploader = new FileUploader({
     url: '/api/records/',
     alias: 'audio_file',
     headers : {
@@ -74,11 +74,8 @@ angular.module( 'transcribe-ninja.record.upload', [
       windowClass: 'upload-modal',
       controller: ["$scope", "$modalInstance", "$log", "$rootScope", "uploader", function($scope, $modalInstance, $log, $rootScope, uploader){
         $scope.uploader = uploader;
-
-        
         
         $scope.sound = ngAudio.load($scope.uploader.queue[0].formData[0].file);
-
 
         $scope.startUpload = function () {
           yaCounter30919251.reachGoal('upload-started');
@@ -141,7 +138,13 @@ angular.module( 'transcribe-ninja.record.upload', [
       });
 
   };
+
+  uploader.onWhenAddingFileFailed = function(item, filter, options) {
+    console.log(item, filter, options);
+  };
+
   uploader.onAfterAddingAll = function(addedFileItems) {
+
       $scope.open();
 
       // console.info('onAfterAddingAll', addedFileItems);

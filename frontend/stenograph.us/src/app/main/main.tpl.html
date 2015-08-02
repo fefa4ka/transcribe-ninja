@@ -4,8 +4,11 @@
         <img src="/static/assets/logo.svg" class="logo">
         <h1 class="slogan">– Расшифровка звука в текст<br/><strong>час записи за час</strong></h1>
         <ul class="nav nav-pills">
-            <li class="upload-button">
-                <span class="btn btn-primary btn-file" ng-click="yaCounter30919251.reachGoal('upload-main')"> Загрузить запись <input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
+            <li class="upload-button" ng-hide="currentUser.id">
+                <span class="btn btn-primary" ng-click="upload()">Загрузить запись</span>
+            </li>
+            <li class="upload-button" ng-show="currentUser.id">
+                <span class="btn btn-primary btn-file">Загрузить запись<input type="file" accept="audio/*" nv-file-select="" uploader="uploader"></span>
             </li>
             <li>
                 <a ui-sref="record-list">Ваши записи<span class="badge" ng-show="currentUser.id && currentUser.records.length > 0">{{ currentUser.records.length }}</span></a>
@@ -20,7 +23,7 @@
             <ul class="list-unstyled">
                 <li>Разметка по времени</li>
                 <li>Разметка собеседников</li>
-                <li>Стенограмма в <strong>DOC, XLS, SRT, TXT</strong></li>
+                <li>Стенограмма в <strong>Word, Excel, cубтитры</strong>,<br/>и по вашим правилам</li>
             </ul>
         </div>
         <p ng-hide="true || currentUser.id && currentUser.records.length > 0">

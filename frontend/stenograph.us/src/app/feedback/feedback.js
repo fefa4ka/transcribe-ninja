@@ -7,8 +7,10 @@ angular.module( 'transcribe-ninja.feedback', [
 
 }])
 
-.controller( 'FeedbackModalCtrl', ["$scope", "$modalInstance", "api", function FeedbackModalCtrl( $scope, $modalInstance, api ) {
-
+.controller( 'FeedbackModalCtrl', ["$scope", "$modalInstance", "api", "title", "description", function FeedbackModalCtrl( $scope, $modalInstance, api, title, description ) {
+    $scope.title = title;
+    $scope.description = description;
+    
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');
     };
