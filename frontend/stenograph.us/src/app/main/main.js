@@ -34,11 +34,7 @@ angular.module( 'transcribe-ninja.main', [
   }
 
   $scope.calculator = function (hours) {
-    var price = 15;
-    
-    if(hours > 10) {
-      price = 12;
-    }
+    var price = 12;
 
     return hours * price * 60
   }

@@ -16,7 +16,7 @@
         </ul>
 
         <h5 class="price">
-            <strong >15 &#8399; за минуту</strong><br/>стенографирования
+            <strong >12 &#8399; за минуту</strong><br/>стенографирования
         </h5>
         <div class="free">
             <h6>Бесплатно</h6>
@@ -37,10 +37,6 @@
                 <li>или введите длительность</li>
             </ul>
             <div class="form"><input type="text" id="calculator" ng-model="calculator_hours" mask="999" ng-click="select_calculator()"> {{ calculator_hours|plural:"час":"часа":"часов" }} = {{ calculator(calculator_hours) | number }} &#8399;</div>
-            
-            <p ng-show="calculator_hours > 10">
-                <strong >12 &#8399; за минуту</strong> стенографирования,<br/> если у вас больше 10 часов
-            </p>
 
             <p>Цена за любое качество и тип записи</p>
 
