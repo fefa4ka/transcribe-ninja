@@ -14,6 +14,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 from hosts import HOSTS
 
+SITE_ID = 1
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -68,6 +70,10 @@ INSTALLED_APPS = (
     'transcribe',
     'work',
     'django_rq',
+
+    # Mailing
+    'django_mailbox',
+    'dbmail',
 
     # API
     'rest_framework',
@@ -208,6 +214,13 @@ RQ = {
     'errors': 'strict',
     'decode_responses': False,
     'unix_socket_path': None,
+}
+
+CACHES = {
+    "default": {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '%s:6379:2' % HOSTS['REDIS'],
+    },
 }
 
 # Fixtures

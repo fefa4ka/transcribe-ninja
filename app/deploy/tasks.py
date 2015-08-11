@@ -58,9 +58,17 @@ common_configure = [
     {"action": "apt",
         "params": ["libpq-dev", "git",
                    "python-setuptools", "python-dev", "build-essential", "python-pip", "redis-server", "ffmpeg",
-                   "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer",
+                   "libmysqlclient-dev", "subversion", "sox", "oracle-java7-installer", "libxslt1-dev", "libxslt1-dev",
                    "gstreamer0.10-tools", "gstreamer-tools", "gstreamer0.10-plugins-base", "gstreamer0.10-plugins-good", "gstreamer0.10-plugins-bad"],
         "message":"Installing apt-get packages" },
+
+    {"action": "sudo", "params": "mysql_secure_installation",
+        "message": "MYSQL Configuration" },
+
+    {"action": "sudo", "params": "service mysqld start",
+        "message": "MYSQL Configuration" },
+    {"action": "sudo", "params": "chkconfig mysqld on",
+        "message": "MYSQL Configuration" },
 
     # List of pypi packages to install
     {"action": "pip", "params": ["virtualenv"],

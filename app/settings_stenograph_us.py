@@ -7,7 +7,8 @@ from settings_production import *
 
 DOMAIN = 'stenograph.us'
 
-EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = "info@stenographus.ru"
+EMAIL_HOST_USER = "info@stenograph.us"
+DEFAULT_FROM_EMAIL = u"Стеня Графов <info@stenograph.us>"
 
 WSGI_APPLICATION = "app.wsgi_%s.application" % DOMAIN.replace(".", "_")
 
@@ -38,6 +39,14 @@ VK_APP_ID = '4953708'
 VK_API_SECRET = 'DPuBGWwzZioNYexUYKJx'
 # VK_EXTRA_SCOPE = ['email']
 
+# Yandex.Money
+YANDEX_MONEY_DEBUG = True
+YANDEX_MONEY_SCID = 12345
+YANDEX_MONEY_SHOP_ID = 47394
+YANDEX_MONEY_SHOP_PASSWORD = 'password'
+YANDEX_MONEY_FAIL_URL = 'http://stenograph.us/#/payments/fail-payment/'
+YANDEX_MONEY_SUCCESS_URL = 'http://stenograph.us/#/payments/success-payment/'
+YANDEX_MONEY_MAIL_ADMINS_ON_PAYMENT_ERROR = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -45,11 +54,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
 
 if not PROD and DEBUG:
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN)
+        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN),
+        os.path.join(BASE_DIR, "admin/static/"),
     )
 else:
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
+        os.path.join(BASE_DIR, "admin/static/"),
     )
 
-STATIC_URL = '/static/'

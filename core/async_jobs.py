@@ -88,6 +88,8 @@ def make_queue(order):
         # Распознаём
         # TODO: Запускать отдельной очередью
         # order.record.recognize()
+
+        # Приглашаем людей на сайт
     else:
         order.record.progress = Record.PROGRESS_ORDERED
 
@@ -118,6 +120,15 @@ def update_near(queue):
             record.status = 4
             record.save()
             export_transcription.delay(record)
+
+    # Если у мудака рейтинг плохой — блочим
+    account = queue.owner.account
+    if account.actual_rating < 0.5:
+        queue.owner.user.active = 0
+        queue.owner.save()
+
+        if queue.owner.email:
+            send_db_mail('ninja-block', queue.owner.email)
 
 
 @job('update_queue')

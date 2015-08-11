@@ -7,7 +7,8 @@ from settings_production import *
 
 DOMAIN = 'transcribe.ninja'
 
-EMAIL_HOST_USER = DEFAULT_FROM_EMAIL = 'info@transcribe.ninja'
+EMAIL_HOST_USER = 'info@transcribe.ninja'
+DEFAULT_FROM_EMAIL = 'Стеня Графов <info@transcribe.ninja>'
 
 WSGI_APPLICATION = 'app.wsgi_%s.application' % DOMAIN.replace(".", "_")
 
@@ -20,7 +21,7 @@ DJOSER = {
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'LOGIN_AFTER_ACTIVATION': True,
-    'SEND_ACTIVATION_EMAIL': True,
+    'SEND_ACTIVATION_EMAIL': False,
 }
 
 # Google Oauth2

@@ -64,6 +64,15 @@ def make_queue(modeladmin, request, queryset):
         for order in record.orders.all():
             core.async_jobs.make_queue.delay(order)
 
+def update_queue_metrics(modeladmin, request, queryset):
+    """
+        Режем на куски, если не порезано
+    """
+    for record in queryset.all():
+        for order in record.orders.all():
+            for queue in order.queue.filter():
+                core.async_jobs.update_near.delay(queue)
+
 
 class RecordAdmin(ModelAdmin):
     list_display = ('title', 'duration', 'total_price', 'spent_money', 'progress', 'completed', 'work_length', 'owner')
@@ -94,7 +103,7 @@ class RecordAdmin(ModelAdmin):
 
     search_fields = ['title', 'owner__username']
 
-    actions = [prepare, analys, make_queue, export_transcription]
+    actions = [prepare, analys, make_queue, export_transcription, update_queue_metrics]
 
     inlines = [OrderInline]
 

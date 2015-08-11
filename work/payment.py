@@ -4,8 +4,12 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+import django.db.models.signals as signals
+from django.conf import settings
 
 from price import Price
+
+from dbmail import send_db_mail
 
 
 class Payment(models.Model):
@@ -42,3 +46,18 @@ class Payment(models.Model):
 
     def __unicode__(self):
         return "Payment for %s: %s" % (self.content_object.__class__.__name__, self.content_object)
+
+
+def send_mail(sender, instance, **kwargs):
+    # Берём дефолтный прайс для объекта
+    if not instance.id:
+        return
+
+    payment = Payment.objects.get(id=instance.id)
+
+    if payment.status == 0 and instance.status == 1 and settings.DOMAIN == 'transcribe.ninja':
+        if payment.owner.email:
+            send_db_mail('ninja-payment-success', payment.owner.email, { 'name': payment.owner.first_name, 'total': payment.total * -1 })
+
+# register the signal
+signals.pre_save.connect(send_mail, sender=Payment)

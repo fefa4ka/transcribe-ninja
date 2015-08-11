@@ -43,6 +43,15 @@ class Feedback(models.Model):
     created = models.DateTimeField(auto_now=True)
 
 
+class Language(models.Model):
+    code = models.CharField(max_length=10)
+    name = models.CharField(max_length=255)
+    english_name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.english_name
+
+
 class Trash(models.Model):
     # Чтобы запись не удалялась с первого раза
     trashed_at = models.DateTimeField(blank=True, null=True)

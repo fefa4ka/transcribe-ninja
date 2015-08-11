@@ -11,9 +11,11 @@ import django.db.models.signals as signals
 
 from django.conf import settings
 
-# from django_mailbox.models import Message
+from django_mailbox.models import Message
 
 from price import Price
+
+from core.models import Language
 
 
 class Account(models.Model):
@@ -55,6 +57,8 @@ class Account(models.Model):
 
     price = models.ForeignKey(Price)
 
+    languages = models.ManyToManyField(Language)
+
     def __unicode__(self):
         return "%d: %s" % (self.id, self.user.username)
 
@@ -71,6 +75,69 @@ class Account(models.Model):
         except:
             # Если не работал. Вылетает ошибка, потому что не нашлись записи
             return 0
+
+    @property
+    def mistakes_part(self):
+        mistakes_length = self.user.queue.all().aggregate(lenght=Sum('mistakes_length'))["lenght"] or 0
+        work_length = self.work_length
+
+        if work_length > 0:
+            mistakes_part = round(mistakes_length / float(work_length), 2)
+        else:
+            mistakes_part = 0
+
+        return mistakes_part
+
+    @property
+    def check_mistakes_part(self):
+        empty_count = self.user.queue.filter(work_type=Price.WORK_TYPE_EDIT, work_length__gt=0, mistakes_length__gt=0).count()
+        check_count = self.user.queue.filter(work_type=Price.WORK_TYPE_EDIT).count()
+
+        if check_count > 0:
+            empty_part = round(empty_count / float(check_count), 2)
+        else:
+            empty_part = 0
+
+        return empty_part
+
+    @property
+    def empty_part(self):
+        empty_count = self.user.queue.filter(work_type=Price.WORK_TYPE_EDIT, work_length=0, mistakes_length__gt=0).count()
+        check_count = self.user.queue.filter(work_type=Price.WORK_TYPE_EDIT).count()
+
+        if check_count > 0:
+            empty_part = round(empty_count / float(check_count), 2)
+        else:
+            empty_part = 0
+
+        return empty_part
+
+    @property
+    def tc_index(self):
+        transcribe_count = self.user.queue.filter(work_type=Price.WORK_TYPE_TRANSCRIBE).count()
+        check_count = self.user.queue.filter(work_type=Price.WORK_TYPE_EDIT).count()
+
+        if check_count > 0:
+            empty_part = round(transcribe_count / float(check_count), 2)
+        else:
+            empty_part = 0
+
+        return empty_part
+
+    @property
+    def actual_rating(self):
+        if self.empty_part == 0:
+            queue_rating = 1
+        else:
+            queue_rating = self.empty_part / 0.05
+
+        if self.mistakes_part == 0:
+            mistakes_rating = 1
+        else:
+            mistakes_rating = self.mistakes_part / 0.05
+
+        return round(2 / (queue_rating + mistakes_rating), 2)
+        
 
     @property
     def balance(self):
@@ -129,9 +196,9 @@ class Account(models.Model):
         else:
             return self.price
 
-    # @property
-    # def emails(self):
-    #     return Message.objects.filter(from_header__icontains=self.user.email)
+    @property
+    def emails(self):
+        return Message.objects.filter(from_header__icontains=self.user.email).order_by('-processed')
 
     @property
     def checked_balance(self):
@@ -201,6 +268,11 @@ def post_account_save(sender, instance, **kwargs):
 
         instance.account = Account(site=settings.DOMAIN, price=transcribe_price)
         instance.account.save()
+
+        # Сделать языки, которые указал
+        ru = Language.objects.get(code='RU')
+        de = Language.objects.get(code='DE')
+        instance.account.languages.add(ru, de)
 
 
 # def pre_user_save(sender, instance, *args, **kwargs):
