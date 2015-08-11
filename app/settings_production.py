@@ -216,12 +216,12 @@ RQ = {
     'unix_socket_path': None,
 }
 
-CACHES = {
-    "default": {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '%s:6379:2' % HOSTS['REDIS'],
-    },
-}
+# CACHES = {
+#     "default": {
+#         'BACKEND': 'redis_cache.cache.RedisCache',
+#         'LOCATION': '%s:6379:2' % HOSTS['REDIS'],
+#     },
+# }
 
 # Fixtures
 FIXTURE_DIRS = (
