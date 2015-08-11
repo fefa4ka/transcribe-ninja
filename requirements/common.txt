@@ -20,7 +20,6 @@ newrelic
 xlsxwriter
 django-wpadmin
 python-docx
-git+https://github.com/yandex-money/yandex-money-kit-django.git
 django-db-mailer
 django-mailbox
 django-redis-cache
