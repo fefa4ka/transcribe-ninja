@@ -88,12 +88,33 @@ angular.module( 'transcribe-ninja.localization', [
     $translateProvider
     .translations('ru', {
         'Стенограф': 'Transcribe',
-        HEADLINE: 'Hello there, This is my awesome app!',
-        INTRO_TEXT: 'And it has i18n support!',
+        'Login': 'Войти',
+        'Logout': 'Выйти',
+        'Earn money': 'Заработать',
+        'Balance': 'На счету',
+        'Your Results': 'История вашей работы',
+        'Results': 'История',
+        'Feedback': 'Обратная связь',
+        'Print dictation': 'Печатайте под диктовку',
+        'payment for each character': 'оплата за каждую букву',
+
+        'Type what they say in the record': 'Напечатайте, что говорят в записи',
+        'Listen to the recording and correct mistakes in transcription': 'Послушайте запись и исправьте ошибки в транскрипции',
+        'For checking earn': 'За проверку заработаете',
+        'and_plus': 'плюс',
+        'for each correction': 'за каждое исправление',
+        'Correct only mistakes and append the missing transcriptions': 'Исправляйте только ошибки и дописывайте недостающий текст',
+
+
+        'currency': '&#8399;',
+        'sub_currency': 'копейка',
+        'sub_currency_plural': 'копеек',
+
+
         'Female': 'Женщина',
         'Male': 'Мужчина',
-          "{{num}} second_0": "{{num}} секунда",
-          "{{num}} second_1":  "{{num}} секунды",
+        "{{num}} second_0": "{{num}} секунда",
+        "{{num}} second_1":  "{{num}} секунды",
         "{{num}} second_2":  "{{num}} секунд",
         "{{num}} minute_0": "{{num}} минута",
         "{{num}} minute_1": "{{num}} минуты",

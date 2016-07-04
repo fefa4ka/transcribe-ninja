@@ -9,15 +9,15 @@
 <div ng-show="queue.duration > 0">
 
 <div class="instruction" ng-show="queue.work_type == 0">
-    <h4>Напечатайте, что говорят в записи</h4>
+    <h4>{{ 'Type what they say in the record' | translate }}</h4>
 </div>
 
 <div class="instruction" ng-show="queue.work_type == 1">
-    <h4>Послушайте запись и исправьте ошибки в транскрибции</h2>
+    <h4>{{ 'Listen to the recording and correct mistakes in transcription' | translate }}</h2>
     <p class="desc">
-        За проверку заработаете <strong>{{ queue.total_price * 100 | number : 0 }} копеек</strong>, плюс <strong>1 копейка</strong> за каждое исправление.
+        {{ 'For checking earn' | translate }} <strong>{{ queue.total_price * 100 | number : 0 }} {{ 'sub_currency_plural' | translate }}</strong>, {{ 'and_plus' | translate }} <strong>1 {{ 'sub_currency' | translate }}</strong> {{ 'for each correction' | translate }}.
     </p>
-    <p class="desc" ng-show="queue.work_type == 1 && originalTranscriptions.length > 0">Исправляйте только ошибки и дописывайте недостающий текст.<br/>Если в стенограмме есть текст, которого нет в записи — <strong>не стирайте его</strong>. Это часть из соседнего куска.</p>
+    <p class="desc" ng-show="queue.work_type == 1 && originalTranscriptions.length > 0">{{ 'Correct only mistakes and append the missing transcriptions' | translate }}.<br/>Если в стенограмме есть текст, которого нет в записи — <strong>не стирайте его</strong>. Это часть из соседнего куска.</p>
 
 </div>
 

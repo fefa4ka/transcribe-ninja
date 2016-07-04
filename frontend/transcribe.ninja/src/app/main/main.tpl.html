@@ -4,34 +4,32 @@
         
     </section>
     <section class="col-md-6 transcribe">
-        <a ui-sref="work" class="btn btn-primary btn-xs work" alt="Задания на транскрибацию">Зарабатывайте</a>
+        <a ui-sref="work" class="btn btn-primary btn-xs work" alt="{{ 'Go to tasks' | translate }}">{{ 'Earn money' | translate }}</a>
         <p class="desc">
-            <nobr>Печатайте под диктовку,</nobr>
-            <nobr>оплата за каждую букву</nobr>
+            <nobr>{{ 'Print dictation' | translate }},</nobr>
+            <nobr>{{ 'payment for each character' | translate }}</nobr>
         </p>
-        <p ng-hide="true">
-            <strong>Около 1000 &#8399; в день</strong>
-        </p>
+
         
         <div class="controls">
             <button class="btn btn-default btn-xs" 
                     ng-click="authModal()"
-                    ng-hide="currentUser.id" alt="Войти">Войти</button>
+                    ng-hide="currentUser.id" alt="Войти">{{ 'Login' | translate }}</button>
 
             <div ng-show="currentUser.id">
                 <div class="btn-group" dropdown>
                     <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                     <ul class="dropdown-menu" role="menu">
                         <li>
-                            <a ui-sref="history">История вашей работы</a>
+                            <a ui-sref="history">{{ 'Your Results' | translate }}</a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#" ng-click="logout()">Выход</a>
+                            <a href="#" ng-click="logout()">{{ 'Logout' | translate }}</a>
                         </li>
                     </ul>
                 </div>
-               <p class="balance"> На счету: <strong>{{ currentUser.balance | number : 0 }} &#8399;</strong></p>
+               <p class="balance"> {{ 'Balance' | translate }}: <strong>{{ currentUser.balance | number : 0 }} &#8399;</strong></p>
             </div>
         </div>
 

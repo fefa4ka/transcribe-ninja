@@ -51,6 +51,7 @@ angular.module( 'transcribe-ninja.player', [
         });
 
         scope.wavesurfer.on('loading', function (percent) {
+          console.log(percent);
             scope.loading_percent = percent;
             scope.$apply();
         });
@@ -60,7 +61,7 @@ angular.module( 'transcribe-ninja.player', [
 
           if(typeof value == "undefined") {
             return;
-          }
+        }
 
           scope.wavesurfer.clearRegions();
           scope.wavesurfer.load(value);

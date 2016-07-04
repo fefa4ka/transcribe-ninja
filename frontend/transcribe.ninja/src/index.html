@@ -34,7 +34,7 @@ rel="stylesheet" type="text/css" />
     <div class="container">
         <header ng-hide="stateName === 'main'">
             <h1 class="logo">
-                <a ui-sref="main" alt="Перейти на главную страницу">
+                <a ui-sref="main" alt="{{ 'Go to main page' | translate }}">
                   <img src="/static/assets/logo_head.svg">
                 </a>    
             </h1>
@@ -43,16 +43,16 @@ rel="stylesheet" type="text/css" />
                 <!-- If AnonymousUser -->
                 <li ng-hide="currentUser.id">
                     <button class="btn btn-default btn-xs" 
-                            ng-click="authModal()">Войти</button>
+                            ng-click="authModal()">{{ 'Login' | translate }}</button>
                 </li>
                 
 
                 <li ui-sref-active="active">
-                    <a href ui-sref="work" alt="Перейти к заданиям">Поработать</a>
+                    <a href ui-sref="work" alt="{{ 'Go to tasks' | translate }}">{{ 'Earn money' | translate }}</a>
                 </li>
 
                 <li ui-sref-active="active">
-                    <a href ui-sref="history" alt="Перейти к истории рабаботы">История</a>
+                    <a href ui-sref="history" alt="{{ 'Go to results' | translate }}">{{ 'Results' | translate }}</a>
                 </li>
 
                 <li ng-show="currentUser.id">
@@ -60,7 +60,7 @@ rel="stylesheet" type="text/css" />
                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" dropdown-toggle ng-disabled="disabled">{{ currentUser.username }} <span class="caret"></span></button>
                         <ul class="dropdown-menu" role="menu">
                             <li>
-                                <a href="#" ng-click="logout()" alt="Выйти из системы">Выход</a>
+                                <a href="#" ng-click="logout()" alt="{{ 'Logout' | translate }}">{{ 'Logout' | translate }}</a>
                             </li>
                         </ul>
                     </div>
@@ -77,14 +77,14 @@ rel="stylesheet" type="text/css" />
             <div ng-class="stateName == 'main' ? 'col-md-5 col-md-offset-1 first-to-right' : 'col-md-6 first-to-left'">
                 <ul class="list-inline">
                     <li>
-                        <a ui-sref="history">История вашей работы</a>
+                        <a ui-sref="history">{{ 'Your Results' | translate }}</a>
                     </li>
                 </ul>
             </div>
             <div class="col-md-5 second">
                 <ul class="list-inline">
                     <li>
-                        <a ng-click="yaCounter27735045.reachGoal('feedback')" href="mailto:info@transcribe.ninja">Обратная связь</a>
+                        <a ng-click="yaCounter27735045.reachGoal('feedback')" href="mailto:info@transcribe.ninja">{{ 'Feedback' | translate }}</a>
                     </li>
                     <li>© Transcribe.ninja</li>
                 </ul>
