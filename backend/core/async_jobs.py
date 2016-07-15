@@ -97,6 +97,7 @@ def make_queue(order):
 
         # Приглашаем людей на сайт
     else:
+        # TODO: потенциальный баг
         order.record.progress = Record.PROGRESS_ORDERED
 
     order.record.save()
@@ -136,6 +137,7 @@ def update_near(queue):
         queue.owner.user.active = 0
         queue.owner.save()
 
+        # Отправляем письмо о блокировке
         if queue.owner.email:
             send_db_mail('ninja-block', queue.owner.email)
 
