@@ -107,9 +107,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'social_auth.context_processors.social_auth_by_name_backends',
 )
 
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, "api/account/templates/"),
+TEMPLATE_DIRS = (os.path.join(BASE_DIR, "../admin/templates/"),
+    os.path.join(BASE_DIR, "../api/account/templates/"),
 )
+
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
@@ -287,7 +288,7 @@ EC2_KEY_PAIR = "%s/%s.pem" % (EC2_KEY_PAIR_DIR, PROJECT_NAME)
 EC2_SERVER_USERNAME = 'ubuntu'
 
 # Media content
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+MEDIA_ROOT = os.path.join(BASE_DIR, "../../data/media/")
 
 # Records content
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")
