@@ -17,12 +17,12 @@ angular.module( 'transcribe-ninja.auth', [
     }
   });
 }])
-.controller( 'SocialAuthCompleteCtrl', function AuthModalCtrl( $scope ) {
+.controller( 'SocialAuthCompleteCtrl', ["$scope", function AuthModalCtrl( $scope ) {
     console.log('close');
     window.close();
-})
+}])
 
-.controller( 'AuthModalCtrl', function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
+.controller( 'AuthModalCtrl', ["$scope", "$modalInstance", "authCallback", "$rootScope", "api", function AuthModalCtrl( $scope, $modalInstance, authCallback, $rootScope, api ) {
     $scope.authCallback = authCallback;
     $scope.logining = false;
     $scope.alerts = [];
@@ -131,7 +131,7 @@ angular.module( 'transcribe-ninja.auth', [
         }
     };
 
-})
+}])
 
 ;
 

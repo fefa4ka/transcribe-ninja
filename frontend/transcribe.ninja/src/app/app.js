@@ -15,9 +15,9 @@ angular.module( 'transcribe-ninja', [
 
   'ngResource'
 ])
-.config(function($resourceProvider) {
+.config(["$resourceProvider", function($resourceProvider) {
   $resourceProvider.defaults.stripTrailingSlashes = false;
-})
+}])
 
 .config( ["$stateProvider", "$urlRouterProvider", function myAppConfig ( $stateProvider, $urlRouterProvider ) {
   $urlRouterProvider.otherwise( '/' );
