@@ -270,8 +270,8 @@ def post_account_save(sender, instance, **kwargs):
 
         # Сделать языки, которые указал
         ru = Language.objects.get(code='RU')
-        de = Language.objects.get(code='DE')
-        instance.account.languages.add(ru, de)
+        # de = Language.objects.get(code='DE')
+        instance.account.languages.add(ru)
 
 
 # def pre_user_save(sender, instance, *args, **kwargs):

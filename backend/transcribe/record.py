@@ -46,7 +46,7 @@ class Record(AudioFile, Trash):
 
     duration = models.FloatField(default=0)
     speakers = models.IntegerField(default=2)
-    language = models.CharField(max_length=20, default="ru-RU")
+    language = models.CharField(max_length=20, default="RU")
 
     # Состояние записи. Без действия, в работе и завершённая.
     PROGRESS_NONE = 0
@@ -88,7 +88,7 @@ class Record(AudioFile, Trash):
         """
         transcriptions = []
 
-        # Собираем транскрипции с  отсортированных по порядку кусков
+        # Собираем транскрипции с отсортированных по порядку кусков
         for piece in self.pieces.all().order_by('start_at'):
             transcriptions += piece.transcriptions.all().order_by('index')
 
@@ -247,7 +247,7 @@ class Record(AudioFile, Trash):
             else:
                 end_at = self.duration
 
-            # Куски изначально в mp3, нужно конвертнуть иили нет
+            # Куски изначально в mp3, нужно конвертнуть или нет
             file_name, extension = os.path.splitext(audio_file_path)
             diarization_path = os.path.join(
                 record_path,
@@ -257,12 +257,12 @@ class Record(AudioFile, Trash):
             subprocess.call(
                 ['ffmpeg', '-i',
                  audio_file_path,
-                 '-ac', "2",
+                 '-ac', "1",
                  '-acodec', 'pcm_s16le',
                  '-ar', '16000',
                  wav_audio_file_path])
 
-            print wav_audio_file_path
+            # print wav_audio_file_path
             # audio_file_path = self.cut_to_file(
             #     os.path.join('diarization', str(position) + ".wav"),
             #     start_at=position, end_at=end_at)
