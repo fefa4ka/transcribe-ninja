@@ -47,12 +47,12 @@ STATIC_ROOT = os.path.join(BASE_DIR, "../../static/%s/" % DOMAIN)
 if not PROD and DEBUG:
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "../../frontend/%s/build/" % DOMAIN),
-        os.path.join(BASE_DIR, "admin/static/"),
+        os.path.join(BASE_DIR, "../admin/static/"),
     )
 else:
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "../../frontend/%s/bin/" % DOMAIN),
-        os.path.join(BASE_DIR, "admin/static/"),
+        os.path.join(BASE_DIR, "../admin/static/"),
     )
 
 
