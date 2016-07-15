@@ -65,8 +65,90 @@ class QueueViewSet(viewsets.ViewSet,
 
         return Response(serializer.data)
 
+    def post(self, request, *args, **kwargs):
+        try:
+            queue_id = 0
+            if 'queue' in request.data:
+                queue_id = request.data['queue']
+            elif len(request.data) > 0:
+                queue_id = request.data[0]['queue']
+
+            if not queue_id:
+                logger.error("Not queue_id provided %s" % (request))
+
+                return Response({'error': 'Queue id not provided'}, status=HTTP_400_BAD_REQUEST)
+
+
+            # Каждая транскрипция связанна с каким-то заказом, либо
+            queue = Queue.objects.get(
+                id=queue_id, owner=request.user)
+
+            if queue.completed:
+                logger.error("Queue %d already completed in %s. Completed by %s, send by %s" % (queue.id, queue.completed, queue.owner, request.user))
+
+                return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
+
+            # Если плохая запись
+            if queue_id == queue.id and 'poor' in request.data:
+                queue.poored += 1
+
+                # Если многие посчитали, что запись плохая,
+                # помечаем, как выполненную
+                if queue.poored > settings.SPEECH_POOR_LIMIT:
+                    queue.completed = timezone.now()
+                    queue.update_work_metrics()
+
+                queue.save()
+
+                core.async_jobs.update_near.delay(queue)
+
+                logger.debug("Queue %d is poored." % (queue.id))
+
+                return Response({'done': 'ok'}, status=HTTP_201_CREATED)
+
+            for data in request.data:
+                serializer = TranscriptionQueueSerializer(data=data)
+                if not serializer.is_valid():
+                    logger.error("Transcription for queue %d send with errors: %s\n%s" % (queue.id, serializer.errors, request.__dict__))
+
+                    return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+                if data['queue'] != queue.id:
+                    logger.error("Sended transcription for queue %d, but locked queue %d" % (data['queue'], queue.id))
+
+                    return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
+
+            for data in request.data:
+                serializer = TranscriptionQueueSerializer(data=data)
+                print data
+                if serializer.is_valid():
+                    serializer.save()
+
+            # Помечаем очередь как прочитанную
+            queue.completed = timezone.now()
+            queue.update_work_metrics()
+
+            # TODO: Удалить аудиофайл
+            queue.save()
+
+            # Отправляем на асинхронный пересчёт зависимых кусков
+            # Меняем приоритет у других кусков и перерасчёт бабла
+            try:
+                core.async_jobs.update_near.delay(queue)
+            except rq.connections.NoRedisConnectionException:
+                logger.error("Can't connect to Redis, when send results of queue %d" % (queue.id))
+
+
+            logger.debug("Transcription for queue %d saved." % (queue.id))
+
+            return Response({'done': 'ok'}, status=HTTP_201_CREATED)
+        except:
+            logger.error("Houston, we have a problem. Queue %d and user %s\n%s" % (queue.id, request.user. request.__dict__))
+            return Response({'error': 'Houston, we have a problem'}, status=HTTP_400_BAD_REQUEST)
+
     def get_queue(self, records_onair=settings.RECORDS_ONAIR):
-        # Если слепой, выдаём задачи на транскрибирование
+
+        # Загружаем те аудио, которые разрешены по знанию языка
         languages = self.request.user.account.languages.values_list('code', flat=True)
         records = Record.objects.filter(language__in=languages)
 
@@ -82,11 +164,12 @@ class QueueViewSet(viewsets.ViewSet,
         else:
             work_types = (Queue.TRANSCRIBE,)
 
+        # Если слепой, выдаём задачи на транскрибирование
         if account.blind:
             work_types = (Queue.TRANSCRIBE,)
 
 
-
+        # Сначала смотрим среди срочных заказов
         last_record_ids = records.filter(progress=3, orders__speedup=1).order_by('id').values_list('id', flat=True).distinct()[:records_onair]
         if last_record_ids.count() == 0:
             last_record_ids = records.filter(progress=3).order_by('id').values_list('id', flat=True).distinct()[:records_onair]
@@ -159,104 +242,3 @@ class QueueViewSet(viewsets.ViewSet,
         serializer = QueueTranscriptionSerializer(queue)
 
         return Response(serializer.data)
-
-
-class TranscriptionViewSet(viewsets.ModelViewSet):
-
-    """
-        Обработка данных про транскрибции.
-        Список транскрибций, добавление.
-
-    """
-
-    model = Transcription
-    queryset = Transcription.objects.all()
-    serializer_class = TranscriptionQueueSerializer
-    permission_classes = (permissions.IsAuthenticated,
-                          IsOwner,)
-
-    def get_queryset(self):
-        """
-            Выдаём список записей авторизированного пользователя
-        """
-        return Transcription.objects.filter(queue__owner=self.request.user)
-
-    def create(self, request, *args, **kwargs):
-        try:
-            queue_id = 0
-            if 'queue' in request.data:
-                queue_id = request.data['queue']
-            elif len(request.data) > 0:
-                queue_id = request.data[0]['queue']
-
-            if not queue_id:
-                logger.error("Not queue_id provided %s" % (request))
-
-                return Response({'error': 'Queue id not provided'}, status=HTTP_400_BAD_REQUEST)
-
-
-            # Каждая транскрипция связанна с каким-то заказом, либо
-            queue = Queue.objects.get(
-                id=queue_id, owner=request.user)
-
-            if queue.completed:
-                logger.error("Queue %d already completed in %s. Completed by %s, send by %s" % (queue.id, queue.completed, queue.owner, request.user))
-
-                return Response({'error': 'Queue already completed'}, status=HTTP_400_BAD_REQUEST)
-
-            # Если плохая запись
-            if queue_id == queue.id and 'poor' in request.data:
-                queue.poored += 1
-
-                # Если многие посчитали, что запись плохая,
-                # помечаем, как выполненную
-                if queue.poored > settings.SPEECH_POOR_LIMIT:
-                    queue.completed = timezone.now()
-                    queue.update_work_metrics()
-
-                queue.save()
-
-                core.async_jobs.update_near.delay(queue)
-
-                logger.debug("Queue %d is poored." % (queue.id))
-
-                return Response({'done': 'ok'}, status=HTTP_201_CREATED)
-
-            for data in request.data:
-                serializer = TranscriptionQueueSerializer(data=data)
-                if not serializer.is_valid():
-                    logger.error("Transcription for queue %d send with errors: %s\n%s" % (queue.id, serializer.errors, request.__dict__))
-
-                    return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
-
-                if data['queue'] != queue.id:
-                    logger.error("Sended transcription for queue %d, but locked queue %d" % (data['queue'], queue.id))
-
-                    return Response({'error': 'Queue should be the same'}, status=HTTP_400_BAD_REQUEST)
-
-            for data in request.data:
-                serializer = TranscriptionQueueSerializer(data=data)
-                if serializer.is_valid():
-                    serializer.save()
-
-            # Помечаем очередь как прочитанную
-            queue.completed = timezone.now()
-            queue.update_work_metrics()
-
-            # TODO: Удалить аудиофайл
-            queue.save()
-
-            # Отправляем на асинхронный пересчёт зависимых кусков
-            # Меняем приоритет у других кусков и перерасчёт бабла
-            try:
-                core.async_jobs.update_near.delay(queue)
-            except rq.connections.NoRedisConnectionException:
-                logger.error("Can't connect to Redis, when send results of queue %d" % (queue.id))
-
-
-            logger.debug("Transcription for queue %d saved." % (queue.id))
-
-            return Response({'done': 'ok'}, status=HTTP_201_CREATED)
-        except:
-            logger.error("Houston, we have a problem. Queue %d and user %s\n%s" % (queue.id, request.user. request.__dict__))
-            return Response({'error': 'Houston, we have a problem'}, status=HTTP_400_BAD_REQUEST)

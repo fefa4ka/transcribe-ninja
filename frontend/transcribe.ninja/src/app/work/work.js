@@ -577,7 +577,7 @@ angular.module( 'transcribe-ninja.work', [
     }
     
     // Отравляем данные на сервер
-    api.transcription.create(transcriptions, function () {
+    api.queue.create(transcriptions, function () {
       // Загружаем новую задачу
       $scope.loadQueue();
     }, function () {

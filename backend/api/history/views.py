@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-from rest_framework.generics import ListAPIView
+from rest_framework import mixins
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.filters import DjangoFilterBackend
 
@@ -32,7 +33,7 @@ class StandartResultSetPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class HistoryViewSet(ListAPIView):
+class HistoryViewSet(mixins.ListModelMixin, GenericViewSet):
     """
         Список кусков записи
     """

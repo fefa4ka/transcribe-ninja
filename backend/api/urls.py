@@ -16,20 +16,20 @@ if settings.DOMAIN == "stenograph.us":
     router.register(r'records', views.RecordViewSet)
     router.register(r'orders', views.OrderViewSet, "")
 
-    urlpatterns += (
-        url(r'^api/records/(?P<record_id>.+)/pieces/$',
-            views.PieceViewSet.as_view()),
-    )
+    # urlpatterns += (
+    #     url(r'^api/records/(?P<record_id>.+)/pieces/$',
+    #         views.PieceViewSet.as_view()),
+    # )
 
 elif settings.DOMAIN == "transcribe.ninja":
-    router.register(r'queue', views.QueueViewSet, "")
-    router.register(r'transcriptions', views.TranscriptionViewSet)
+    router.register(r'queue', views.QueueViewSet, "queue")
+    # router.register(r'transcriptions', views.TranscriptionViewSet, "transcriptions")
+
+    router.register(r'history', views.HistoryViewSet, "history")
 
     urlpatterns += (
         url(r'^api/statistics/$',
             views.StatisticsView.as_view()),
-        url(r'^api/history/$',
-            views.HistoryViewSet.as_view()),
 
         # url(r'^api/payments/yandex-money/', include('yandex_money.urls')),
     )
