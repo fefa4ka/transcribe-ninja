@@ -44,7 +44,7 @@ class Piece(models.Model):
     start_at = models.FloatField()
     end_at = models.FloatField()
     duration = models.FloatField()
-    speaker = models.ForeignKey(Speaker, blank=True, null=True)
+    speaker = models.ForeignKey(Speaker, blank=True, null=True, related_name='pieces')
 
     @property
     def transcriptions(self):

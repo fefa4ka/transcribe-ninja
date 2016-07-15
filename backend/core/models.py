@@ -17,6 +17,14 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 
+import collections
+
+import contextlib
+
+import webrtcvad
+
+import wave
+
 
 class Feedback(models.Model):
     """
@@ -165,6 +173,56 @@ class AudioFile(models.Model):
 
     @property
     def parts(self):
+        return self.mp3splt_parts
+
+    @property
+    def vad_parts(self):
+        vad = webrtcvad.Vad(0)
+        audio, sample_rate = self._read_wav()
+        frames = self._frame_generator(30)
+        frames = list(frames)
+        segments = self._vad_collector(sample_rate, 30, 300, vad, frames)
+
+        return segments
+        # Glue
+        # Minimum piece lenght = 5 seconds
+        # Maximum piece lenght = 15 seconds
+        glued = []
+        for index, seg in enumerate(segments):
+            duration = seg[1] - seg[0]
+
+            previous_seg = segments[index - 1]
+            previous_silence = seg[0] - previous_seg[1]
+
+            if len(segments) - 1 > index:
+                next_seg = segments[index + 1]
+                next_silence = next_seg[0] - seg[1]
+            else:
+                next_seg = seg
+                next_silence = duration
+
+
+            if duration > settings.PIECE_DURATION_MINIMUM and duration < settings.PIECE_DURATION_MAXIMUM:
+                if to_glue:
+                    seg[0] = to_glue
+                    to_glue = False
+
+                glued.append(seg)
+                next
+
+            if duration < settings.PIECE_DURATION_MINIMUM:
+                # Приклеиваем козявку к ближайшему подходящему
+                if len(glued) > 0 and previous_silence < duration and (seg[1] - previous_seg[0]) < settings.PIECE_DURATION_MAXIMUM:
+                    glued[len(glued) - 1][1] = seg[1]
+                elif next_silence < duration and (next_seg[1] - seg[0]) < settings.PIECE_DURATION_MAXIMUM:
+                    to_glue = seg[0]
+                else:
+                    glued.append(seg)
+
+        return glued
+
+    @property
+    def mp3splt_parts(self):
         splitted_path = os.path.join(
             settings.MEDIA_ROOT,
             os.path.dirname(self.audio_file_format("mp3")),
@@ -173,7 +231,12 @@ class AudioFile(models.Model):
         # Если нет папки создаём и делим на части
         if not os.path.exists(splitted_path):
             os.makedirs(splitted_path)
-            self._split_to_parts(settings.DIARIZATION_PART_SIZE)
+            subprocess.call(
+                ['mp3splt', '-f',
+                 '-t', str(settings.DIARIZATION_PART_SIZE),
+                 '-a',
+                 '-d', splitted_path,
+                 settings.MEDIA_ROOT + self.audio_file_format("mp3")])
 
         # Если есть, надеемся, что там все файлы
         files = os.listdir(splitted_path)
@@ -200,18 +263,6 @@ class AudioFile(models.Model):
 
         return sorted(splitted, key=lambda x: x[1])
 
-    def _split_to_parts(self, length):
-        splitted_path = os.path.join(
-            settings.MEDIA_ROOT,
-            os.path.dirname(self.audio_file_format("mp3")),
-            'split')
-
-        subprocess.call(
-            ['mp3splt', '-f',
-             '-t', str(length),
-             '-a',
-             '-d', splitted_path,
-             settings.MEDIA_ROOT + self.audio_file_format("mp3")])
 
     def cut_to_file(self, file_name, start_at, end_at, offset=0, channels=2):
         """
@@ -294,8 +345,8 @@ class AudioFile(models.Model):
             subprocess.call(
                 ['ffmpeg', '-i',
                  settings.MEDIA_ROOT + audio_file_path,
-                 '-ac', str(channels),
                  '-acodec', 'pcm_s16le',
+                 '-ac', str(channels),
                  '-ar', '16000',
                  settings.MEDIA_ROOT + final_file_path])
         elif extension != "mp3":
@@ -310,16 +361,97 @@ class AudioFile(models.Model):
     def _ffmpeg_decode(self, original_file_name, file_name_format, channels=2):
         # Если такой файл есть, то возвращаем путь к файлу
         if not os.path.isfile(settings.MEDIA_ROOT + file_name_format):
+            file_name_format_title, extension = os.path.splitext(file_name_format)
+
             # Если папок нет - создаём
             dir_path = os.path.dirname(settings.MEDIA_ROOT + file_name_format)
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
 
             # Если в таком формате нет, то конвертируем
-            subprocess.call(
-                ['ffmpeg', '-i',
-                 settings.MEDIA_ROOT + original_file_name,
-                 '-ac', str(channels),
-                 settings.MEDIA_ROOT + file_name_format])
+            print extension
+            if extension == ".wav":
+                print "WOOgoGO"
+                subprocess.call(
+                    ['ffmpeg', '-i',
+                     settings.MEDIA_ROOT + original_file_name,
+                     '-acodec', 'pcm_s16le',
+                     '-ac', str(channels),
+                     '-ar', '16000',
+                     settings.MEDIA_ROOT + file_name_format])
+            else:
+                subprocess.call(
+                    ['ffmpeg', '-i',
+                     settings.MEDIA_ROOT + original_file_name,
+                     '-ac', str(channels),
+                     settings.MEDIA_ROOT + file_name_format])
 
         return file_name_format
+
+    def _read_wav(self):
+        wav_file = os.path.join(
+            settings.MEDIA_ROOT,
+            self.audio_file_format("wav", channels=1)
+        )
+
+        with contextlib.closing(wave.open(wav_file, 'rb')) as wf:
+            num_channels = wf.getnchannels()
+            assert num_channels == 1
+            sample_width = wf.getsampwidth()
+            assert sample_width == 2
+            sample_rate = wf.getframerate()
+            assert sample_rate in (8000, 16000, 32000)
+            pcm_data = wf.readframes(wf.getnframes())
+            return pcm_data, sample_rate
+
+    def _frame_generator(self, frame_duration_ms):
+        audio, sample_rate = self._read_wav()
+
+        n = int(sample_rate * (frame_duration_ms / 1000.0) * 2)
+        offset = 0
+        while offset + n < len(audio):
+            yield audio[offset:offset + n]
+            offset += n
+
+    def _vad_collector(self, sample_rate, frame_duration_ms, padding_duration_ms, vad, frames):
+        num_padding_frames = int(padding_duration_ms / frame_duration_ms)
+        ring_buffer = collections.deque(maxlen=num_padding_frames)
+        triggered = False
+
+        voices = []
+        time_start = 0
+        time_end = 0
+        # silence = 0
+
+        for index, frame in enumerate(frames):
+            time = index * int(sample_rate * (frame_duration_ms / 1000.0) * 2)\
+                    / (sample_rate * 2.)
+
+            if not triggered:
+                ring_buffer.append(frame)
+                num_voiced = len([f for f in ring_buffer
+                                  if vad.is_speech(f, sample_rate)])
+                if num_voiced > 0.9 * ring_buffer.maxlen:
+                    triggered = True
+                    ring_buffer.clear()
+
+                    # silence += time - time_end
+                    time_start = time
+            else:
+                ring_buffer.append(frame)
+                num_unvoiced = len([f for f in ring_buffer
+                                    if not vad.is_speech(f, sample_rate)])
+                if num_unvoiced > 0.9 * ring_buffer.maxlen:
+                    triggered = False
+                    ring_buffer.clear()
+
+                    time_end = time
+
+                    segment = [time_start, time_end]
+                    voices.append(segment)
+                    # print '%.2f - %.2f to %.2f sec' % (time_end - time_start, time_start, time_end)
+                    time_start = time
+
+        return voices
+
+
