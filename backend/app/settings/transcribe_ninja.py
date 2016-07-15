@@ -3,7 +3,7 @@
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from .development import *
+from .production import *
 
 DOMAIN = 'transcribe.ninja'
 
