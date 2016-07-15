@@ -18,7 +18,6 @@ SITE_ID = 1
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEPLOY_DIR = os.path.join(os.path.join(os.path.dirname(os.path.abspath(''))), 'deploy')
-print DEPLOY_DIR
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
@@ -291,6 +290,7 @@ EC2_SERVER_USERNAME = 'ubuntu'
 
 # Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "../../data/media/")
+STATIC_ROOT = os.path.join(BASE_DIR, "../../data/static/")
 
 # Records content
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")

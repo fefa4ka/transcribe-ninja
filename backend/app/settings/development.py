@@ -265,6 +265,7 @@ EC2_SERVER_USERNAME = 'ubuntu'
 
 # Media content
 MEDIA_ROOT = os.path.join(BASE_DIR, "../../data/media/")
+STATIC_ROOT = os.path.join(BASE_DIR, "../../data/static/")
 
 # Records content
 RECORD_ROOT = os.path.join(MEDIA_ROOT, "record/")
