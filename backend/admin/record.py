@@ -146,7 +146,6 @@ class RecordAdmin(ModelAdmin):
         amount = 0
         for order in instance.orders.all():
             queue_length = Queue.objects.filter(order=order, completed__isnull=False).aggregate(Sum('work_length'))
-            print queue_length
             amount += queue_length["work_length__sum"] or 0
         return amount
 
