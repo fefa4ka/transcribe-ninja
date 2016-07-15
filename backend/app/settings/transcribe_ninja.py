@@ -3,7 +3,7 @@
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from settings_development import *
+from .development import *
 
 DOMAIN = 'transcribe.ninja'
 
@@ -42,15 +42,17 @@ VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "static/%s/" % DOMAIN)
+STATIC_ROOT = os.path.join(BASE_DIR, "../../static/%s/" % DOMAIN)
 
 if not PROD and DEBUG:
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, "frontend/%s/build/" % DOMAIN),
+        os.path.join(BASE_DIR, "../../frontend/%s/build/" % DOMAIN),
+        os.path.join(BASE_DIR, "admin/static/"),
     )
 else:
     STATICFILES_DIRS = (
-        os.path.join(BASE_DIR, "frontend/%s/bin/" % DOMAIN),
+        os.path.join(BASE_DIR, "../../frontend/%s/bin/" % DOMAIN),
+        os.path.join(BASE_DIR, "admin/static/"),
     )
 
 
