@@ -1,6 +1,6 @@
 [program:transribe_prepare]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker prepare --settings=app.settings_transcribe_ninja
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/manage.py rqworker prepare --settings=app.settings.transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_prepare.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_prepare.err.log
@@ -10,7 +10,7 @@ redirect_stderr=true
 
 [program:transribe_analys]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker analys --settings=app.settings_transcribe_ninja
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/manage.py rqworker analys --settings=app.settings.transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_analys.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_analys.err.log
@@ -20,7 +20,7 @@ redirect_stderr=true
 
 [program:transribe_update_queue]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker update_queue --settings=app.settings_transcribe_ninja
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/manage.py rqworker update_queue --settings=app.settings.transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_update_queue.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_update_queue.err.log
@@ -30,7 +30,7 @@ redirect_stderr=true
 
 [program:transribe_make_queue]
 user=%(EC2_SERVER_USERNAME)s
-command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/manage.py rqworker make_queue --settings=app.settings_transcribe_ninja
+command=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/env/bin/python  /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/manage.py rqworker make_queue --settings=app.settings.transcribe_ninja
 directory=/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/
 stdout_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_make_queue.log
 stderr_logfile=/home/%(EC2_SERVER_USERNAME)s/logs/rq_make_queue.err.log

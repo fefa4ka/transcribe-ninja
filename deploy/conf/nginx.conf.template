@@ -1,9 +1,9 @@
 upstream django_transcribe_ninja {
-    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_transcribe_ninja.sock;
+    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/app/wsgi_transcribe_ninja.sock;
 }
 
 upstream django_stenograph_us {
-    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/wsgi_stenograph_us.sock;
+    server unix:///home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/app/wsgi_stenograph_us.sock;
 }
 
 server {
@@ -20,17 +20,17 @@ server {
     client_max_body_size 1024M;  
     
     location /static {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/transcribe.ninja;
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/data/static/transcribe.ninja;
 
     }
 
     location ~ ^/(admin|api)/ {
         uwsgi_pass  django_transcribe_ninja;
-        include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
+        include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_params; 
     }
 
     location / {
-        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/transcribe.ninja/;  
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/data/static/transcribe.ninja/;  
     }
 }
 
@@ -48,17 +48,17 @@ server {
     client_max_body_size 1024M;  
     
     location /static {
-        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/stenograph.us;
+        alias /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/data/static/stenograph.us;
 
     }
 
     location ~ ^/(admin|api)/ {
         uwsgi_pass  django_stenograph_us;
-        include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_params; 
+        include     /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_params; 
     }
 
     location / {
-        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/static/stenograph.us/;  
+        root /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/data/static/stenograph.us/;  
     }
 }
 
