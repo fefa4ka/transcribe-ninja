@@ -1,0 +1,21 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrastyle %}{{ block.super }}
+<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<div id="waveform"></div>
+<script type="text/javascript">
+    var wavesurfer = WaveSurfer.create({
+        container: '#waveform',
+        waveColor: 'violet',
+        progressColor: 'purple'
+    });
+
+    wavesurfer.load('{{ original.audio_file.url }}');
+</script>
+
+{{ block.super }}
+{% endblock %}
