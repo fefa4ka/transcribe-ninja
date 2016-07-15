@@ -7,11 +7,19 @@ from deployer.host import SSHHost
 import boto
 import boto.ec2
 
-from app import settings_production as settings
+import os.path
+
+import sys
+sys.path.insert(0, '..')
+import backend.app.settings.production as settings
+
+# sys.path.insert(0, 'deploy')
+
 
 class TranscribeNinjaHost(SSHHost):
     username = settings.EC2_SERVER_USERNAME
-    key_filename = settings.EC2_KEY_PAIR
+    key_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+        settings.EC2_KEY_PAIR)
 
     @property
     def address(self):

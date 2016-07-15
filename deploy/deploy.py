@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from django.db import connection
-
 from deployer.client import start
 
 from deployer.node import Node
 
-from app.deploy import hosts
-from app.deploy.transcribe import TranscribeNinjaSystem
+import hosts
+from transcribe import TranscribeNinjaSystem
 
-import app.settings_development as settings_development
-import app.settings_production as settings_production
+# import ..backend.app.settings.development as settings_development
+# import backend.app.settings.production as settings_production
 
 
 class RootNode(Node):

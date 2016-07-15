@@ -6,13 +6,16 @@
 from deployer.node import Node, map_roles
 from deployer.utils import esc1
 
-from app.deploy.service import *
-from app.deploy.django import *
-import app.deploy.tasks as tasks
+from service import *
+from django import *
+import tasks as tasks
 
 import os.path
 
-from app import settings_production as settings
+import sys
+sys.path.insert(0, '..')
+import backend.app.settings.production as settings
+
 
 class TranscribeNinjaSystem(Node):
 
@@ -95,8 +98,8 @@ class TranscribeNinjaSystem(Node):
                 with self.hosts.cd(self.frontend_path, expand=True):
                     self.hosts.run('bash build.sh')
 
-            self.run_management_command('collectstatic --noinput --settings=app.settings_transcribe_ninja')
-            self.run_management_command('collectstatic --noinput --settings=app.settings_stenograph_us')
+            self.run_management_command('collectstatic --noinput --settings=app.settings.transcribe_ninja')
+            self.run_management_command('collectstatic --noinput --settings=app.settings.stenograph_us')
 
     @map_roles(host='engine')
     class Engine(DjangoDeployment):
@@ -110,11 +113,11 @@ class TranscribeNinjaSystem(Node):
             self._ec2_configure_instance(tasks.reload_supervisor)
 
         def migrate(self):
-            self.run_management_command('migrate --settings=app.settings_stenograph_us')
+            self.run_management_command('migrate --settings=app.settings.stenograph_us')
 
         def reset_db(self):
             self.run_management_command('reset')
-            self.run_management_command('syncdb --settings=app.settings_stenograph_us')
+            self.run_management_command('syncdb --settings=app.settings.stenograph_us')
 
     def create(self):
         # Если созданы — удалить

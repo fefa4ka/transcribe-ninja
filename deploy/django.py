@@ -6,14 +6,16 @@
 # from deployer.node import Node
 from deployer.utils import esc1
 
-from app.deploy.aws import *
+import os.path
+
+from aws import *
 
 
 class DjangoDeployment(AWS):
     def update_hosts(self, hosts):
         self._put_template({
-                "template": "%(BASE_DIR)s/app/conf/hosts.py.template",
-                "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/hosts.py"
+                "template": os.path.join(os.path.dirname(os.path.abspath(__file__)), 'conf/hosts.py.template'),
+                "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/backend/app/hosts.py"
             }, hosts)
 
     def run_management_command(self, command):

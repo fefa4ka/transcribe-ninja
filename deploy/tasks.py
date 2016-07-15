@@ -136,29 +136,29 @@ npm_install = [
 
     # nginx
 reload_nginx = [
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/nginx.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf"}},
+    {"action": "put_template", "params": {"template": "%(DEPLOY_DIR)s/conf/nginx.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/nginx.conf"}},
     {"action": "sudo", "params": "service nginx restart",
      "message": "Restarting nginx"},
 ]
 
 create_nginx_links = [
     {"action": "sudo", "params":
-     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
+     "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/nginx.conf /etc/nginx/sites-enabled/%(PROJECT_NAME)s.conf"},
 ]
 
 create_uwsgi_links = [
     {"action": "sudo", "params":
-        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_stenograph_us.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_stenograph_us.ini"},
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_stenograph_us.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_stenograph_us.ini"},
     {"action": "sudo", "params":
-        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_transcribe_ninja.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_transcribe_ninja.ini"},
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_transcribe_ninja.conf /etc/uwsgi/apps-enabled/%(PROJECT_NAME)s_transcribe_ninja.ini"},
 ]
 
 reload_uwsgi = [
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi_stenograph_us.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_stenograph_us.conf"}},
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/uwsgi_transcribe_ninja.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/uwsgi_transcribe_ninja.conf"}},
+    {"action": "put_template", "params": {"template": "%(DEPLOY_DIR)s/conf/uwsgi_stenograph_us.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_stenograph_us.conf"}},
+    {"action": "put_template", "params": {"template": "%(DEPLOY_DIR)s/conf/uwsgi_transcribe_ninja.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/uwsgi_transcribe_ninja.conf"}},
     {"action": "sudo", "params": "service uwsgi restart",
         "message": "Restarting uwsgi"},
 ]
@@ -173,10 +173,10 @@ engine_configure = [
     {"action": "apt", "params": ["supervisor"],
         "message":"Installing supervisor"},
 
-    {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/supervisor.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf"}},
+    {"action": "put_template", "params": {"template": "%(DEPLOY_DIR)s/conf/supervisor.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/supervisor.conf"}},
     {"action": "sudo", "params":
-        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf /etc/supervisor/conf.d/%(PROJECT_NAME)s.conf"},
+        "ln -s /home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/supervisor.conf /etc/supervisor/conf.d/%(PROJECT_NAME)s.conf"},
     {"action": "sudo", "params": "service supervisor restart",
         "message": "Restarting supervisor"},
 
@@ -185,8 +185,8 @@ engine_configure = [
 ]
 
 reload_supervisor = [
-   {"action": "put_template", "params": {"template": "%(BASE_DIR)s/app/conf/supervisor.conf.template",
-                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/app/conf/supervisor.conf"}},
+   {"action": "put_template", "params": {"template": "%(DEPLOY_DIR)s/conf/supervisor.conf.template",
+                                          "destination": "/home/%(EC2_SERVER_USERNAME)s/%(PROJECT_NAME)s/deploy/conf/supervisor.conf"}},
     {"action": "sudo", "params": "service supervisor restart",
         "message": "Restarting supervisor"},
 ]

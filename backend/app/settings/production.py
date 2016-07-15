@@ -12,11 +12,13 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from hosts import HOSTS
+from ..hosts import HOSTS
 
 SITE_ID = 1
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+DEPLOY_DIR = os.path.join(os.path.join(os.path.dirname(os.path.abspath(''))), 'deploy')
+print DEPLOY_DIR
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '@0jnn4oh3h2ri-y6skgfea!&07o+5z8#oamzh-1nmm)wq*p(e%'
@@ -283,7 +285,7 @@ AWS_HEADERS = {
 EC2_REGION = 'eu-central-1'
 EC2_INSTANCE_TYPE = 't2.medium'
 EC2_AMI = 'ami-accff2b1'
-EC2_KEY_PAIR_DIR = "%s/app/conf" % BASE_DIR
+EC2_KEY_PAIR_DIR = "conf"
 EC2_KEY_PAIR = "%s/%s.pem" % (EC2_KEY_PAIR_DIR, PROJECT_NAME)
 EC2_SERVER_USERNAME = 'ubuntu'
 

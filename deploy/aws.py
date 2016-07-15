@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from app import settings_production as settings
 
 from deployer.node import Node
 from deployer.utils import esc1
@@ -12,6 +11,11 @@ import boto.rds2
 
 import os
 import time
+
+import sys
+sys.path.insert(0, '..')
+from  backend.app.settings import production as settings
+
 
 class AWS(Node):
     def get_address(self):
@@ -322,5 +326,5 @@ class AWS(Node):
         Activates virtualenv and runs command
         """
         with self.hosts.prefix(settings.ACTIVATE):
-            with self.hosts.cd(settings.PROJECT_DIR, expand=True):
+            with self.hosts.cd(os.path.join(settings.PROJECT_DIR, 'backend'), expand=True):
                 self.hosts.run(self._render(command))
