@@ -6,7 +6,7 @@ from record import *
 from payment import *
 from queue import *
 from price import *
-from mailbox import *
+# from mailbox import *
 from feedback import *
 from language import *
 # from yandex import *
