@@ -72,7 +72,7 @@ module.exports = {
       'vendor/es5-shim/es5-shim.js',
       'vendor/angular-translate/angular-translate.min.js',
       'vendor/angular-sanitize/angular-sanitize.js',
-      'vendor/angular-file-upload/angular-file-upload.js',
+      'vendor/angular-file-upload/dist/angular-file-upload.js',
       'vendor/angular-hotkeys/build/hotkeys.min.js',
       'vendor/angular-resource/angular-resource.js',
       'vendor/jquery/dist/jquery.js',
