@@ -6,7 +6,7 @@ djangorestframework==3.1 # REST API
 markdown==2.5.2       # Markdown support for the browsable API.
 django-rq-dashboard
 django-filter==0.10.0  # Filtering support
-#https://github.com/fefa4ka/voiceid/archive/master.zip # Before install SOX and GSTREAM
+https://github.com/fefa4ka/voiceid/archive/master.zip # Before install SOX and GSTREAM
 numpy==1.9.1
 pydub==0.9.5
 django-storages
