@@ -42,7 +42,7 @@ VK_API_SECRET = 'fLri3IgiQBCRidQ782bM'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
-STATIC_ROOT = os.path.join(BASE_DIR, "../../static/%s/" % DOMAIN)
+STATIC_ROOT = os.path.join(BASE_DIR, "../../data/static/%s/" % DOMAIN)
 
 if not PROD and DEBUG:
     STATICFILES_DIRS = (

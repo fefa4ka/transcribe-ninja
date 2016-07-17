@@ -51,7 +51,7 @@ YANDEX_MONEY_MAIL_ADMINS_ON_PAYMENT_ERROR = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 # Paths relative to settings file
-STATIC_ROOT = os.path.join(BASE_DIR, "../../static/%s/" % DOMAIN)
+STATIC_ROOT = os.path.join(BASE_DIR, "../../data/static/%s/" % DOMAIN)
 
 if not PROD and DEBUG:
     STATICFILES_DIRS = (
