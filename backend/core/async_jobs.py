@@ -9,6 +9,8 @@ from work.models import *
 
 from django.db.models import Q
 
+from dbmail import send_db_mail
+
 # Очереди для записей
 
 @job('prepare', timeout=3600)
