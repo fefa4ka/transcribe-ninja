@@ -134,7 +134,7 @@ def update_near(queue):
     account.save()
 
     if account.rating < 0.5:
-        queue.owner.user.active = 0
+        queue.owner.active = 0
         queue.owner.save()
 
         # Отправляем письмо о блокировке
