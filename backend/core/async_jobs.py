@@ -23,6 +23,9 @@ def record_prepare(record):
 
         record — экземляр записи Record
     """
+    # Если не перезагрузить объект, то при сохранении будет (2006, 'MySQL server has gone away')
+    record = Record.objects.get(id=record.id)
+
     # Сперва подготавливаем запись
     record.prepare()
     record.save()
