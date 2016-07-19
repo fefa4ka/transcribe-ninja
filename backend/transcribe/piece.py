@@ -118,6 +118,7 @@ class Piece(models.Model):
 
     @property
     def transcribe_queue(self):
+        # х3 почему их может не быть
         try:
             return self.queue.filter(work_type=0)[0]
         except:
@@ -125,7 +126,10 @@ class Piece(models.Model):
 
     @property
     def check_transcription_queue(self):
-        return self.queue.filter(work_type=1)[0]
+        try:
+            return self.queue.filter(work_type=1)[0]
+        except:
+            return None
 
     @property
     def previous_check_transcription_queue(self):
