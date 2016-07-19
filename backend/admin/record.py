@@ -15,10 +15,10 @@ from site import admin_site
 
 
 
-# class PieceInline(TabularInline):
-#     model = Piece
-#     formset = PieceFormSet
-#     extra = 0
+class PieceInline(TabularInline):
+    model = Piece
+    # formset = PieceFormSet
+    extra = 0
 
 class OrderInline(TabularInline):
     model = Order
@@ -82,7 +82,7 @@ class RecordAdmin(ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('audio_file', 'title', 'owner')
+            'fields': ('title', 'owner')
         }),
         ('Recod properties', {
             'classes': ('collapse',),

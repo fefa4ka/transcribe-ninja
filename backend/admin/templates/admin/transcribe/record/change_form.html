@@ -3,13 +3,18 @@
 {% block extrastyle %}{{ block.super }}
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.regions.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.57/plugin/wavesurfer.timeline.min.js"></script>
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+
 {% endblock %}
 
 
 {% block content %}
 <div id="waveform"></div>
+<div id="waveform-timeline"></div>
 
-<div style="text-align: center">
+
+<div>
   <button class="btn btn-primary" onclick="wavesurfer.playPause()">
     <i class="glyphicon glyphicon-play"></i>
     Play
@@ -33,25 +38,37 @@
 <script type="text/javascript">
     var wavesurfer = WaveSurfer.create({
         container: '#waveform',
-        waveColor: 'violet',
-        progressColor: 'purple'
+        waveColor: '#0677A2',
+        progressColor: '#888888'
     });
 
     wavesurfer.load('{{ original.audio_file.url|safe }}');
 
     wavesurfer.on('ready', function () {
       // Enable creating regions by dragging
-      wavesurfer.enableDragSelection();
+      // wavesurfer.enableDragSelection();
+        var timeline = Object.create(WaveSurfer.Timeline);
 
+          timeline.init({
+            wavesurfer: wavesurfer,
+            container: '#waveform-timeline'
+          });
+        var pieces = [];
     {% for piece in original.pieces.all %}
-    console.log({{piece.start_at}});
+        pieces.push([{{ piece.start_at }}, {{ piece.end_at }}]);
+    {% endfor %}
+
+    for(var piece_id in pieces) {
         wavesurfer.addRegion({
-            start: Math.floor({{ piece.start_at }}), // time in seconds
-            end: Math.floor({{ piece.end_at }}), // time in seconds
+            start: Math.floor(pieces[piece_id][0]), // time in seconds
+            end: Math.floor(pieces[piece_id][1]), // time in seconds
             color: 'hsla(100, 100%, 30%, 0.1)'
         });
+    }
+        
      
-    {% endfor %}
+    
+
       // Add a couple of pre-defined regions
       
     });
