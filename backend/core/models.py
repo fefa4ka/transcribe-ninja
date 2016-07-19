@@ -183,17 +183,21 @@ class AudioFile(models.Model):
         frames = list(frames)
         segments = self._vad_collector(sample_rate, 30, 300, vad, frames)
 
-        return segments
-        # Glue
-        # Minimum piece lenght = 5 seconds
-        # Maximum piece lenght = 15 seconds
         glued = []
+        to_glue = False
         for index, seg in enumerate(segments):
+            # Приклеиваем кусок, если есть что приклеить
+            if to_glue:
+                seg[0] = to_glue
+                to_glue = False
+
+            # Длинна текущего куска
             duration = seg[1] - seg[0]
 
             previous_seg = segments[index - 1]
             previous_silence = seg[0] - previous_seg[1]
 
+            # Если это не последний кусок
             if len(segments) - 1 > index:
                 next_seg = segments[index + 1]
                 next_silence = next_seg[0] - seg[1]
@@ -201,15 +205,12 @@ class AudioFile(models.Model):
                 next_seg = seg
                 next_silence = duration
 
-
+            # Если кусок в допустимых приделах, то просто добавляем его
             if duration > settings.PIECE_DURATION_MINIMUM and duration < settings.PIECE_DURATION_MAXIMUM:
-                if to_glue:
-                    seg[0] = to_glue
-                    to_glue = False
-
                 glued.append(seg)
                 next
 
+            # Если кусок маленький, то приклиеваем к нему
             if duration < settings.PIECE_DURATION_MINIMUM:
                 # Приклеиваем козявку к ближайшему подходящему
                 if len(glued) > 0 and previous_silence < duration and (seg[1] - previous_seg[0]) < settings.PIECE_DURATION_MAXIMUM:
