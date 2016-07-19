@@ -4,6 +4,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.regions.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.57/plugin/wavesurfer.timeline.min.js"></script>
+<!-- <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet"> -->
 
 {% endblock %}
 
@@ -81,7 +82,9 @@
         wavesurfer.addRegion({
             start: Math.floor(start_at), // time in seconds
             end: Math.floor(end_at), // time in seconds
-            color: color
+            color: color,
+            resize: false,
+            drag: false
         });
     }
         
