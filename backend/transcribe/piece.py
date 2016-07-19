@@ -136,7 +136,19 @@ class Piece(models.Model):
         if self.previous:
             return self.previous.check_transcription_queue
         else:
-            return self
+            return self.check_transcription_queue
+
+    @property
+    def recognize_status(self):
+        status = 0
+        if self.transcribe_queue.completed:
+            status += 1
+        if self.previous_check_transcription_queue.completed:
+            status += 1
+        if self.check_transcription_queue.completed:
+            status += 1
+
+        return status
 
     def recognize(self):
         """
