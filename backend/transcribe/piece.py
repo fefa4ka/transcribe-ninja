@@ -141,11 +141,11 @@ class Piece(models.Model):
     @property
     def recognize_status(self):
         status = 0
-        if self.transcribe_queue.completed:
+        if self.transcribe_queue and self.transcribe_queue.completed:
             status += 1
-        if self.previous_check_transcription_queue.completed:
+        if self.previous_check_transcription_queue and self.previous_check_transcription_queue.completed:
             status += 1
-        if self.check_transcription_queue.completed:
+        if self.check_transcription_queue and self.check_transcription_queue.completed:
             status += 1
 
         return status
