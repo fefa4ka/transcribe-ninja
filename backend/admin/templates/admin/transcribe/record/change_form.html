@@ -4,7 +4,6 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.52/wavesurfer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.1.2/plugin/wavesurfer.regions.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.0.57/plugin/wavesurfer.timeline.min.js"></script>
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
 {% endblock %}
 
@@ -12,28 +11,26 @@
 {% block content %}
 <div id="waveform"></div>
 <div id="waveform-timeline"></div>
-
-
-<div>
-  <button class="btn btn-primary" onclick="wavesurfer.playPause()">
-    <i class="glyphicon glyphicon-play"></i>
-    Play
-  </button>
-
-  <p class="row">
+  <div class="row">
+    <div class="col-xs-1">
+        <button class="btn btn-primary" onclick="wavesurfer.playPause()">
+            <i class="glyphicon glyphicon-play"></i>
+            Play
+        </button>
+    </div>
     <div class="col-xs-1">
       <i class="glyphicon glyphicon-zoom-in"></i>
     </div>
 
-    <div class="col-xs-10">
+    <div class="col-xs-9">
       <input id="slider" type="range" min="1" max="200" value="1" style="width: 100%" />
     </div>
 
     <div class="col-xs-1">
       <i class="glyphicon glyphicon-zoom-out"></i>
     </div>
-  </p>
-</div>
+  </div>
+
 
 <script type="text/javascript">
     var wavesurfer = WaveSurfer.create({
